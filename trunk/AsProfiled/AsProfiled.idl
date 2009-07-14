@@ -1,0 +1,36 @@
+// AsProfiled.idl : IDL source for AsProfiled
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (AsProfiled.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(0E53C629-C0C6-4ABD-BC00-8516E5D4E35C),
+	dual,
+	nonextensible,
+	helpstring("IProfiler Interface"),
+	pointer_default(unique)
+]
+interface IProfiler : IUnknown{
+};
+[
+	uuid(EA3B1302-CDD1-49D7-B8A6-1BB752C22B3B),
+	version(1.0),
+	helpstring("AsProfiled 1.0 Type Library")
+]
+library AsProfiledLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(F5A5DD69-3CAF-4D3D-9B76-1A9906F68D7B),
+		helpstring("Profiler Class")
+	]
+	coclass Profiler
+	{
+		[default] interface IProfiler;
+	};
+};

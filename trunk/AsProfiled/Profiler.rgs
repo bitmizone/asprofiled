@@ -1,0 +1,26 @@
+HKCR
+{
+	AsProfiled.Profiler.1 = s 'Profiler Class'
+	{
+		CLSID = s '{F5A5DD69-3CAF-4D3D-9B76-1A9906F68D7B}'
+	}
+	AsProfiled.Profiler = s 'Profiler Class'
+	{
+		CLSID = s '{F5A5DD69-3CAF-4D3D-9B76-1A9906F68D7B}'
+		CurVer = s 'AsProfiled.Profiler.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {F5A5DD69-3CAF-4D3D-9B76-1A9906F68D7B} = s 'Profiler Class'
+		{
+			ProgID = s 'AsProfiled.Profiler.1'
+			VersionIndependentProgID = s 'AsProfiled.Profiler'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{EA3B1302-CDD1-49D7-B8A6-1BB752C22B3B}'
+		}
+	}
+}
