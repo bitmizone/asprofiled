@@ -3,20 +3,54 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AsProfiled", "AsProfiled\AsProfiled.vcproj", "{F74D07EE-878F-4624-AA97-DD82AE8EA777}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApplication", "TestApplication\TestApplication.csproj", "{775AA558-DF4A-4635-BEED-F482DB7909A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsContracts", "AsContracts\AsContracts.csproj", "{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
 		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|Win32 = Debug|Win32
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Debug|Win32.ActiveCfg = Debug|Win32
 		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Debug|Win32.Build.0 = Debug|Win32
+		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Release|Any CPU.ActiveCfg = Release|Win32
+		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Release|Win32.ActiveCfg = Release|Win32
 		{F74D07EE-878F-4624-AA97-DD82AE8EA777}.Release|Win32.Build.0 = Release|Win32
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{775AA558-DF4A-4635-BEED-F482DB7909A5}.Release|Win32.ActiveCfg = Release|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
