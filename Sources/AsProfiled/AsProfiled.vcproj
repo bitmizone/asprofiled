@@ -28,6 +28,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -105,6 +106,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="regsvr32 /u &quot;$(TargetPath)&quot; &amp;&amp; regsvr32 &quot;$(TargetPath)&quot;"
 			/>
 		</Configuration>
 		<Configuration

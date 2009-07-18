@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApplication", "TestAppl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsContracts", "AsContracts\AsContracts.csproj", "{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{759CDFE4-DED4-4BF1-B78A-29EA62163C9A}"
+	ProjectSection(SolutionItems) = preProject
+		RegisterProfiler.bat = RegisterProfiler.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
