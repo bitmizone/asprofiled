@@ -1,0 +1,1 @@
+#define FUNCTION_NAME_SIZE 1024

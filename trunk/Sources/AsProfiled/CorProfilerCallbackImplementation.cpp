@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "CorProfilerCallbackImplementation.h"
 
+
+
 CCorProfilerCallbackImplementation::CCorProfilerCallbackImplementation(void)
 {
 }
