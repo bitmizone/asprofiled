@@ -13,6 +13,8 @@
 
 // CProfiler
 
+
+
 class ATL_NO_VTABLE CProfiler :
 	public CComObjectRootEx<CComSingleThreadModel>,
 	public CComCoClass<CProfiler, &CLSID_Profiler>,
@@ -40,7 +42,7 @@ END_COM_MAP()
 	
 	}
 
-	    // STARTUP/SHUTDOWN EVENTS
+	// STARTUP/SHUTDOWN EVENTS
     STDMETHOD(Initialize)(IUnknown *pICorProfilerInfoUnk);
     STDMETHOD(Shutdown)();
 	//void FunctionEnterHandler(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo);
@@ -51,7 +53,8 @@ END_COM_MAP()
 
 private :
 	CComQIPtr<ICorProfilerInfo2> _ICorProfilerInfo2;
-	
+	HRESULT SetEventMask();
+	HRESULT GetFullMethodName(FunctionID functionId, LPWSTR wszMethod);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Profiler), CProfiler)
