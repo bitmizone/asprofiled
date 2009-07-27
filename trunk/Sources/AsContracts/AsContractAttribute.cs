@@ -13,9 +13,13 @@ namespace AsContracts
         private string _invariant;
         private string _postCondition;
 
+        public AsContractAttribute()
+        {
+        }
+
         public AsContractAttribute(string preCondition, string invariant, string postCondition)
         {
-
+            Console.WriteLine("Contract constructed");
         }
 
         public string PostCondition
