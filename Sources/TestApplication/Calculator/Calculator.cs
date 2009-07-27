@@ -8,7 +8,8 @@ namespace TestApplication.Calculator
 {
     class Calculator
     {
-        [AsContract("divisor != 0", "", "")]
+        // [AsContract("divisor != 0", "", "")]
+        [AsContract(PreCondition="", Invariant="", PostCondition="")]
         public int Div(int divided, int divisor)
         {
             Test(divided);

@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		RegisterProfiler.bat = RegisterProfiler.bat
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExpressionParser", "ExpressionParser\ExpressionParser.vcproj", "{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -56,6 +58,16 @@ Global
 		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}.Release|Win32.ActiveCfg = Release|Any CPU
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Debug|Win32.Build.0 = Debug|Win32
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Release|Any CPU.ActiveCfg = Release|Win32
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Release|Win32.ActiveCfg = Release|Win32
+		{3980CD54-A36A-4D5A-A1EA-9B2445271DD8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

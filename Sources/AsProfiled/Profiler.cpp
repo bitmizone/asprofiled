@@ -20,22 +20,35 @@ CProfiler::CProfiler() {
 	
 }
 
+
+
+// static function mapper 
+UINT_PTR CProfiler::FunctionMapper(FunctionID functionId, BOOL *pbHookFunction) {
+	
+	if (_cProfilerGlobalHandler != NULL) {
+		_cProfilerGlobalHandler->MapFunction(functionId);
+	}
+	return (UINT_PTR) functionId;
+}
+
+void CProfiler::MapFunction(FunctionID functionId) {
+	WCHAR szMethodName[FUNCTION_NAME_SIZE];
+
+	HRESULT hr = GetFullMethodName(functionId, szMethodName);
+	
+}
+
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
 	IMetaDataImport2 *metaDataImport = 0;
 	WCHAR methodName[FUNCTION_NAME_SIZE];
 	mdToken token = 0;
 	HRESULT hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionID, IID_IMetaDataImport2, (LPUNKNOWN*) &metaDataImport, &token);
-	
-	cout << functionID << endl;
-	//if (SUCCEEDED(hr)) {
-		GetFullMethodName(functionID, methodName);
-	//}
 }
 
 void _stdcall FunctionEnterGlobal(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
 
 	++callCounter;
-	cout << "entering function" << endl;
+	// cout << "entering function" << endl;
 	_cProfilerGlobalHandler->FunctionEnter(functionID, clientData, func, argumentInfo);
 	
 }
@@ -108,7 +121,11 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 		ULONG cchMethod;
 		ULONG pchMethod;
 		methodMetaData->GetMethodProps(methodToken, &pClass, methodName, FUNCTION_NAME_SIZE, &cchMethod, 0, 0, 0, 0, 0);
-		cout << methodName << "damn" << endl;
+		int i = 0;
+		while ((char) methodName[i] != '\0') {
+			printf("%c", methodName[i++]);
+		}
+		printf("\n");
 	}else {
 		// log error
 	}
@@ -116,19 +133,7 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	return hr;
 }
 
-STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
-{
-	_cProfilerGlobalHandler = this;
-	// query for ICorProfiler2 object
-	HRESULT hr =  pICorProfilerInfoUnk->QueryInterface(IID_ICorProfilerInfo2, (LPVOID*) &_ICorProfilerInfo2);
-	// register for recieving specified events
-	hr = SetEventMask();
-	// register handlers for function enter/leave events
-	
-	_ICorProfilerInfo2->SetEnterLeaveFunctionHooks2( &FunctionEnterHandler, &FunctionLeaveHandler, NULL);
-	cout << "Program has started" << endl;
-    return S_OK;
-} 
+
 
 STDMETHODIMP CProfiler::Shutdown() {
 	cout << "Program has ended" << endl;
@@ -180,3 +185,17 @@ HRESULT CProfiler::SetEventMask()
 	return _ICorProfilerInfo2->SetEventMask(COR_PRF_MONITOR_ENTERLEAVE);;
 }
 
+STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
+{
+	_cProfilerGlobalHandler = this;
+	// query for ICorProfiler2 object
+	HRESULT hr =  pICorProfilerInfoUnk->QueryInterface(IID_ICorProfilerInfo2, (LPVOID*) &_ICorProfilerInfo2);
+	// register for recieving specified events
+	hr = SetEventMask();
+	// register handlers for function enter/leave events
+	
+	_ICorProfilerInfo2->SetEnterLeaveFunctionHooks2( &FunctionEnterHandler, &FunctionLeaveHandler, NULL);
+	_ICorProfilerInfo2->SetFunctionIDMapper(FunctionMapper);
+	cout << "Program has started" << endl;
+    return S_OK;
+} 

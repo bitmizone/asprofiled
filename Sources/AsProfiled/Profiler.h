@@ -45,11 +45,13 @@ END_COM_MAP()
 	// STARTUP/SHUTDOWN EVENTS
     STDMETHOD(Initialize)(IUnknown *pICorProfilerInfoUnk);
     STDMETHOD(Shutdown)();
-	//void FunctionEnterHandler(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo);
-	//void FunctionLeaveHandler(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange);
+	
 
 	void FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo);
 	void FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange);
+
+	void MapFunction(FunctionID);
+	static UINT_PTR _stdcall FunctionMapper(FunctionID functionId, BOOL *pbHookFunction);
 
 private :
 	CComQIPtr<ICorProfilerInfo2> _ICorProfilerInfo2;
