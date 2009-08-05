@@ -1,9 +1,9 @@
-// Profiler.cpp : Implementation of CProfiler
+// profiler.cpp : Implementation of CProfiler
 
 
 #include "winnt.h"
 #include "stdafx.h"
-#include "Profiler.h"
+#include "profiler.h"
 #include "common.h"
 #include <assert.h>
 #include <iostream>
@@ -32,15 +32,16 @@ UINT_PTR CProfiler::FunctionMapper(FunctionID functionId, BOOL *pbHookFunction) 
 }
 
 void CProfiler::MapFunction(FunctionID functionId) {
-	WCHAR szMethodName[FUNCTION_NAME_SIZE];
+	WCHAR szMethodName[NAME_BUFFER_SIZE];
 
 	HRESULT hr = GetFullMethodName(functionId, szMethodName);
-	
+
 }
 
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
 	IMetaDataImport2 *metaDataImport = 0;
-	WCHAR methodName[FUNCTION_NAME_SIZE];
+	// place for fully qualified method name
+	WCHAR methodName[NAME_BUFFER_SIZE * 2];
 	mdToken token = 0;
 	HRESULT hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionID, IID_IMetaDataImport2, (LPUNKNOWN*) &metaDataImport, &token);
 }
@@ -111,25 +112,31 @@ void _declspec(naked) FunctionLeaveHandler(FunctionID functionID, UINT_PTR clien
 HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	HRESULT hr = S_OK;
 	IMetaDataImport* methodMetaData = 0;
-
-	WCHAR methodName[FUNCTION_NAME_SIZE];
+	WCHAR szFunction[NAME_BUFFER_SIZE];
+	WCHAR szClass[NAME_BUFFER_SIZE];
 	mdToken methodToken = 0;
 	hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionId, IID_IMetaDataImport, (LPUNKNOWN *) &methodMetaData, &methodToken);
 
 	if (SUCCEEDED(hr)) {
-		mdTypeDef pClass; 
+		mdTypeDef classTypeDef; 
 		ULONG cchMethod;
-		ULONG pchMethod;
-		methodMetaData->GetMethodProps(methodToken, &pClass, methodName, FUNCTION_NAME_SIZE, &cchMethod, 0, 0, 0, 0, 0);
-		int i = 0;
-		while ((char) methodName[i] != '\0') {
-			printf("%c", methodName[i++]);
+		ULONG cchClass;
+		hr = methodMetaData->GetMethodProps(methodToken, &classTypeDef, szFunction, 
+											NAME_BUFFER_SIZE, &cchMethod, 
+											NULL, NULL, NULL, NULL, NULL);
+		if (SUCCEEDED(hr)) 
+		{
+			hr = methodMetaData->GetTypeDefProps(classTypeDef, szClass, NAME_BUFFER_SIZE, &cchClass, NULL, NULL);
+			if (SUCCEEDED(hr)) {
+				_snwprintf_s(wszMethod,NAME_BUFFER_SIZE, NAME_BUFFER_SIZE ,L"%s.%s",szClass,szFunction);
+				PrintCharArray(wszMethod);
+			}
 		}
-		printf("\n");
+		
 	}else {
 		// log error
 	}
-
+	methodMetaData->Release();
 	return hr;
 }
 

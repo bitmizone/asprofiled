@@ -209,7 +209,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\AsProfiled.cpp"
+				RelativePath=".\as_profiled.cpp"
 				>
 			</File>
 			<File
@@ -221,7 +221,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CorProfilerCallbackImplementation.cpp"
+				RelativePath=".\common.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\cor_profiler_callback_implementation.cpp"
 				>
 			</File>
 			<File
@@ -247,7 +251,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Profiler.cpp"
+				RelativePath=".\profiler.cpp"
 				>
 			</File>
 			<File
@@ -281,7 +285,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CorProfilerCallbackImplementation.h"
+				RelativePath=".\cor_profiler_callback_implementation.h"
 				>
 			</File>
 			<File
@@ -289,7 +293,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Profiler.h"
+				RelativePath=".\profiler.h"
 				>
 			</File>
 			<File

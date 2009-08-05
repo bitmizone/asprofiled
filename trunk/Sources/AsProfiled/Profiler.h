@@ -4,7 +4,7 @@
 #include "resource.h"       // main symbols
 
 #include "AsProfiled_i.h"
-#include "CorProfilerCallbackImplementation.h"
+#include "cor_profiler_callback_implementation.h"
 #include "corprof.h"
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
