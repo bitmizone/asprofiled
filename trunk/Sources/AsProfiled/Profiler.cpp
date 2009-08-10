@@ -35,15 +35,15 @@ void CProfiler::MapFunction(FunctionID functionId) {
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
 
 	HRESULT hr = GetFullMethodName(functionId, szMethodName);
-
+	PrintCharArray(szMethodName);
 }
 
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
 	IMetaDataImport2 *metaDataImport = 0;
 	// place for fully qualified method name
-	WCHAR methodName[NAME_BUFFER_SIZE * 2];
 	mdToken token = 0;
 	HRESULT hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionID, IID_IMetaDataImport2, (LPUNKNOWN*) &metaDataImport, &token);
+	
 }
 
 void _stdcall FunctionEnterGlobal(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
@@ -111,32 +111,60 @@ void _declspec(naked) FunctionLeaveHandler(FunctionID functionID, UINT_PTR clien
 
 HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	HRESULT hr = S_OK;
-	IMetaDataImport* methodMetaData = 0;
+	IMetaDataImport* pMetaDataImport = 0;
 	WCHAR szFunction[NAME_BUFFER_SIZE];
 	WCHAR szClass[NAME_BUFFER_SIZE];
-	mdToken methodToken = 0;
-	hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionId, IID_IMetaDataImport, (LPUNKNOWN *) &methodMetaData, &methodToken);
+	mdMethodDef methodToken = 0;
+	mdTypeDef typeDefToken; 
+	mdCustomAttribute metadataCustomAttr[10];
+	ULONG cchMethod;
+	ULONG cchClass;
+	ULONG pchData;
+	ULONG count;
+	const void* ppData;
+	HCORENUM phEnum = NULL;
+	
 
+	hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionId, IID_IMetaDataImport, (LPUNKNOWN *) &pMetaDataImport, &methodToken);
+	ToBinary((void*) &methodToken, 4, 3);
 	if (SUCCEEDED(hr)) {
-		mdTypeDef classTypeDef; 
-		ULONG cchMethod;
-		ULONG cchClass;
-		hr = methodMetaData->GetMethodProps(methodToken, &classTypeDef, szFunction, 
+
+		hr = pMetaDataImport->GetMethodProps(methodToken, &typeDefToken, szFunction, 
 											NAME_BUFFER_SIZE, &cchMethod, 
 											NULL, NULL, NULL, NULL, NULL);
+		ToBinary((void*) &typeDefToken, 4, 3);
 		if (SUCCEEDED(hr)) 
 		{
-			hr = methodMetaData->GetTypeDefProps(classTypeDef, szClass, NAME_BUFFER_SIZE, &cchClass, NULL, NULL);
+			hr = pMetaDataImport->GetTypeDefProps(typeDefToken, szClass, NAME_BUFFER_SIZE, &cchClass, NULL, NULL);
 			if (SUCCEEDED(hr)) {
 				_snwprintf_s(wszMethod,NAME_BUFFER_SIZE, NAME_BUFFER_SIZE ,L"%s.%s",szClass,szFunction);
-				PrintCharArray(wszMethod);
 			}
+
+			//hr = methodMetaData->GetCustomAttributeByName(methodToken, L"AsContractAttribute", &ppData, &pchData);
+			
+			hr = pMetaDataImport->EnumCustomAttributes(&phEnum, typeDefToken, 0, metadataCustomAttr, 10, &count);
+			int sum = count;
+			while (count > 0) 
+			{
+				pMetaDataImport->EnumCustomAttributes(&phEnum, methodToken, 0, metadataCustomAttr, 10, &count);
+				sum += count;
+			}
+			ULONG lSum = 0;
+			pMetaDataImport->CountEnum(phEnum, &lSum);
+			pMetaDataImport->CloseEnum(phEnum);
+			
+			printf("%d\n", lSum);
+			if (SUCCEEDED(hr)) {
+				 // printf("%p ", pchData);
+			}
+
 		}
-		
-	}else {
+	}
+	else 
+	{
 		// log error
 	}
-	methodMetaData->Release();
+	pMetaDataImport->Release();
 	return hr;
 }
 

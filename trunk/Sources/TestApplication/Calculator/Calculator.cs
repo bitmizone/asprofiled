@@ -6,6 +6,7 @@ using AsContracts;
 
 namespace TestApplication.Calculator
 {
+    // [AsContract("a","b", "c")]
     class Calculator
     {
         // [AsContract("divisor != 0", "", "")]
@@ -13,7 +14,6 @@ namespace TestApplication.Calculator
         public int Div(int divided, int divisor)
         {
             Test(divided);
-            Calculator c = new Calculator();
             return divided / divisor;
         }
 
