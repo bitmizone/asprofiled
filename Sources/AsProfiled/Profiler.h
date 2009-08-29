@@ -57,6 +57,7 @@ private :
 	CComQIPtr<ICorProfilerInfo2> _ICorProfilerInfo2;
 	HRESULT SetEventMask();
 	HRESULT GetFullMethodName(FunctionID functionId, LPWSTR wszMethod);
+	HRESULT GetFunctionData(FunctionID functionId);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Profiler), CProfiler)
