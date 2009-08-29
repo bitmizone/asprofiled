@@ -1,6 +1,4 @@
 // profiler.cpp : Implementation of CProfiler
-
-
 #include "winnt.h"
 #include "stdafx.h"
 #include "profiler.h"
@@ -34,26 +32,25 @@ UINT_PTR CProfiler::FunctionMapper(FunctionID functionId, BOOL *pbHookFunction) 
 void CProfiler::MapFunction(FunctionID functionId) {
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
 
+	cout << "map function" << endl;
 	HRESULT hr = GetFullMethodName(functionId, szMethodName);
+	hr = GetFunctionData(functionId);
 	PrintCharArray(szMethodName);
 }
 
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
-	IMetaDataImport2 *metaDataImport = 0;
-	// place for fully qualified method name
-	mdToken token = 0;
-	HRESULT hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionID, IID_IMetaDataImport2, (LPUNKNOWN*) &metaDataImport, &token);
-	
+	//cout << "function enter" << endl;
+	cout << (int)  argumentInfo->numRanges << endl;
 }
 
 void _stdcall FunctionEnterGlobal(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
 
-	++callCounter;
-	// cout << "entering function" << endl;
+	//cout << "function enter global" << endl;
 	_cProfilerGlobalHandler->FunctionEnter(functionID, clientData, func, argumentInfo);
 	
 }
 
+// restore call stack
 void _declspec(naked) FunctionEnterHandler(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) 
 {
 	__asm 
@@ -73,7 +70,6 @@ void _declspec(naked) FunctionEnterHandler(FunctionID functionID, UINT_PTR clien
 		popad
 		pop		ebp
 		ret		16
-
 	}
 }
 
@@ -81,7 +77,7 @@ void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PR
 	
 }
 
-// Main logic for entering function goes here
+
 void _stdcall FunctionLeaveGlobal(FunctionID qfunctionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
 	
 	
@@ -109,13 +105,20 @@ void _declspec(naked) FunctionLeaveHandler(FunctionID functionID, UINT_PTR clien
 	}
 }
 
+
+HRESULT CProfiler::GetFunctionData(FunctionID functionId) 
+{
+
+	return S_OK;
+}
+
 HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	HRESULT hr = S_OK;
 	IMetaDataImport* pMetaDataImport = 0;
 	WCHAR szFunction[NAME_BUFFER_SIZE];
 	WCHAR szClass[NAME_BUFFER_SIZE];
-	mdMethodDef methodToken = 0;
-	mdTypeDef typeDefToken; 
+	mdMethodDef methodToken = mdTypeDefNil;
+	mdTypeDef typeDefToken = mdTypeDefNil;
 	mdCustomAttribute metadataCustomAttr[10];
 	ULONG cchMethod;
 	ULONG cchClass;
@@ -126,21 +129,24 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	
 
 	hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionId, IID_IMetaDataImport, (LPUNKNOWN *) &pMetaDataImport, &methodToken);
+#ifdef DEBUG_ALL
 	ToBinary((void*) &methodToken, 4, 3);
+#endif
 	if (SUCCEEDED(hr)) {
 
 		hr = pMetaDataImport->GetMethodProps(methodToken, &typeDefToken, szFunction, 
 											NAME_BUFFER_SIZE, &cchMethod, 
 											NULL, NULL, NULL, NULL, NULL);
+		// DEBUG PURPOSES
+#ifdef DEBUG_ALL
 		ToBinary((void*) &typeDefToken, 4, 3);
+#endif
 		if (SUCCEEDED(hr)) 
 		{
 			hr = pMetaDataImport->GetTypeDefProps(typeDefToken, szClass, NAME_BUFFER_SIZE, &cchClass, NULL, NULL);
 			if (SUCCEEDED(hr)) {
 				_snwprintf_s(wszMethod,NAME_BUFFER_SIZE, NAME_BUFFER_SIZE ,L"%s.%s",szClass,szFunction);
 			}
-
-			//hr = methodMetaData->GetCustomAttributeByName(methodToken, L"AsContractAttribute", &ppData, &pchData);
 			
 			hr = pMetaDataImport->EnumCustomAttributes(&phEnum, typeDefToken, 0, metadataCustomAttr, 10, &count);
 			int sum = count;
@@ -153,12 +159,12 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			pMetaDataImport->CountEnum(phEnum, &lSum);
 			pMetaDataImport->CloseEnum(phEnum);
 			
-			printf("%d\n", lSum);
 			if (SUCCEEDED(hr)) {
 				 // printf("%p ", pchData);
 			}
-
+			// getMethodProps error
 		}
+		// get token and metadata from function error
 	}
 	else 
 	{
@@ -167,6 +173,7 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	pMetaDataImport->Release();
 	return hr;
 }
+
 
 
 
@@ -217,8 +224,12 @@ HRESULT CProfiler::SetEventMask()
 
 	// set the event mask 
 	DWORD eventMask = (DWORD)(COR_PRF_MONITOR_ENTERLEAVE);
-	return _ICorProfilerInfo2->SetEventMask(COR_PRF_MONITOR_ENTERLEAVE);;
+	return _ICorProfilerInfo2->SetEventMask(COR_PRF_MONITOR_ENTERLEAVE | 
+											COR_PRF_ENABLE_FUNCTION_RETVAL |  
+											COR_PRF_ENABLE_FUNCTION_ARGS);
 }
+
+
 
 STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 {
@@ -230,6 +241,7 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 	// register handlers for function enter/leave events
 	
 	_ICorProfilerInfo2->SetEnterLeaveFunctionHooks2( &FunctionEnterHandler, &FunctionLeaveHandler, NULL);
+
 	_ICorProfilerInfo2->SetFunctionIDMapper(FunctionMapper);
 	cout << "Program has started" << endl;
     return S_OK;
