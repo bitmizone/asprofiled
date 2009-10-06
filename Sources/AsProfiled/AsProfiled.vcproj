@@ -297,6 +297,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\profiler_helper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
