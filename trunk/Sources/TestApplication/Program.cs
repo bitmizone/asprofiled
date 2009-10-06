@@ -10,7 +10,8 @@ namespace TestApplication
     {
         static void Main(string[] args)
         {
-            Calculator.Calculator calculatorInstance = new TestApplication.Calculator.Calculator(); 
+            Calculator.Calculator calculatorInstance = new TestApplication.Calculator.Calculator();
+            int a = 999;
             calculatorInstance.Div(2,3);
         }
     }

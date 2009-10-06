@@ -8,7 +8,6 @@ void PrintCharArray(WCHAR* charArray) {
 	while ((char) charArray[i] != '\0') {
 		printf("%c", charArray[i++]);
 	}
-	printf("\n");
 }
 
 // print binary representation of bytes
