@@ -13,13 +13,14 @@ namespace TestApplication.Calculator
         [AsContract(PreCondition="", Invariant="", PostCondition="")]
         public int Div(int divided, int divisor)
         {
-            Test(divided);
+            Test(this);
             return divided / divisor;
         }
 
-        public void Test(object arg)
+        public void Test(Calculator arg)
         {
             object local = arg;
+            var t = arg.GetType().GetMethod("aha");
         }
     }
 }

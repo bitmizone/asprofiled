@@ -37,25 +37,10 @@ void CProfiler::MapFunction(FunctionID functionId) {
 
 }
 
-void CProfiler::ParseParam(PCCOR_SIGNATURE signature) {
-	
-	COR_SIGNATURE sig =  *signature++;
-
-	switch (sig) {
-		case ELEMENT_TYPE_I4:
-			cout << endl << "int found" << endl;
-			break;
-		default:
-
-			break;
-	}
-}
-
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
 	HRESULT hr = GetFullMethodName(functionID, szMethodName);
 	PrintCharArray(szMethodName);
-	
 	
 	IMetaDataImport* metaDataImport = NULL;
 	mdToken token = mdTokenNil;
