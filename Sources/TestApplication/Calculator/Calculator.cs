@@ -7,9 +7,8 @@ using AsContracts;
 namespace TestApplication.Calculator
 {
     // [AsContract("a","b", "c")]
-    class Calculator
+    class Calculator : Object
     {
-        // [AsContract("divisor != 0", "", "")]
         [AsContract(PreCondition="", Invariant="", PostCondition="")]
         public int Div(int divided, int divisor)
         {
@@ -20,7 +19,7 @@ namespace TestApplication.Calculator
         public void Test(Calculator arg)
         {
             object local = arg;
-            var t = arg.GetType().GetMethod("aha");
+            //var t = arg.GetType().GetMethod("aha");
         }
     }
 }
