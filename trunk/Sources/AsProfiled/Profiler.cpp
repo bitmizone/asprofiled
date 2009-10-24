@@ -69,7 +69,6 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 		ULONG sizeOfSigInBytes;
 		
 		metaDataImport->GetSigFromToken(params[i], &sig, &sizeOfSigInBytes);
-		ParseParam(sig);
 		PrintCharArray(paramName);
 		if (i == paramsCount - 1) 
 			cout << ")";
@@ -175,6 +174,23 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 		hr = pMetaDataImport->GetMethodProps(methodToken, &typeDefToken, szFunction, 
 											NAME_BUFFER_SIZE, &cchMethod, 
 											NULL, &sigBlob, &sigBlobBytesCount, NULL, NULL);
+	
+		hr = pMetaDataImport->EnumCustomAttributes(&phEnum, methodToken, 0, metadataCustomAttr, 10, &count);
+			int sum = count;
+			while (count > 0) 
+			{
+				pMetaDataImport->EnumCustomAttributes(&phEnum, methodToken, 0, metadataCustomAttr, 10, &count);
+				sum += count;
+			}
+			for (int i = 0 ; i < sum > 0 ; ++i) {
+				UINT16 prolog =  *((UINT16*) metadataCustomAttr);
+				//should be always equal 1
+				cout << "prolog = " << prolog;
+			}
+			cout << "No of attributes: " << sum << endl;
+			ULONG lSum = 0;
+			pMetaDataImport->CountEnum(phEnum, &lSum);
+			pMetaDataImport->CloseEnum(phEnum);
 
 		ULONG callConv = 0;
 		ULONG paramsCount = 0;
@@ -212,19 +228,6 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			if (SUCCEEDED(hr)) {
 				_snwprintf_s(wszMethod,NAME_BUFFER_SIZE, NAME_BUFFER_SIZE ,L"%s.%s",szClass,szFunction);
 			}
-			
-
-
-			hr = pMetaDataImport->EnumCustomAttributes(&phEnum, typeDefToken, 0, metadataCustomAttr, 10, &count);
-			int sum = count;
-			while (count > 0) 
-			{
-				pMetaDataImport->EnumCustomAttributes(&phEnum, methodToken, 0, metadataCustomAttr, 10, &count);
-				sum += count;
-			}
-			ULONG lSum = 0;
-			pMetaDataImport->CountEnum(phEnum, &lSum);
-			pMetaDataImport->CloseEnum(phEnum);
 			
 			if (SUCCEEDED(hr)) {
 				 // printf("%p ", pchData);
