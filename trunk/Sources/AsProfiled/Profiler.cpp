@@ -186,6 +186,16 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 				UINT16 prolog =  *((UINT16*) metadataCustomAttr);
 				//should be always equal 1
 				cout << "prolog = " << prolog;
+				// get info about custom attributes
+				// extract to method
+				mdMethodDef typeToken = mdTokenNil;
+				hr = pMetaDataImport->GetCustomAttributeProps(metadataCustomAttr[i], NULL, &typeToken, NULL, NULL);
+				LPWSTR typeName = new WCHAR[NAME_BUFFER_SIZE];
+				//typeName[0] = '\0';
+				//hr = pMetaDataImport->GetMethodProps(typeToken, NULL, typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL, NULL, NULL, NULL);
+				//hr = pMetaDataImport->GetTypeDefProps(metadataCustomAttr[i], typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL);
+				PrintCharArray(typeName);
+
 			}
 			cout << "No of attributes: " << sum << endl;
 			ULONG lSum = 0;
