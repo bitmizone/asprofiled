@@ -7,12 +7,12 @@
 = Recently solved =
 
   * get metadata token of constructor (method) of the attribute attached to contracted method.
-----
+
 
 *Solution*: Get customAttributeProps with second parameter as an owner of an attribute. I.E.{{{ pMetaDataImport->GetCustomAttributeProps(*currentAttribute, &methodToken, &attributeConstructor, NULL, NULL); }}} After this call attributeConstructor will be handler to constructor that we are interested in.
-
-  * Events of entering and leaving function are not correctly captured and handled which result in ending program.
 ----
+  * Events of entering and leaving function are not correctly captured and handled which result in ending program.
+
 
 *Solution*: Register EnterLeaveFunctionHooks2 as follows: 
 {{{ 
@@ -66,3 +66,4 @@ void _declspec(naked) FunctionEnterHandler(FunctionID functionID, UINT_PTR clien
 	}
 }
 }}}
+----
