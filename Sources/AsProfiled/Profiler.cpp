@@ -170,38 +170,55 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	ToBinary((void*) &methodToken, 4, 3);
 #endif
 	if (SUCCEEDED(hr)) {
-
 		hr = pMetaDataImport->GetMethodProps(methodToken, &typeDefToken, szFunction, 
 											NAME_BUFFER_SIZE, &cchMethod, 
 											NULL, &sigBlob, &sigBlobBytesCount, NULL, NULL);
 	
 		hr = pMetaDataImport->EnumCustomAttributes(&phEnum, methodToken, 0, metadataCustomAttr, 10, &count);
-			int sum = count;
-			while (count > 0) 
-			{
-				pMetaDataImport->EnumCustomAttributes(&phEnum, methodToken, 0, metadataCustomAttr, 10, &count);
-				sum += count;
-			}
-			for (int i = 0 ; i < sum > 0 ; ++i) {
-				UINT16 prolog =  *((UINT16*) metadataCustomAttr);
-				//should be always equal 1
-				cout << "prolog = " << prolog;
-				// get info about custom attributes
-				// extract to method
-				mdMethodDef typeToken = mdTokenNil;
-				hr = pMetaDataImport->GetCustomAttributeProps(metadataCustomAttr[i], NULL, &typeToken, NULL, NULL);
-				LPWSTR typeName = new WCHAR[NAME_BUFFER_SIZE];
-				//typeName[0] = '\0';
-				//hr = pMetaDataImport->GetMethodProps(typeToken, NULL, typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL, NULL, NULL, NULL);
-				//hr = pMetaDataImport->GetTypeDefProps(metadataCustomAttr[i], typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL);
-				PrintCharArray(typeName);
 
-			}
-			cout << "No of attributes: " << sum << endl;
-			ULONG lSum = 0;
-			pMetaDataImport->CountEnum(phEnum, &lSum);
-			pMetaDataImport->CloseEnum(phEnum);
+		while (count > 0) 
+		{
+			pMetaDataImport->EnumCustomAttributes(&phEnum, methodToken, 0, metadataCustomAttr, 10, &count);
+		}
 
+		ULONG lSum = 0;
+		pMetaDataImport->CountEnum(phEnum, &lSum);
+		
+		cout << "No of attributes: " << lSum << endl;
+		for (ULONG i = 0 ; i < lSum ; ++i) {
+			mdMethodDef attributeConstructor = mdTokenNil;
+			mdCustomAttribute *currentAttribute = &metadataCustomAttr[i];
+			pMetaDataImport->GetCustomAttributeProps(*currentAttribute, &methodToken, &attributeConstructor, NULL, NULL);
+			cout << hex <<  attributeConstructor  << endl;
+			INT16 prolog =  *((UINT16*) currentAttribute);
+			cout << hex << *currentAttribute << endl;
+			// should be always equal 1
+			cout << "prolog = " << prolog;
+			// get info about custom attributes
+			// extract to method
+			mdMethodDef typeToken = mdTokenNil;
+			hr = pMetaDataImport->GetCustomAttributeProps(metadataCustomAttr[i], NULL, &typeToken, NULL, NULL);
+			LPWSTR typeName = new WCHAR[NAME_BUFFER_SIZE];
+			//typeName[0] = '\0';
+			//hr = pMetaDataImport->GetMethodProps(typeToken, NULL, typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL, NULL, NULL, NULL);
+			//hr = pMetaDataImport->GetTypeDefProps(metadataCustomAttr[i], typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL);
+			mdTypeDef typeOfAttribute = mdTokenNil;
+			pMetaDataImport->GetMemberRefProps(typeToken, &typeOfAttribute, typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL);
+
+			cout << endl;
+			PrintCharArray(typeName);
+			cout << endl;
+
+			LPWSTR typeOwner = new WCHAR[NAME_BUFFER_SIZE];
+			//pMetaDataImport->GetTypeRefProps(typeOfAttribute, NULL, typeOwner, NAME_BUFFER_SIZE, NULL);
+			//PrintCharArray(typeOwner);
+			cout << endl;
+
+		}
+		
+		pMetaDataImport->CloseEnum(phEnum);
+		
+		
 		ULONG callConv = 0;
 		ULONG paramsCount = 0;
 		// call convention 
