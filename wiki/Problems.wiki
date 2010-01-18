@@ -7,5 +7,6 @@
 = Recently solved =
 
   * get metadata token of constructor (method) of the attribute attached to contracted method.
----- 
+----
+
 *Solution* get customAttributeProps with second parameter as ano owner of an attribute. Example {{{ pMetaDataImport->GetCustomAttributeProps(*currentAttribute, &methodToken, &attributeConstructor, NULL, NULL); }}}
