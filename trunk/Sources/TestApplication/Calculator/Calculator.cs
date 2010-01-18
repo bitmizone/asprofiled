@@ -9,6 +9,7 @@ namespace TestApplication.Calculator
     // [AsContract("a","b", "c")]
     class Calculator : Object
     {
+        [CLSCompliant(true)]
         [AsContract(PreCondition="", Invariant="", PostCondition="")]
         public int Div(int divided, int divisor)
         {
@@ -16,10 +17,10 @@ namespace TestApplication.Calculator
             return divided / divisor;
         }
 
+        
         public void Test(Calculator arg)
         {
             object local = arg;
-            //var t = arg.GetType().GetMethod("aha");
         }
     }
 }
