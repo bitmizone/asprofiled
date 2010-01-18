@@ -9,4 +9,4 @@
   * get metadata token of constructor (method) of the attribute attached to contracted method.
 ----
 
-*Solution* get customAttributeProps with second parameter as ano owner of an attribute. Example {{{ pMetaDataImport->GetCustomAttributeProps(*currentAttribute, &methodToken, &attributeConstructor, NULL, NULL); }}}
+*Solution*: Get customAttributeProps with second parameter as an owner of an attribute. I.E. {{{ pMetaDataImport->GetCustomAttributeProps(*currentAttribute, &methodToken, &attributeConstructor, NULL, NULL); }}} After this call attributeConstructor will be handler to constructor that we are interested in.
