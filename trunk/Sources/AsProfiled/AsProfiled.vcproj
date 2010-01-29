@@ -255,6 +255,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\profiler_helper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
