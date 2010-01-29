@@ -183,49 +183,73 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 
 		ULONG lSum = 0;
 		pMetaDataImport->CountEnum(phEnum, &lSum);
-		
+		cout << endl << "------Attributes Info------" << endl;
 		cout << "No of attributes: " << lSum << endl;
+		
 		for (ULONG i = 0 ; i < lSum ; ++i) {
-			mdMethodDef attributeConstructor = mdTokenNil;
+
+			// get info about custom attribute
 			mdCustomAttribute *currentAttribute = &metadataCustomAttr[i];
-			pMetaDataImport->GetCustomAttributeProps(*currentAttribute, &methodToken, &attributeConstructor, NULL, NULL);
-			cout << hex <<  attributeConstructor  << endl;
-			INT16 prolog =  *((UINT16*) currentAttribute);
-			cout << hex << *currentAttribute << endl;
+			
+			const void* attributeBlob = NULL;
+			ULONG attributeBlobSize = 0;
+			mdMethodDef attributeConstructor = mdTokenNil;
+			pMetaDataImport->GetCustomAttributeProps(*currentAttribute, &methodToken, &attributeConstructor, &attributeBlob, &attributeBlobSize); 
+			cout << "Attribute ctor token value: "<< hex <<  attributeConstructor  << endl;
+			cout << "Custom attribute token value: " << hex << *currentAttribute << endl;
+			
 			// should be always equal 1
-			cout << "prolog = " << prolog;
-			// get info about custom attributes
-			// extract to method
-			mdMethodDef typeToken = mdTokenNil;
-			hr = pMetaDataImport->GetCustomAttributeProps(metadataCustomAttr[i], NULL, &typeToken, NULL, NULL);
-			LPWSTR typeName = new WCHAR[NAME_BUFFER_SIZE];
+			INT16 prolog =  *((UINT16*) attributeBlob);
+			cout << "prolog (always=1) = " << prolog;
+			
+			PCCOR_SIGNATURE methodMetadataBlob = 0;
+			ULONG metaDataBlobSize = 0;
+			hr = pMetaDataImport->GetMethodProps(attributeConstructor, 
+												NULL, 
+												NULL, 
+												NULL, 
+												NULL, 
+												NULL, 
+												&methodMetadataBlob, 
+												&metaDataBlobSize, 
+												NULL, 
+												NULL);
+
+
+			cout << endl << "ctor blob size " << metaDataBlobSize << endl;
+			ToBinary((void*)methodMetadataBlob, metaDataBlobSize, 0);
+			CProfilerHelper::GetInstance().ParseCallingConvention(methodMetadataBlob);
+			CProfilerHelper::GetInstance().GetArgumentsCount(methodMetadataBlob);			
+			//mdMethodDef typeToken = mdTokenNil;
+			//hr = pMetaDataImport->GetCustomAttributeProps(metadataCustomAttr[i], NULL, &typeToken, NULL, NULL);
+			//LPWSTR typeName = new WCHAR[NAME_BUFFER_SIZE];
 			//typeName[0] = '\0';
 			//hr = pMetaDataImport->GetMethodProps(typeToken, NULL, typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL, NULL, NULL, NULL);
 			//hr = pMetaDataImport->GetTypeDefProps(metadataCustomAttr[i], typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL);
-			mdTypeDef typeOfAttribute = mdTokenNil;
-			pMetaDataImport->GetMemberRefProps(typeToken, &typeOfAttribute, typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL);
+			//mdTypeDef typeOfAttribute = mdTokenNil;
+			//pMetaDataImport->GetMemberRefProps(typeToken, &typeOfAttribute, typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL);
 
-			cout << endl;
-			PrintCharArray(typeName);
-			cout << endl;
+			//cout << endl;
+			//PrintCharArray(typeName);
+			//cout << endl;*/
 
-			LPWSTR typeOwner = new WCHAR[NAME_BUFFER_SIZE];
+			//LPWSTR typeOwner = new WCHAR[NAME_BUFFER_SIZE];
 			//pMetaDataImport->GetTypeRefProps(typeOfAttribute, NULL, typeOwner, NAME_BUFFER_SIZE, NULL);
 			//PrintCharArray(typeOwner);
 			cout << endl;
 
 		}
-		
+		cout << "------End Of Attribute Info------" << endl;
 		pMetaDataImport->CloseEnum(phEnum);
 		
-		
+		cout << "------Method Info------" << endl;
 		ULONG callConv = 0;
 		ULONG paramsCount = 0;
 		// call convention 
 		sigBlob += CorSigUncompressData(sigBlob, &callConv);
 		if ( callConv != IMAGE_CEE_CS_CALLCONV_FIELD) {
 			sigBlob += CorSigUncompressData(sigBlob,&paramsCount);
-			cout << paramsCount << endl;
+			cout << "# of arguments: " << paramsCount << endl;
 		}
 		LPWSTR returnType = new WCHAR[NAME_BUFFER_SIZE];
 		returnType[0] = '\0';
@@ -264,12 +288,15 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			sigBlob += CorSigUncompressData(sigBlob, &callingConvetion);
 			// getMethodProps error
 		}
+		cout << endl << "------End Of Method Info------" << endl;
 		// get token and metadata from function error
+			
 	}
 	else 
 	{
 		// log error
 	}
+
 	pMetaDataImport->Release();
 	return hr;
 }
@@ -312,13 +339,15 @@ HRESULT CProfiler::SetEventMask()
 	//COR_PRF_DISABLE_INLINING	= 0x200000,
 	//COR_PRF_DISABLE_OPTIMIZATIONS	= 0x400000,
 	//COR_PRF_ENABLE_OBJECT_ALLOCATED	= 0x800000,
+	
 	// New in VS2005
-	//	COR_PRF_ENABLE_FUNCTION_ARGS	= 0x2000000,
-	//	COR_PRF_ENABLE_FUNCTION_RETVAL	= 0x4000000,
-	//  COR_PRF_ENABLE_FRAME_INFO	= 0x8000000,
-	//  COR_PRF_ENABLE_STACK_SNAPSHOT	= 0x10000000,
-	//  COR_PRF_USE_PROFILE_IMAGES	= 0x20000000,
+	//COR_PRF_ENABLE_FUNCTION_ARGS	= 0x2000000,
+	//COR_PRF_ENABLE_FUNCTION_RETVAL	= 0x4000000,
+	//COR_PRF_ENABLE_FRAME_INFO	= 0x8000000,
+	//COR_PRF_ENABLE_STACK_SNAPSHOT	= 0x10000000,
+	//COR_PRF_USE_PROFILE_IMAGES	= 0x20000000,
 	// End New in VS2005
+	
 	//COR_PRF_ALL	= 0x3fffffff,
 	//COR_PRF_MONITOR_IMMUTABLE	= COR_PRF_MONITOR_CODE_TRANSITIONS | COR_PRF_MONITOR_REMOTING | COR_PRF_MONITOR_REMOTING_COOKIE | COR_PRF_MONITOR_REMOTING_ASYNC | COR_PRF_MONITOR_GC | COR_PRF_ENABLE_REJIT | COR_PRF_ENABLE_INPROC_DEBUGGING | COR_PRF_ENABLE_JIT_MAPS | COR_PRF_DISABLE_OPTIMIZATIONS | COR_PRF_DISABLE_INLINING | COR_PRF_ENABLE_OBJECT_ALLOCATED | COR_PRF_ENABLE_FUNCTION_ARGS | COR_PRF_ENABLE_FUNCTION_RETVAL | COR_PRF_ENABLE_FRAME_INFO | COR_PRF_ENABLE_STACK_SNAPSHOT | COR_PRF_USE_PROFILE_IMAGES
 
