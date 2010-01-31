@@ -12,7 +12,7 @@ namespace TestApplication
         {
             Calculator.Calculator calculatorInstance = new TestApplication.Calculator.Calculator();
             int a = 999;
-            calculatorInstance.Div(2,3);
+            calculatorInstance.Div(true,0, 4096, "barnaba > 4");
         }
     }
 }

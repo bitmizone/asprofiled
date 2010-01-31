@@ -10,9 +10,14 @@ namespace TestApplication.Calculator
     {
         [AsContract(PreCondition="", Invariant="", PostCondition="")]
         [AsContract("", "", "")]
-        public int Div(int divided, int divisor)
+        public int Div(bool t, int divided, int divisor, string val)
         {
             Test(this);
+            string te = val;
+            if (divisor == 0)
+            {
+                return 0;
+            }
             return divided / divisor;
         }
 
@@ -21,6 +26,8 @@ namespace TestApplication.Calculator
         {
             object local = arg;
         }
+
+
     }
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple=true)]
