@@ -2,6 +2,10 @@
 
 = To solve =
 
+  * Is it valid when it comes to reading value of object in FunctionEnter 
+{{{
+ObjectID* id = reinterpret_cast<ObjectID*>( range.startAddress);
+}}}
   * attribute's metadata is not visible when containing assembly hasn't been loaded.
   * read and parse attribute's constructor metadata
 
