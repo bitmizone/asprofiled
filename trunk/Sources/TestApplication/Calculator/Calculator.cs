@@ -8,8 +8,8 @@ namespace TestApplication.Calculator
     // [AsContract("a","b", "c")]
     class Calculator : Object
     {
-        [AsContract(PreCondition="", Invariant="", PostCondition="")]
-        [AsContract("", "", "")]
+        //[AsContract(PreCondition="bieda", Invariant="", PostCondition="")] // named args
+        [AsContract(null, "biedąctwo", null)] // fixed args
         public int Div(bool t, int divided, int divisor, string val)
         {
             Test(this);
@@ -40,7 +40,7 @@ namespace TestApplication.Calculator
 
         public AsContractAttribute(string preCondition, string invariant, string postCondition)
         {
-            Console.WriteLine("Contract constructed");
+            
         }
 
         public string PostCondition

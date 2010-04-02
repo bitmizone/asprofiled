@@ -1,6 +1,6 @@
 #include "stdafx.h" // wont compile without this
 #include "profiler_helper.h"
-
+#include "common.h"
 
 CProfilerHelper::CProfilerHelper() { }
 
@@ -62,4 +62,51 @@ ULONG CProfilerHelper::GetArgumentsCount(PCCOR_SIGNATURE &data) {
 	CorSigUncompressData(data, &argsCount);
 	std::cout << "ParamCount " << argsCount << std::endl;
 	return argsCount;
+}
+
+// only fixed string args for now
+void CProfilerHelper::ParseAttributeMetaData(const void* attributeBlob, ULONG blobSize) {
+	static UINT8 oneByteLengthUnicodeMarker = 0;
+	static UINT8 twoBytesLengthUnicodeMarker = 6;
+	static UINT8 threeBytesLengthUnicodeMarker = 14;
+	static UINT8 fourBytesLengthUnicodeMarker = 30;
+	UINT8* blob = (UINT8*) attributeBlob;
+	ToBinary((void*)blob, blobSize, 0);
+	ULONG prolog = *((INT16*)blob);
+	std::cout << " PROLOG = "<< prolog << std::endl;
+	// move forward
+	// skip prolog
+	blob += 2;
+	ULONG stringLength = 0;
+	if (*blob == 0xFF) { // string is null
+		std::cout << "string is null" << std::endl;
+		blob++;
+	}
+	
+	ULONG packedLen = 0; 
+	CorSigUncompressData(blob, &packedLen);
+	std::cout<< "PackedLen is " << packedLen << std::endl;
+	ULONG consumedBytes = 0 ;
+	WCHAR arg[1024];
+	UINT index=0;
+	while (consumedBytes <= packedLen) {
+		UINT8 byte = *blob;
+		if ((byte >> 7) == oneByteLengthUnicodeMarker) { 
+			arg[index++] = *blob;
+			blob++;
+			consumedBytes++;
+		}else if ((byte >> 5) == twoBytesLengthUnicodeMarker) {
+			arg[index++] = *((UINT16*) blob);
+			blob+=2;
+			consumedBytes+=2;
+		}else if ((byte >> 4) == threeBytesLengthUnicodeMarker) {
+			blob+=3;
+		}else{//four byte
+			blob+=4;
+		}
+		
+	}
+	arg[index] = '\0';
+	PrintCharArray(arg);
+
 }
