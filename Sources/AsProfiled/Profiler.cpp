@@ -260,11 +260,13 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 												NULL, 
 												NULL);
 
-
-			cout << endl << "ctor blob size " << metaDataBlobSize << endl;
-			ToBinary((void*)methodMetadataBlob, metaDataBlobSize, 0);
+			
 			CProfilerHelper::GetInstance().ParseCallingConvention(methodMetadataBlob);
-			CProfilerHelper::GetInstance().GetArgumentsCount(methodMetadataBlob);			
+			ULONG argsCount = CProfilerHelper::GetInstance().GetArgumentsCount(methodMetadataBlob);	
+			if (argsCount == 3) {
+				CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
+			}
+			
 			//mdMethodDef typeToken = mdTokenNil;
 			//hr = pMetaDataImport->GetCustomAttributeProps(metadataCustomAttr[i], NULL, &typeToken, NULL, NULL);
 			//LPWSTR typeName = new WCHAR[NAME_BUFFER_SIZE];

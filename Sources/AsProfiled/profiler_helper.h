@@ -9,6 +9,7 @@ class CProfilerHelper {
 		static CProfilerHelper& GetInstance();
 		void ParseCallingConvention(PCCOR_SIGNATURE& data);
 		ULONG GetArgumentsCount(PCCOR_SIGNATURE& data);
+		void ParseAttributeMetaData(const void* attributeBlob, ULONG blobSize);
 	private:
 		CProfilerHelper();
 };
