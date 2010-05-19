@@ -62,6 +62,7 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				CompileAs="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -83,6 +84,7 @@
 				LinkIncremental="2"
 				ModuleDefinitionFile=".\AsProfiled.def"
 				GenerateDebugInformation="true"
+				MapExports="false"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -221,11 +223,35 @@
 				>
 			</File>
 			<File
+				RelativePath=".\astudillo\ASTCreator.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\ASTNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\CGTFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\CharacterSetTable.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\common.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\cor_profiler_callback_implementation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\DFA.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\DFAStateTable.cpp"
 				>
 			</File>
 			<File
@@ -251,11 +277,39 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\astudillo\ErrorReporter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\ErrorTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\GrammarInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\LALR.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\LALRStateTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\NonTerminal.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\profiler.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\profiler_helper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\RuleTable.cpp"
 				>
 			</File>
 			<File
@@ -278,12 +332,44 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\astudillo\Symbol.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\SymbolTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\Terminal.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\Token.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\astudillo\ASTCreator.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\ASTNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\CGTFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\CharacterSetTable.h"
+				>
+			</File>
 			<File
 				RelativePath=".\common.h"
 				>
@@ -293,7 +379,43 @@
 				>
 			</File>
 			<File
+				RelativePath=".\astudillo\DFA.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\DFAStateTable.h"
+				>
+			</File>
+			<File
 				RelativePath=".\dllmain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\ErrorReporter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\ErrorTable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\GrammarInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\LALR.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\LALRStateTable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\misc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\NonTerminal.h"
 				>
 			</File>
 			<File
@@ -309,11 +431,35 @@
 				>
 			</File>
 			<File
+				RelativePath=".\astudillo\RuleTable.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
 			<File
+				RelativePath=".\astudillo\Symbol.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\SymbolStack.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\SymbolTable.h"
+				>
+			</File>
+			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\Terminal.h"
+				>
+			</File>
+			<File
+				RelativePath=".\astudillo\Token.h"
 				>
 			</File>
 		</Filter>
