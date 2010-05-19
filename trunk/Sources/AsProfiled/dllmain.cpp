@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
-#include "AsProfiled_i.h"
+//#include "AsProfiled_i.h"
 #include "dllmain.h"
 
 CAsProfiledModule _AtlModule;

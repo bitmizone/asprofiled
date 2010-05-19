@@ -18,7 +18,7 @@
 class ATL_NO_VTABLE CProfiler :
 	public CComObjectRootEx<CComSingleThreadModel>,
 	public CComCoClass<CProfiler, &CLSID_Profiler>,
-	// public IDispatchImpl<IProfiler, &IID_IProfiler, &LIBID_AsProfiledLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
+	//public IDispatchImpl<IProfiler, &IID_IProfiler, &LIBID_AsProfiledLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
 	public CCorProfilerCallbackImplementation
 {
 public:

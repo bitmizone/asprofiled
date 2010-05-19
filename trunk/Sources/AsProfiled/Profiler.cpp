@@ -1,4 +1,5 @@
 // profiler.cpp : Implementation of CProfiler
+
 #include "winnt.h"
 #include "stdafx.h"
 #include "profiler.h"
@@ -88,7 +89,7 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 
 	//HRESULT hh = _ICorProfilerInfo2->GetFunctionInfo2(functionID, func, &classId, &moduleId, &token, paramsCount, &pcTypeArgs, typeArgs);
 	bool enableStringInfo = false;
-	for (int i = 0 ; i < argumentInfo->numRanges ; i++) {
+	for (UINT i = 0 ; i < argumentInfo->numRanges ; i++) {
 		COR_PRF_FUNCTION_ARGUMENT_RANGE range = argumentInfo->ranges[i];
 		//UINT_PTR* ptr = &range.startAddress;
 		// cout << endl  << *ptr;

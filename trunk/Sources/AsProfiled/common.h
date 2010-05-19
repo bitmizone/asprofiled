@@ -3,7 +3,7 @@
 
 #define ATTRIBUTE_CONTRACT_NAME "AsContractAttribute"
 #define NAME_BUFFER_SIZE 2048
-
+#define DEBUG_ALL 0
 void PrintCharArray(WCHAR*);
 void ToBinary(void*, int , int);
 
