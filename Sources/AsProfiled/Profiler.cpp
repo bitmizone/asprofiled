@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <iostream>
 #include <fstream>
+#include "astudillo/CGTFile.h"
 
 using namespace std;;
 
