@@ -9,6 +9,8 @@
 #include <iostream>
 #include <fstream>
 #include "astudillo/CGTFile.h"
+#include <stdlib.h>
+#include "SimpleErrorRep.h"
 
 using namespace std;;
 
@@ -266,18 +268,41 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			CProfilerHelper::GetInstance().ParseCallingConvention(methodMetadataBlob);
 			ULONG argsCount = CProfilerHelper::GetInstance().GetArgumentsCount(methodMetadataBlob);	
 			if (argsCount == 3) {
-				WCHAR* argument = CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
+				CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
+				WCHAR* argument = L"bieda > 3";
+				std::cout << "DEBUG" << std::endl;
 				CGTFile    cgtFile;
 				Symbol     *rdc;
 				DFA        *dfa;
 				LALR       *lalr;
-				cgtFile.load("grammar.cgt");
-				dfa->scan(argument);
-				delete [] argument;
+				ErrorTable       *myErrors;
+				  SimpleErrorRep   myReporter; 
+				bool ok = cgtFile.load("c:\\grammar.cgt");
+				std::cout << ok << std::endl;
+				dfa = cgtFile.getScanner();
+				
+				std::cout << "OK2" << std::endl;
+				ok = dfa->scan(argument);
+				myErrors = dfa->getErrors();
+  
+				  // If there are errors report them
+				  if (myErrors->errors.size() > 0) {
+					for (int i=0; i < myErrors->errors.size(); i++) {
+						std::cout << myReporter.composeParseErrorMsg (*myErrors->errors[i]) << endl;
+					}
+				  }
+
+				std::cout << ok << std::endl;
+				//delete [] argument;
+				std::cout << "OK4" << std::endl;
 				vector<Token*> tokens = dfa->getTokens();
+				std::cout << "OK5" << std::endl;
 				lalr = cgtFile.getParser();
+				std::cout << "OK6" << std::endl;
 				rdc = lalr->parse(tokens, true, true);
+				std::cout << "OK7" << std::endl;
 				lalr->printReductionTree(rdc,0);
+				std::cout << "OK8" << std::endl;
 
 			}
 			

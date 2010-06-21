@@ -383,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SimpleErrorRep.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
