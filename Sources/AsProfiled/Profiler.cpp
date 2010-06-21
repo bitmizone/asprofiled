@@ -303,6 +303,9 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 				std::cout << "OK7" << std::endl;
 				lalr->printReductionTree(rdc,0);
 				std::cout << "OK8" << std::endl;
+				for ( vector<Token*>::iterator i = tokens.begin(); i != tokens.end(); i++) {
+					cout << (*i)->kind << endl;
+				}
 
 			}
 			
