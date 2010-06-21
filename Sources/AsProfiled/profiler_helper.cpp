@@ -65,7 +65,7 @@ ULONG CProfilerHelper::GetArgumentsCount(PCCOR_SIGNATURE &data) {
 }
 
 // only fixed string args for now
-void CProfilerHelper::ParseAttributeMetaData(const void* attributeBlob, ULONG blobSize) {
+WCHAR* CProfilerHelper::ParseAttributeMetaData(const void* attributeBlob, ULONG blobSize) {
 	static UINT8 oneByteLengthUnicodeMarker = 0;
 	static UINT8 twoBytesLengthUnicodeMarker = 6;
 	static UINT8 threeBytesLengthUnicodeMarker = 14;
@@ -108,5 +108,5 @@ void CProfilerHelper::ParseAttributeMetaData(const void* attributeBlob, ULONG bl
 	}
 	arg[index] = '\0';
 	PrintCharArray(arg);
-
+	return arg;
 }
