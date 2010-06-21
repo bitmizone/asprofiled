@@ -266,7 +266,19 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			CProfilerHelper::GetInstance().ParseCallingConvention(methodMetadataBlob);
 			ULONG argsCount = CProfilerHelper::GetInstance().GetArgumentsCount(methodMetadataBlob);	
 			if (argsCount == 3) {
-				CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
+				WCHAR* argument = CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
+				CGTFile    cgtFile;
+				Symbol     *rdc;
+				DFA        *dfa;
+				LALR       *lalr;
+				cgtFile.load("grammar.cgt");
+				dfa->scan(argument);
+				delete [] argument;
+				vector<Token*> tokens = dfa->getTokens();
+				lalr = cgtFile.getParser();
+				rdc = lalr->parse(tokens, true, true);
+				lalr->printReductionTree(rdc,0);
+
 			}
 			
 			//mdMethodDef typeToken = mdTokenNil;
