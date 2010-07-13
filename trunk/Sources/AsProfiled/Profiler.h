@@ -59,7 +59,7 @@ private :
 	HRESULT GetFullMethodName(FunctionID functionId, LPWSTR wszMethod);
 	HRESULT GetFunctionData(FunctionID functionId);
 	void ParseParam(PCCOR_SIGNATURE signature);
-	PCCOR_SIGNATURE ParseSignature( IMetaDataImport *metaDataImport, PCCOR_SIGNATURE signature, LPWSTR signatureText);
+	/*PCCOR_SIGNATURE ParseSignature( IMetaDataImport *metaDataImport, PCCOR_SIGNATURE signature, LPWSTR signatureText);*/
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Profiler), CProfiler)

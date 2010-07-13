@@ -1,4 +1,5 @@
-/***************************************************************************
+
+ /***************************************************************************
                           ASTCreator.h 
 						  This class works as a framework for the 
 						  creation of an abstract syntax tree specific 

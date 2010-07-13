@@ -28,7 +28,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				CommandLine="copy $(SolutionDir)\Lib\log4cxx.lib\log4cxx.dll $(TargetDir)\log4cxx.dll"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -55,6 +55,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Lib\&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;SILENT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -80,8 +81,10 @@
 				Name="VCLinkerTool"
 				RegisterOutput="true"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="corguids.lib"
+				AdditionalDependencies="corguids.lib $(SolutionDir)\Lib\log4cxx.lib\log4cxx.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Lib\log4cxx\log4cxx.lib&quot;"
+				AdditionalManifestDependencies=""
 				ModuleDefinitionFile=".\AsProfiled.def"
 				GenerateDebugInformation="true"
 				MapExports="false"
@@ -253,6 +256,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\GrammarParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ParamParser.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\profiler.cpp"
 				>
 			</File>
@@ -368,6 +379,14 @@
 			</File>
 			<File
 				RelativePath=".\dllmain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GrammarParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ParamParser.h"
 				>
 			</File>
 			<File

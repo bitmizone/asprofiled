@@ -11,8 +11,7 @@ namespace TestApplication
         static void Main(string[] args)
         {
             Calculator.Calculator calculatorInstance = new TestApplication.Calculator.Calculator();
-            int a = 999;
-            calculatorInstance.Div(true,0, 4096, "barnaba > 4");
+            calculatorInstance.Div(true,2, 4096, "barnaba > 4");
         }
     }
 }
