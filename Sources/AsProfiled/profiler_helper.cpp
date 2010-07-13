@@ -87,7 +87,7 @@ WCHAR* CProfilerHelper::ParseAttributeMetaData(const void* attributeBlob, ULONG 
 	CorSigUncompressData(blob, &packedLen);
 	std::cout<< "PackedLen is " << packedLen << std::endl;
 	ULONG consumedBytes = 0 ;
-	WCHAR arg[1024];
+	WCHAR* arg = new WCHAR[1024];
 	UINT index=0;
 	while (consumedBytes <= packedLen) {
 		UINT8 byte = *blob;

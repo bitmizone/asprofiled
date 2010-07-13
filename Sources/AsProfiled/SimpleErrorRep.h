@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef SIMPLE_ERROR_REP_H
+#define SIMPLE_ERROR_REP_H
+
 #include <stdlib.h>
 #include "astudillo\ErrorReporter.h"
 using namespace std;
@@ -50,3 +55,5 @@ public :
         return header + msg;
     }
 };
+
+#endif

@@ -1,6 +1,7 @@
+
 #include "stdafx.h"
-#include <cstdio>
 #include "common.h"
+
 
 void PrintCharArray(WCHAR* charArray) {
 	int i = 0;

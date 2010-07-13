@@ -12,13 +12,13 @@ namespace TestApplication.Calculator
         [AsContract(null, "biedactwo > 4", null)] // fixed args
         public int Div(bool t, int divided, int divisor, string val)
         {
-            Test(this);
-            string te = val;
-            if (divisor == 0)
-            {
-                return 0;
-            }
-            return divided / divisor;
+            ////Test(this);
+            //string te = val;
+            //if (divisor == 0)
+            //{
+            //    return 0;
+            //}
+            return 0;// divided / divisor;
         }
 
         

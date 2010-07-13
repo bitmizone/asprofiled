@@ -1,25 +1,40 @@
 // profiler.cpp : Implementation of CProfiler
 
-#include "winnt.h"
 #include "stdafx.h"
-#include "profiler.h"
-#include "common.h"
-#include "profiler_helper.h"
+
 #include <assert.h>
 #include <iostream>
 #include <fstream>
-#include "astudillo/CGTFile.h"
 #include <stdlib.h>
+
+#include <log4cxx/logger.h>
+#include <log4cxx/basicconfigurator.h>
+
+
+#include "winnt.h"
+#include "profiler.h"
+#include "common.h"
+#include "profiler_helper.h"
+#include "astudillo/CGTFile.h"
 #include "SimpleErrorRep.h"
+#include "ParamParser.h"
+#include "GrammarParser.h"
 
 using namespace std;;
+using namespace log4cxx;
 
 CProfiler* _cProfilerGlobalHandler = NULL;
 
+LoggerPtr loggerMyMain(Logger::getLogger("main"));
+
+
 int callCounter = 0;
 
+
+
 CProfiler::CProfiler() {
-	
+	BasicConfigurator::configure();
+	loggerMyMain->setLevel(Level::toLevel(log4cxx::Level::DEBUG_INT));
 }
 
 
@@ -43,7 +58,8 @@ void CProfiler::MapFunction(FunctionID functionId) {
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
 	HRESULT hr = GetFullMethodName(functionID, szMethodName);
-	PrintCharArray(szMethodName);
+
+	LOG4CXX_INFO(loggerMyMain, szMethodName)
 	
 	IMetaDataImport* metaDataImport = NULL;
 	mdToken token = mdTokenNil;
@@ -53,21 +69,16 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	ClassID classId = NULL;
 	mdMethodDef mdMethod = mdTypeDefNil;
 	ULONG paramPosition = 0;
-	WCHAR paramName[NAME_BUFFER_SIZE];
 	
 	ULONG paramNameLen = 0;
 	DWORD corElementType = 0;
-
+	LPWSTR paramName = 0;
 	_ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionID, IID_IMetaDataImport, (IUnknown**) &metaDataImport, &token);
 
-	 
-
 	metaDataImport->EnumParams(&paramsEnum, token, params, 1024, &paramsCount);
-	ClassID typeArgs[10];
 	ULONG32 pcTypeArgs = 0;
 
-#ifndef SILENT
-	for (ULONG i = 0; i < paramsCount; ++i) {
+	/*for (ULONG i = 0; i < paramsCount; ++i) {
 		if (i == 0) 
 			cout << "(";
 		metaDataImport->GetParamProps(params[i], &mdMethod, &paramPosition, paramName, NAME_BUFFER_SIZE, &paramNameLen, NULL, &corElementType, NULL, NULL);
@@ -75,14 +86,13 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 		ULONG sizeOfSigInBytes;
 		
 		metaDataImport->GetSigFromToken(params[i], &sig, &sizeOfSigInBytes);
-
+		
 		PrintCharArray(paramName);
 		if (i == paramsCount - 1) 
 			cout << ")";
 		else
 			cout << ", ";
-	}
-#endif
+	}*/
 	metaDataImport->CloseEnum(paramsEnum);	
 
 	ModuleID moduleId = NULL;
@@ -112,15 +122,16 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 			memcpy(&stringLength, ((const void *)(stringOID + stringLengthOffset)), sizeof(DWORD));
 			memcpy(tempString, ((const void *)(stringOID + bufferOffset)), stringLength * sizeof(DWORD));
 			//tempString[stringLength * sizeof(DWORD)] = '\0'; 
-			PrintCharArray(tempString);
+			LOG4CXX_DEBUG(loggerMyMain, tempString);
+			
 			//UINT stringLen = *(tp + stringLengthOffset);
-			cout << endl << "len = " << stringLength << endl;
+			LOG4CXX_DEBUG(loggerMyMain, "len = " << stringLength)
 		}
 		if (*id == 0x1000) {
 			enableStringInfo = true;
 		}
 
-		cout << endl << *id << "##### " << range.startAddress << " " << range.length << endl;
+		LOG4CXX_DEBUG(loggerMyMain, "" << *id << "##### " << range.startAddress << " " << range.length);
 	}
 	cout << endl;
 }
@@ -204,9 +215,7 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	mdCustomAttribute metadataCustomAttr[10];
 	ULONG cchMethod;
 	ULONG cchClass;
-	ULONG pchData;
 	ULONG count;
-	const void* ppData;
 	HCORENUM phEnum = NULL;
 	PCCOR_SIGNATURE sigBlob = NULL;
 	ULONG sigBlobBytesCount = NULL;
@@ -267,45 +276,54 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			
 			CProfilerHelper::GetInstance().ParseCallingConvention(methodMetadataBlob);
 			ULONG argsCount = CProfilerHelper::GetInstance().GetArgumentsCount(methodMetadataBlob);	
+			
 			if (argsCount == 3) {
-				CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
-				WCHAR* argument = L"bieda > 3";
-				std::cout << "DEBUG" << std::endl;
-				CGTFile    cgtFile;
-				Symbol     *rdc;
-				DFA        *dfa;
-				LALR       *lalr;
-				ErrorTable       *myErrors;
-				  SimpleErrorRep   myReporter; 
-				bool ok = cgtFile.load("c:\\grammar.cgt");
-				std::cout << ok << std::endl;
-				dfa = cgtFile.getScanner();
-				
-				std::cout << "OK2" << std::endl;
-				ok = dfa->scan(argument);
-				myErrors = dfa->getErrors();
-  
-				  // If there are errors report them
-				  if (myErrors->errors.size() > 0) {
-					for (int i=0; i < myErrors->errors.size(); i++) {
-						std::cout << myReporter.composeParseErrorMsg (*myErrors->errors[i]) << endl;
-					}
-				  }
+							
 
-				std::cout << ok << std::endl;
-				//delete [] argument;
-				std::cout << "OK4" << std::endl;
-				vector<Token*> tokens = dfa->getTokens();
-				std::cout << "OK5" << std::endl;
-				lalr = cgtFile.getParser();
-				std::cout << "OK6" << std::endl;
-				rdc = lalr->parse(tokens, true, true);
-				std::cout << "OK7" << std::endl;
-				lalr->printReductionTree(rdc,0);
-				std::cout << "OK8" << std::endl;
-				for ( vector<Token*>::iterator i = tokens.begin(); i != tokens.end(); i++) {
-					cout << (*i)->kind << endl;
-				}
+				//////////////////////////////////////////
+				///////// GRAMMAR PARSER SECTION//////////
+				//std::string filePath = "baba";
+				//std::string& filePathRef = filePath; 
+				//CGrammarParser* grammarParser = new CGrammarParser(filePathRef);
+				//delete grammarParser;
+				//CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
+				//WCHAR* argument = L"bieda > 3";
+
+				//CGTFile    cgtFile;
+				//Symbol     *rdc;
+				//DFA        *dfa;
+				//LALR       *lalr;
+				//ErrorTable       *myErrors;
+				//  SimpleErrorRep   myReporter; 
+				//bool ok = cgtFile.load("c:\\grammar.cgt");
+				//std::cout << ok << std::endl;
+				//dfa = cgtFile.getScanner();
+				//
+				//std::cout << "OK2" << std::endl;
+				//ok = dfa->scan(argument);
+				//myErrors = dfa->getErrors();
+  
+				//  // If there are errors report them
+				//  if (myErrors->errors.size() > 0) {
+				//	for (unsigned int i=0; i < myErrors->errors.size(); i++) {
+				//		std::cout << myReporter.composeParseErrorMsg (*myErrors->errors[i]) << endl;
+				//	}
+				//  }
+
+				//std::cout << ok << std::endl;
+				////delete [] argument;
+				//std::cout << "OK4" << std::endl;
+				//vector<Token*> tokens = dfa->getTokens();
+				//std::cout << "OK5" << std::endl;
+				//lalr = cgtFile.getParser();
+				//std::cout << "OK6" << std::endl;
+				//rdc = lalr->parse(tokens, true, true);
+				//std::cout << "OK7" << std::endl;
+				//lalr->printReductionTree(rdc,0);
+				//std::cout << "OK8" << std::endl;
+				//for ( vector<Token*>::iterator i = tokens.begin(); i != tokens.end(); i++) {
+				//	cout << (*i)->kind << endl;
+				//}
 
 			}
 			
@@ -342,23 +360,22 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 		}
 		LPWSTR returnType = new WCHAR[NAME_BUFFER_SIZE];
 		returnType[0] = '\0';
-		sigBlob = ParseSignature(pMetaDataImport, sigBlob, returnType);
-#ifndef SILENT
-		PrintCharArray(returnType);
-		cout << " ";
-#endif
+		// get function's return type
+		CParamParser* paramParser = new CParamParser(*pMetaDataImport);
+		sigBlob = paramParser->ParseSignature(sigBlob, returnType);
+
+		LOG4CXX_DEBUG(loggerMyMain, returnType);
+		
+		// get function's arguments type
 		for ( ULONG i = 0; (sigBlob != NULL) && (i < paramsCount); ++i )
 		{
 			LPWSTR parameters = new WCHAR[NAME_BUFFER_SIZE];
 			parameters[0] = '\0';
-			sigBlob = ParseSignature(pMetaDataImport, sigBlob, parameters);
+			sigBlob = paramParser->ParseSignature(sigBlob, parameters);
 
 			if ( sigBlob != NULL )
 			{
-#ifndef SILENT
-				PrintCharArray(parameters);
-				cout << " ";
-#endif
+				LOG4CXX_DEBUG(loggerMyMain,parameters);
 			}
 		}	
 		// DEBUG PURPOSES
@@ -460,8 +477,8 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 	HRESULT hr =  pICorProfilerInfoUnk->QueryInterface(IID_ICorProfilerInfo2, (LPVOID*) &_ICorProfilerInfo2);
 	// register for recieving specified events
 	hr = SetEventMask();
+
 	// register handlers for function enter/leave events
-	
 	_ICorProfilerInfo2->SetEnterLeaveFunctionHooks2( &FunctionEnterHandler, &FunctionLeaveHandler, NULL);
 
 	_ICorProfilerInfo2->SetFunctionIDMapper(FunctionMapper);
@@ -469,202 +486,3 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
     return S_OK;
 } 
 
-PCCOR_SIGNATURE CProfiler::ParseSignature( IMetaDataImport *metaDataImport, PCCOR_SIGNATURE signature, LPWSTR signatureText)
-{	
-	COR_SIGNATURE corSignature = *signature++;
-
-	switch (corSignature) 
-	{	
-	case ELEMENT_TYPE_VOID:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"void");
-		break;							
-	case ELEMENT_TYPE_BOOLEAN:	
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"bool");	
-		break;			
-	case ELEMENT_TYPE_CHAR:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE , L"wchar");	
-		break;							
-	case ELEMENT_TYPE_I1:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"int8");	
-		break;		 		
-	case ELEMENT_TYPE_U1:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"unsigned int8");	
-		break;	 		
-	case ELEMENT_TYPE_I2:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"int16");	
-		break;		
-	case ELEMENT_TYPE_U2:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"unsigned int16");	
-		break;					
-	case ELEMENT_TYPE_I4:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"int32");	
-		break;        
-	case ELEMENT_TYPE_U4:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"unsigned int32");	
-		break;				
-	case ELEMENT_TYPE_I8:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"int64");	
-		break;				
-	case ELEMENT_TYPE_U8:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"unsigned int64");	
-		break;		
-	case ELEMENT_TYPE_R4:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"float32");	
-		break;					
-	case ELEMENT_TYPE_R8:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"float64");	
-		break;			 		
-	case ELEMENT_TYPE_STRING:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"String");	
-		break;	
-	case ELEMENT_TYPE_VAR:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"class variable(unsigned int8)");	
-		break;		
-	case ELEMENT_TYPE_MVAR:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"method variable(unsigned int8)");	
-		break;					         
-	case ELEMENT_TYPE_TYPEDBYREF:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"refany");	
-		break;		 		
-	case ELEMENT_TYPE_I:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"int");	
-		break;			
-	case ELEMENT_TYPE_U:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"unsigned int");	
-		break;			  		
-	case ELEMENT_TYPE_OBJECT:
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"Object");	
-		break;		       
-	case ELEMENT_TYPE_SZARRAY:	 
-		signature = ParseSignature(metaDataImport, signature, signatureText); 
-		wcscat_s(signatureText, NAME_BUFFER_SIZE,  L"[]");
-		break;				
-	case ELEMENT_TYPE_PINNED:
-		signature = ParseSignature(metaDataImport, signature, signatureText); 
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"pinned");	
-		break;	        
-	case ELEMENT_TYPE_PTR:   
-		signature = ParseSignature(metaDataImport, signature, signatureText); 
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"*");	
-		break;           
-	case ELEMENT_TYPE_BYREF:   
-		signature = ParseSignature(metaDataImport, signature, signatureText); 
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, L"&");	
-		break;
-	case ELEMENT_TYPE_VALUETYPE:   
-	case ELEMENT_TYPE_CLASS:	
-	case ELEMENT_TYPE_CMOD_REQD:
-	case ELEMENT_TYPE_CMOD_OPT:
-		{
-			mdToken	token;	
-			signature += CorSigUncompressToken( signature, &token ); 
-
-			WCHAR className[ NAME_BUFFER_SIZE ];
-			if ( TypeFromToken( token ) == mdtTypeRef )
-			{
-				metaDataImport->GetTypeRefProps(token, NULL, className, NAME_BUFFER_SIZE, NULL);
-			}
-			else
-			{
-				metaDataImport->GetTypeDefProps(token, className, NAME_BUFFER_SIZE, NULL, NULL, NULL );
-			}
-
-			wcscat_s(signatureText, NAME_BUFFER_SIZE, className );
-		}
-		break;		
-	case ELEMENT_TYPE_GENERICINST:
-		{
-			signature = ParseSignature(metaDataImport, signature, signatureText); 
-
-			wcscat_s(signatureText, NAME_BUFFER_SIZE, L"<");	
-			ULONG arguments = CorSigUncompressData(signature);
-			for (ULONG i = 0; i < arguments; ++i)
-			{
-				if(i != 0)
-				{
-					wcscat_s(signatureText, NAME_BUFFER_SIZE, L", ");	
-				}
-
-				signature = ParseSignature(metaDataImport, signature, signatureText);
-			}
-			wcscat_s(signatureText, NAME_BUFFER_SIZE, L">");	
-		}
-		break;		        
-	case ELEMENT_TYPE_ARRAY:	
-		{
-			signature = ParseSignature(metaDataImport, signature, signatureText);              
-			ULONG rank = CorSigUncompressData(signature);													
-			if ( rank == 0 ) 
-			{
-				wcscat_s(signatureText, NAME_BUFFER_SIZE, L"[?]");
-			}
-			else 
-			{		
-				ULONG arraysize = (sizeof(ULONG) * 2 * rank);
-				ULONG *lower = (ULONG *)_alloca(arraysize);
-				memset(lower, 0, arraysize); 
-				ULONG *sizes = &lower[rank];
-
-				ULONG numsizes = CorSigUncompressData(signature);	
-				for (ULONG i = 0; i < numsizes && i < rank; i++)
-				{
-					sizes[i] = CorSigUncompressData(signature);	
-				}
-
-				ULONG numlower = CorSigUncompressData(signature);	
-				for (ULONG i = 0; i < numlower && i < rank; i++)	
-				{
-					lower[i] = CorSigUncompressData( signature ); 
-				}
-
-				wcscat_s(signatureText, NAME_BUFFER_SIZE, L"[");	
-				for (ULONG i = 0; i < rank; ++i)	
-				{					
-					if (i > 0) 
-					{
-						wcscat_s(signatureText, NAME_BUFFER_SIZE, L",");
-					}
-
-					if (lower[i] == 0)
-					{
-						if(sizes[i] != 0)
-						{
-							WCHAR *size = new WCHAR[NAME_BUFFER_SIZE];
-							size[0] = '\0';
-							wsprintf(size, L"%d", sizes[i]);											
-							wcscat_s(signatureText, NAME_BUFFER_SIZE, size);
-						}
-					}	
-					else	
-					{
-						WCHAR *low = new WCHAR[NAME_BUFFER_SIZE];
-						low[0] = '\0';
-						wsprintf(low, L"%d", lower[i]);
-						wcscat_s(signatureText, NAME_BUFFER_SIZE, low);
-						wcscat_s(signatureText, 3, L"...");	
-
-						if (sizes[i] != 0)	
-						{
-							WCHAR *size = new WCHAR[NAME_BUFFER_SIZE];
-							size[0] = '\0';
-							wsprintf(size, L"%d", (lower[i] + sizes[i] + 1));
-							wcscat_s(signatureText, NAME_BUFFER_SIZE,  size);
-						}
-					}
-				}
-				wcscat_s(signatureText, NAME_BUFFER_SIZE, L"]");
-			}
-		} 
-		break;   		    
-	default:	
-	case ELEMENT_TYPE_END:	
-	case ELEMENT_TYPE_SENTINEL:	
-		WCHAR *elementType = new WCHAR[NAME_BUFFER_SIZE];
-		elementType[0] = '\0';
-		wsprintf(elementType, L"<UNKNOWN:0x%X>", corSignature);
-		wcscat_s(signatureText, NAME_BUFFER_SIZE, elementType);
-		break;				                      				            
-	}
-
-	return signature;
-}
