@@ -11,6 +11,6 @@
 	
 
 void PrintCharArray(WCHAR*);
-void ToBinary(void*, int , int);
+char* ToBinary(void*, int , int);
 
 #endif // end of COMMON

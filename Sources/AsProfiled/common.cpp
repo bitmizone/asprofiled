@@ -12,16 +12,16 @@ void PrintCharArray(WCHAR* charArray) {
 
 // print binary representation of bytes
 // used for checking correctness of retrieved CorTokenType
-void ToBinary(void* p, int cBytes, int cBytesToSkip) {
+char* ToBinary(void* p, int cBytes, int cBytesToSkip) {
 	char* ptr = (char*) p;
+	char* binaryRepresentation = new char[cBytes * 8];
 	int i = 0;
 	while (i < cBytes) {
 		int bitPos;
 		for (bitPos = 0; bitPos < 8; ++bitPos) {
-			printf("%d", *(ptr + i) >> (7 - bitPos) & 0x1);
+			binaryRepresentation[i * 8 + bitPos] = *(ptr + i) >> (7 - bitPos) & 0x1;
 		}
-		printf(" ");
 		++i;
 	}
-	printf("\n");
+	return binaryRepresentation;
 }

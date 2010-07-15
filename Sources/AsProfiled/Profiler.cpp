@@ -30,16 +30,17 @@ LoggerPtr loggerMyMain(Logger::getLogger("main"));
 
 int callCounter = 0;
 
-
-
 CProfiler::CProfiler() {
+	// Configure Log4cxx
 	BasicConfigurator::configure();
-	loggerMyMain->setLevel(Level::toLevel(log4cxx::Level::DEBUG_INT));
+	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
+	loggerMyMain->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
 }
 
 
 
-// static function mapper 
+// Static function mapper 
+// We might need to map functions in order to track them
 UINT_PTR CProfiler::FunctionMapper(FunctionID functionId, BOOL *pbHookFunction) {
 	
 	if (_cProfilerGlobalHandler != NULL) {
@@ -48,36 +49,51 @@ UINT_PTR CProfiler::FunctionMapper(FunctionID functionId, BOOL *pbHookFunction) 
 	return (UINT_PTR) functionId;
 }
 
+// Do whatever we want with function ID
 void CProfiler::MapFunction(FunctionID functionId) {
-	
-
-	//cout << "map function" << endl;
+		//cout << "map function" << endl;
 
 }
 
+// Function called by .NET runtime when function is invoked
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
+	
+	// buffer for function name
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
+	// read function name
 	HRESULT hr = GetFullMethodName(functionID, szMethodName);
-
+	
 	LOG4CXX_INFO(loggerMyMain, szMethodName)
 	
+	// Declaration of pointer to IMetaDataImport interface, 
+	// which provides methods for importing and manipulating existing metadata
 	IMetaDataImport* metaDataImport = NULL;
+	// A pointer that references the metadata for called function 
 	mdToken token = mdTokenNil;
-	HCORENUM paramsEnum = NULL;
-	ULONG paramsCount = 0;
-	mdParamDef params[1024];
-	ClassID classId = NULL;
 	mdMethodDef mdMethod = mdTypeDefNil;
+	// Enumerator for function's parameters
+	HCORENUM paramsEnum = NULL;
+	// Arguments count
+	ULONG paramsCount = 0;
+	// Token to param's metadata
+	mdParamDef params[1024];
+	// Param postion in function signature
 	ULONG paramPosition = 0;
-	
+	// Parameter name lenght
 	ULONG paramNameLen = 0;
-	DWORD corElementType = 0;
+	// Parameter's name
 	LPWSTR paramName = 0;
+	// Parameter's type
+	DWORD corElementType = 0;
+	
+	// Retrieve function's metadata 
 	_ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionID, IID_IMetaDataImport, (IUnknown**) &metaDataImport, &token);
-
+	
+	// Get enumerator to interate over parameters
 	metaDataImport->EnumParams(&paramsEnum, token, params, 1024, &paramsCount);
 	ULONG32 pcTypeArgs = 0;
-
+	
+	/////////////////// Parsing parameters, not needed. Done elsewhere
 	/*for (ULONG i = 0; i < paramsCount; ++i) {
 		if (i == 0) 
 			cout << "(";
@@ -221,9 +237,10 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	ULONG sigBlobBytesCount = NULL;
 
 	hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionId, IID_IMetaDataImport, (LPUNKNOWN *) &pMetaDataImport, &methodToken);
-#ifndef SILENT
-	ToBinary((void*) &methodToken, 4, 3);
-#endif	
+
+	LOG4CXX_DEBUG(loggerMyMain, "methodToken dump:" << ToBinary((void*) &methodToken, 4, 3));
+	
+
 	if (SUCCEEDED(hr)) {
 		
 		hr = pMetaDataImport->GetMethodProps(methodToken, &typeDefToken, szFunction, 
@@ -239,10 +256,10 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 
 		ULONG lSum = 0;
 		pMetaDataImport->CountEnum(phEnum, &lSum);
-#ifndef SILENT
-		cout << endl << "------Attributes Info------" << endl;
-		cout << "No of attributes: " << lSum << endl;
-#endif	
+
+		LOG4CXX_DEBUG(loggerMyMain, "------Attributes Info------");
+		LOG4CXX_DEBUG(loggerMyMain, "No of attributes: " << lSum);
+
 		for (ULONG i = 0 ; i < lSum ; ++i) {
 
 			// get info about custom attribute
@@ -252,14 +269,14 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			ULONG attributeBlobSize = 0;
 			mdMethodDef attributeConstructor = mdTokenNil;
 			pMetaDataImport->GetCustomAttributeProps(*currentAttribute, &methodToken, &attributeConstructor, &attributeBlob, &attributeBlobSize); 
-#ifndef SILENT
-			cout << "Attribute ctor token value: "<< hex <<  attributeConstructor  << endl;
-			cout << "Custom attribute token value: " << hex << *currentAttribute << endl;
+
+			LOG4CXX_DEBUG(loggerMyMain, "Attribute ctor token value: "<< hex <<  attributeConstructor);
+			LOG4CXX_DEBUG(loggerMyMain, "Custom attribute token value: " << hex << *currentAttribute);
 
 			// should be always equal 1
 			INT16 prolog =  *((UINT16*) attributeBlob);
-			cout << "prolog (always=1) = " << prolog;
-#endif			
+			LOG4CXX_DEBUG(loggerMyMain, "prolog (always=1) = " << prolog);
+
 			PCCOR_SIGNATURE methodMetadataBlob = 0;
 			ULONG metaDataBlobSize = 0;
 			hr = pMetaDataImport->GetMethodProps(attributeConstructor, 
@@ -346,17 +363,17 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			cout << endl;
 
 		}
-		cout << "------End Of Attribute Info------" << endl;
+		LOG4CXX_DEBUG(loggerMyMain,"------End Of Attribute Info------");
 		pMetaDataImport->CloseEnum(phEnum);
 		
-		cout << "------Method Info------" << endl;
+		LOG4CXX_DEBUG(loggerMyMain, "------Method Info------");
 		ULONG callConv = 0;
 		ULONG paramsCount = 0;
 		// call convention 
 		sigBlob += CorSigUncompressData(sigBlob, &callConv);
 		if ( callConv != IMAGE_CEE_CS_CALLCONV_FIELD) {
 			sigBlob += CorSigUncompressData(sigBlob,&paramsCount);
-			cout << "# of arguments: " << paramsCount << endl;
+			LOG4CXX_DEBUG(loggerMyMain, "# of arguments: " << paramsCount);
 		}
 		LPWSTR returnType = new WCHAR[NAME_BUFFER_SIZE];
 		returnType[0] = '\0';
@@ -378,15 +395,17 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 				LOG4CXX_DEBUG(loggerMyMain,parameters);
 			}
 		}	
-		// DEBUG PURPOSES
-#ifndef SILENT
-		ToBinary((void*) &typeDefToken, 4, 3);
-#endif
+
+
+		LOG4CXX_DEBUG(loggerMyMain, ToBinary((void*) &typeDefToken, 4, 3));
+
 		if (SUCCEEDED(hr)) 
 		{
 			hr = pMetaDataImport->GetTypeDefProps(typeDefToken, szClass, NAME_BUFFER_SIZE, &cchClass, NULL, NULL);
 			if (SUCCEEDED(hr)) {
+				
 				_snwprintf_s(wszMethod,NAME_BUFFER_SIZE, NAME_BUFFER_SIZE ,L"%s.%s",szClass,szFunction);
+				//LOG4CXX_INFO(loggerMyMain, wszMethod);
 			}
 			
 			if (SUCCEEDED(hr)) {
@@ -397,7 +416,7 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			sigBlob += CorSigUncompressData(sigBlob, &callingConvetion);
 			// getMethodProps error
 		}
-		cout << endl << "------End Of Method Info------" << endl;
+		LOG4CXX_DEBUG(loggerMyMain,"------End Of Method Info------");
 		// get token and metadata from function error
 			
 	}
@@ -414,8 +433,8 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 
 
 STDMETHODIMP CProfiler::Shutdown() {
-	cout << "Program has ended" << endl;
-	cout << "Function call counter is " << callCounter << endl;
+	LOG4CXX_DEBUG(loggerMyMain, "Program has ended");
+	LOG4CXX_DEBUG(loggerMyMain, "Function call counter is " << callCounter);
 	return S_OK;
 }
 
@@ -473,16 +492,17 @@ HRESULT CProfiler::SetEventMask()
 STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 {
 	_cProfilerGlobalHandler = this;
-	// query for ICorProfiler2 object
+	// Query for ICorProfiler2 object
 	HRESULT hr =  pICorProfilerInfoUnk->QueryInterface(IID_ICorProfilerInfo2, (LPVOID*) &_ICorProfilerInfo2);
-	// register for recieving specified events
+	// Register for recieving specified events
 	hr = SetEventMask();
 
-	// register handlers for function enter/leave events
+	// Register handlers for function enter/leave events
 	_ICorProfilerInfo2->SetEnterLeaveFunctionHooks2( &FunctionEnterHandler, &FunctionLeaveHandler, NULL);
-
+	
+	// Setting function mapper
 	_ICorProfilerInfo2->SetFunctionIDMapper(FunctionMapper);
-	cout << "Program has started" << endl;
+	LOG4CXX_DEBUG(loggerMyMain, "Program has started");
     return S_OK;
 } 
 
