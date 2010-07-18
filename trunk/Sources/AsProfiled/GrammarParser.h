@@ -11,9 +11,11 @@
 class CGrammarParser
 {
 public:
-	CGrammarParser(std::string& cgtFilePath);
+	CGrammarParser(std::string cgtFilePath);
 	~CGrammarParser(void);
+	bool Initialize(void);
 private:
+	std::string filePath;
 	CGTFile *cgtFile;
 	Symbol *rdc;
 	DFA	*dfa;
