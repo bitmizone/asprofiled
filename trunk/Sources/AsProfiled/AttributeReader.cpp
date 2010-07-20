@@ -9,10 +9,8 @@ LoggerPtr attributeLogger(Logger::getLogger("attributeReader"));
 
 CAttributeReader::CAttributeReader(void)
 {
-	// Configure Log4cxx
-	BasicConfigurator::configure();
 	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
-	attributeLogger->setLevel(Level::toLevel(log4cxx::Level::DEBUG_INT));
+	attributeLogger->setLevel(Level::toLevel(log4cxx::Level::FATAL_INT));
 }
 
 CAttributeReader::~CAttributeReader(void)
@@ -24,17 +22,14 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 
 	this->methodToken = methodTokenArg;
 	this->pMetaDataImport = pMetaDataImportArg;
-	mdCustomAttribute tokensOfCustomAttributes[10];
+	mdCustomAttribute tokensOfCustomAttributes[1];
 	HCORENUM phEnum = NULL;
 	this->attributesCount = 0;
-	
-	pMetaDataImport->EnumCustomAttributes(&phEnum, this->methodToken, 0, 
-												tokensOfCustomAttributes, 10, &(this->attributesCount));
-	
-	while (this->attributesCount > 0){
+		
+	do {
 		pMetaDataImport->EnumCustomAttributes(&phEnum, this->methodToken, 0, 
-												tokensOfCustomAttributes, 10, &(this->attributesCount));
-	} // while (this->attributesCount > 0);
+												tokensOfCustomAttributes, 1, &(this->attributesCount));
+	} while (this->attributesCount > 0);
 
 	
 
