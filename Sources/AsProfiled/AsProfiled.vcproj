@@ -264,6 +264,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MethodInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Param.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ParamParser.cpp"
 				>
 			</File>
@@ -391,6 +399,14 @@
 			</File>
 			<File
 				RelativePath=".\GrammarParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MethodInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Param.h"
 				>
 			</File>
 			<File

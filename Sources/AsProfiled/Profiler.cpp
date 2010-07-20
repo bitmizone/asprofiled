@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include "profiler.h"
+#include "MethodInfo.h"
 
 using namespace std;;
 using namespace log4cxx;
@@ -14,7 +15,7 @@ CProfiler::CProfiler()
 	// Configure Log4cxx
 	BasicConfigurator::configure();
 	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
-	myMainLogger->setLevel(Level::toLevel(log4cxx::Level::ERROR_INT));
+	myMainLogger->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
 }
 
 
@@ -90,8 +91,6 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 									}*/
 	metaDataImport->CloseEnum(paramsEnum);	
 
-	ModuleID moduleId = NULL;
-
 	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
 	_ICorProfilerInfo2->GetStringLayout(&bufferLengthOffset, &stringLengthOffset, &bufferOffset);
 
@@ -124,8 +123,6 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 		if (*id == 0x1000) {
 			enableStringInfo = true;
 		}
-
-		//LOG4CXX_DEBUG(myMainLogger, "" << *id << "##### " << range.startAddress << " " << range.length);
 	}
 }
 
@@ -142,7 +139,7 @@ HRESULT CProfiler::GetFunctionData(FunctionID functionId)
 HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	HRESULT hr = S_OK;
 	IMetaDataImport* pMetaDataImport = 0;
-	WCHAR szFunction[NAME_BUFFER_SIZE];
+	WCHAR* szFunction;
 	WCHAR szClass[NAME_BUFFER_SIZE];
 	mdMethodDef methodToken = mdTypeDefNil;
 	mdTypeDef typeDefToken = mdTypeDefNil;	
@@ -150,40 +147,45 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	ULONG cchClass;
 	
 	PCCOR_SIGNATURE sigBlob = NULL;
-	ULONG sigBlobBytesCount = NULL;
+	CMethodInfo methodInfo(functionId, _ICorProfilerInfo2);
+	methodInfo.Initialize();
 
-	hr = _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionId, IID_IMetaDataImport, (LPUNKNOWN *) &pMetaDataImport, &methodToken);
-
-	// LOG4CXX_DEBUG(myMainLogger, "methodToken dump:" << ToBinary((void*) &methodToken, 4, 3));
-
+	pMetaDataImport = methodInfo.GetMetaDataImport();
+	methodToken = methodInfo.GetMethodToken();
+	
 	if (SUCCEEDED(hr)) {
 		
-		hr = pMetaDataImport->GetMethodProps(methodToken, &typeDefToken, szFunction, 
-											NAME_BUFFER_SIZE, &cchMethod, 
-											NULL, &sigBlob, &sigBlobBytesCount, NULL, NULL);
-		
-
+		sigBlob = methodInfo.GetMethodSignatureBlob();
+		szFunction = methodInfo.GetMethodName();
+		typeDefToken = methodInfo.GetTypeToken();
 		this->attributeReader->Initialize(methodToken, pMetaDataImport);
+		this->attributeReader->PrintAttributesInfo();
 
-		LOG4CXX_DEBUG(myMainLogger, "------Method Info------");
-		ULONG callConv = 0;
+		ULONG callConv = methodInfo.GetCallingConvention();
 		ULONG paramsCount = 0;
 		// call convention 
-		sigBlob += CorSigUncompressData(sigBlob, &callConv);
-		if ( callConv != IMAGE_CEE_CS_CALLCONV_FIELD) {
-			sigBlob += CorSigUncompressData(sigBlob,&paramsCount);
-			LOG4CXX_DEBUG(myMainLogger, "# of arguments: " << paramsCount);
-		}
+		sigBlob = methodInfo.GetMethodSignatureBlob();
+		paramsCount = methodInfo.GetArgumentsCount();
+		sigBlob = methodInfo.GetMethodSignatureBlob();
+		LOG4CXX_DEBUG(myMainLogger, "# of arguments: " << methodInfo.GetArgumentsCount());
+		
 		LPWSTR returnType = new WCHAR[NAME_BUFFER_SIZE];
 		returnType[0] = '\0';
 		// get function's return type
 		CParamParser* paramParser = new CParamParser(*pMetaDataImport);
-		sigBlob = paramParser->ParseSignature(sigBlob, returnType);
-
-		LOG4CXX_DEBUG(myMainLogger, returnType);
+		//sigBlob = paramParser->ParseSignature(sigBlob, returnType);
+		CParam* param = methodInfo.GetReturnValue();
+		sigBlob = methodInfo.GetMethodSignatureBlob();
+		LOG4CXX_INFO(myMainLogger, param->paramType);
 		
+		//std::vector<CParam*> arguments = *methodInfo.GetArguments();
+		//sigBlob = methodInfo.GetMethodSignatureBlob();
+		//for (vector<CParam*>::iterator iter = arguments.begin(); iter != arguments.end(); ++iter) {
+			//LOG4CXX_INFO(myMainLogger, (*iter)->paramType);
+		//}
+
 		// get function's arguments type
-		for ( ULONG i = 0; (sigBlob != NULL) && (i < paramsCount); ++i )
+		/*for ( ULONG i = 0; (sigBlob != NULL) && (i < paramsCount); ++i )
 		{
 			LPWSTR parameters = new WCHAR[NAME_BUFFER_SIZE];
 			parameters[0] = '\0';
@@ -191,17 +193,16 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 
 			if ( sigBlob != NULL )
 			{
-				LOG4CXX_DEBUG(myMainLogger,parameters);
+				LOG4CXX_INFO(myMainLogger,parameters);
 			}
-		}	
-
+		}	*/
+		
 		LOG4CXX_DEBUG(myMainLogger, ToBinary((void*) &typeDefToken, 4, 3));
 
 		if (SUCCEEDED(hr)) 
 		{
 			hr = pMetaDataImport->GetTypeDefProps(typeDefToken, szClass, NAME_BUFFER_SIZE, &cchClass, NULL, NULL);
 			if (SUCCEEDED(hr)) {
-				
 				_snwprintf_s(wszMethod,NAME_BUFFER_SIZE, NAME_BUFFER_SIZE ,L"%s.%s",szClass,szFunction);
 			}
 			
@@ -213,8 +214,6 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			sigBlob += CorSigUncompressData(sigBlob, &callingConvetion);
 			// getMethodProps error
 		}
-
-		LOG4CXX_DEBUG(myMainLogger,"------End Of Method Info------");
 			
 	}
 	else 
