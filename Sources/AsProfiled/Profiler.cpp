@@ -71,24 +71,7 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	
 	// Get enumerator to interate over parameters
 	metaDataImport->EnumParams(&paramsEnum, token, params, 1024, &paramsCount);
-	ULONG32 pcTypeArgs = 0;
-	
-									/////////////////// Parsing parameters, not needed. Done elsewhere
-									/*for (ULONG i = 0; i < paramsCount; ++i) {
-										if (i == 0) 
-											cout << "(";
-										metaDataImport->GetParamProps(params[i], &mdMethod, &paramPosition, paramName, NAME_BUFFER_SIZE, &paramNameLen, NULL, &corElementType, NULL, NULL);
-										PCCOR_SIGNATURE sig;
-										ULONG sizeOfSigInBytes;
-										
-										metaDataImport->GetSigFromToken(params[i], &sig, &sizeOfSigInBytes);
-										
-										PrintCharArray(paramName);
-										if (i == paramsCount - 1) 
-											cout << ")";
-										else
-											cout << ", ";
-									}*/
+	ULONG32 pcTypeArgs = 0;		
 	metaDataImport->CloseEnum(paramsEnum);	
 
 	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
@@ -143,7 +126,6 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 	WCHAR szClass[NAME_BUFFER_SIZE];
 	mdMethodDef methodToken = mdTypeDefNil;
 	mdTypeDef typeDefToken = mdTypeDefNil;	
-	ULONG cchMethod;
 	ULONG cchClass;
 	
 	PCCOR_SIGNATURE sigBlob = NULL;
@@ -163,40 +145,30 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 
 		ULONG callConv = methodInfo.GetCallingConvention();
 		ULONG paramsCount = 0;
-		// call convention 
+
+		// Get calling convention 
 		sigBlob = methodInfo.GetMethodSignatureBlob();
 		paramsCount = methodInfo.GetArgumentsCount();
 		sigBlob = methodInfo.GetMethodSignatureBlob();
 		LOG4CXX_DEBUG(myMainLogger, "# of arguments: " << methodInfo.GetArgumentsCount());
 		
+		// Get function's return type
 		LPWSTR returnType = new WCHAR[NAME_BUFFER_SIZE];
 		returnType[0] = '\0';
-		// get function's return type
 		CParamParser* paramParser = new CParamParser(*pMetaDataImport);
-		//sigBlob = paramParser->ParseSignature(sigBlob, returnType);
 		CParam* param = methodInfo.GetReturnValue();
 		sigBlob = methodInfo.GetMethodSignatureBlob();
-		LOG4CXX_INFO(myMainLogger, param->paramType);
+		LOG4CXX_DEBUG(myMainLogger, param->paramType);
 		
-		//std::vector<CParam*> arguments = *methodInfo.GetArguments();
-		//sigBlob = methodInfo.GetMethodSignatureBlob();
-		//for (vector<CParam*>::iterator iter = arguments.begin(); iter != arguments.end(); ++iter) {
-			//LOG4CXX_INFO(myMainLogger, (*iter)->paramType);
-		//}
 
-		// get function's arguments type
-		/*for ( ULONG i = 0; (sigBlob != NULL) && (i < paramsCount); ++i )
-		{
-			LPWSTR parameters = new WCHAR[NAME_BUFFER_SIZE];
-			parameters[0] = '\0';
-			sigBlob = paramParser->ParseSignature(sigBlob, parameters);
+		// Get method's arguments
+		std::vector<CParam*>* arguments = methodInfo.GetArguments();
+		sigBlob = methodInfo.GetMethodSignatureBlob();
+		for (vector<CParam*>::iterator iter = arguments->begin(); iter != arguments->end(); iter++) {
+			LOG4CXX_INFO(myMainLogger, (*iter)->paramType);
+		}
 
-			if ( sigBlob != NULL )
-			{
-				LOG4CXX_INFO(myMainLogger,parameters);
-			}
-		}	*/
-		
+				
 		LOG4CXX_DEBUG(myMainLogger, ToBinary((void*) &typeDefToken, 4, 3));
 
 		if (SUCCEEDED(hr)) 
@@ -204,10 +176,6 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 			hr = pMetaDataImport->GetTypeDefProps(typeDefToken, szClass, NAME_BUFFER_SIZE, &cchClass, NULL, NULL);
 			if (SUCCEEDED(hr)) {
 				_snwprintf_s(wszMethod,NAME_BUFFER_SIZE, NAME_BUFFER_SIZE ,L"%s.%s",szClass,szFunction);
-			}
-			
-			if (SUCCEEDED(hr)) {
-				 
 			}
 
 			ULONG callingConvetion = 0;
@@ -227,8 +195,6 @@ HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
 
 
 void _stdcall FunctionEnterGlobal(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
-
-	//cout << "function enter global" << endl;
 	_cProfilerGlobalHandler->FunctionEnter(functionID, clientData, func, argumentInfo);
 	
 }

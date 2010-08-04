@@ -17,6 +17,9 @@ CMethodInfo::~CMethodInfo(void)
 	if (this->paramParser != NULL) {
 		delete this->paramParser;
 	}
+
+	if (this->arguments != NULL) {
+	}
 }
 
 void CMethodInfo::Initialize() 
@@ -90,7 +93,7 @@ CParam* CMethodInfo::GetReturnValue() {
 		return this->returnValue;
 	}
 	if (this->state == ARGUMENTS_COUNT_READ) {
-		returnValue = new CParam();
+		this->returnValue = new CParam();
 		this->methodSignatureBlob = paramParser->ParseSignature(this->methodSignatureBlob, returnValue->paramType);
 		this->state = RETURN_VALUE_TYPE_READ;
 	}else{
@@ -105,7 +108,7 @@ std::vector<CParam*>* CMethodInfo::GetArguments() {
 		return this->arguments;
 	}
 	if (this->state == RETURN_VALUE_TYPE_READ) {
-		this->arguments = new std::vector<CParam*>[this->argumentsCount];
+		this->arguments = new std::vector<CParam*>();
 		for ( ULONG i = 0; (this->methodSignatureBlob != NULL) && (i < this->argumentsCount); ++i )
 		{
 			CParam* argument = new CParam();
