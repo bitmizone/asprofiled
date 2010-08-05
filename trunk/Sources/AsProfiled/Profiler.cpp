@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "profiler.h"
-#include "MethodInfo.h"
+
 
 using namespace std;;
 using namespace log4cxx;
@@ -43,8 +43,7 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	// read function name
 	HRESULT hr = GetFullMethodName(functionID, szMethodName);
 	
-	LOG4CXX_INFO(myMainLogger, szMethodName)
-	
+	LOG4CXX_INFO(myMainLogger, szMethodName);
 	// Declaration of pointer to IMetaDataImport interface, 
 	// which provides methods for importing and manipulating existing metadata
 	IMetaDataImport* metaDataImport = NULL;
@@ -120,77 +119,62 @@ HRESULT CProfiler::GetFunctionData(FunctionID functionId)
 }
 
 HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
-	HRESULT hr = S_OK;
 	IMetaDataImport* pMetaDataImport = 0;
-	WCHAR* szFunction;
-	WCHAR szClass[NAME_BUFFER_SIZE];
 	mdMethodDef methodToken = mdTypeDefNil;
 	mdTypeDef typeDefToken = mdTypeDefNil;	
-	ULONG cchClass;
 	
 	PCCOR_SIGNATURE sigBlob = NULL;
+	
 	CMethodInfo methodInfo(functionId, _ICorProfilerInfo2);
 	methodInfo.Initialize();
 
 	pMetaDataImport = methodInfo.GetMetaDataImport();
 	methodToken = methodInfo.GetMethodToken();
 	
-	if (SUCCEEDED(hr)) {
-		
-		sigBlob = methodInfo.GetMethodSignatureBlob();
-		szFunction = methodInfo.GetMethodName();
-		typeDefToken = methodInfo.GetTypeToken();
-		this->attributeReader->Initialize(methodToken, pMetaDataImport);
-		this->attributeReader->PrintAttributesInfo();
+	sigBlob = methodInfo.GetMethodSignatureBlob();
+	methodInfo.GetMethodName();
+	typeDefToken = methodInfo.GetTypeToken();
+	CTypeInfo typeInfo(pMetaDataImport, typeDefToken);
 
-		ULONG callConv = methodInfo.GetCallingConvention();
-		ULONG paramsCount = 0;
+	wstring fullMethodName(typeInfo.GetName());
+	fullMethodName =  fullMethodName.append(L".");
+	fullMethodName = fullMethodName.append(methodInfo.GetMethodName());
+	memcpy(wszMethod, fullMethodName.c_str(), (fullMethodName.size() + 1) * sizeof(WCHAR) );
+	
+	this->attributeReader->Initialize(methodToken, pMetaDataImport);
+	this->attributeReader->PrintAttributesInfo();
 
-		// Get calling convention 
-		sigBlob = methodInfo.GetMethodSignatureBlob();
-		paramsCount = methodInfo.GetArgumentsCount();
-		sigBlob = methodInfo.GetMethodSignatureBlob();
-		LOG4CXX_DEBUG(myMainLogger, "# of arguments: " << methodInfo.GetArgumentsCount());
-		
-		// Get function's return type
-		LPWSTR returnType = new WCHAR[NAME_BUFFER_SIZE];
-		returnType[0] = '\0';
-		CParamParser* paramParser = new CParamParser(*pMetaDataImport);
-		CParam* param = methodInfo.GetReturnValue();
-		sigBlob = methodInfo.GetMethodSignatureBlob();
-		LOG4CXX_DEBUG(myMainLogger, param->paramType);
-		
+	ULONG callConv = methodInfo.GetCallingConvention();
+	ULONG paramsCount = 0;
 
-		// Get method's arguments
-		std::vector<CParam*>* arguments = methodInfo.GetArguments();
-		sigBlob = methodInfo.GetMethodSignatureBlob();
-		for (vector<CParam*>::iterator iter = arguments->begin(); iter != arguments->end(); iter++) {
-			LOG4CXX_INFO(myMainLogger, (*iter)->paramType);
-		}
+	// Get calling convention 
+	sigBlob = methodInfo.GetMethodSignatureBlob();
+	paramsCount = methodInfo.GetArgumentsCount();
+	sigBlob = methodInfo.GetMethodSignatureBlob();
+	LOG4CXX_DEBUG(myMainLogger, "# of arguments: " << methodInfo.GetArgumentsCount());
+	
+	// Get function's return type
+	LPWSTR returnType = new WCHAR[NAME_BUFFER_SIZE];
+	returnType[0] = '\0';
+	CParamParser* paramParser = new CParamParser(*pMetaDataImport);
+	CParam* param = methodInfo.GetReturnValue();
+	sigBlob = methodInfo.GetMethodSignatureBlob();
+	LOG4CXX_DEBUG(myMainLogger, param->paramType);
+	
 
-				
-		LOG4CXX_DEBUG(myMainLogger, ToBinary((void*) &typeDefToken, 4, 3));
-
-		if (SUCCEEDED(hr)) 
-		{
-			hr = pMetaDataImport->GetTypeDefProps(typeDefToken, szClass, NAME_BUFFER_SIZE, &cchClass, NULL, NULL);
-			if (SUCCEEDED(hr)) {
-				_snwprintf_s(wszMethod,NAME_BUFFER_SIZE, NAME_BUFFER_SIZE ,L"%s.%s",szClass,szFunction);
-			}
-
-			ULONG callingConvetion = 0;
-			sigBlob += CorSigUncompressData(sigBlob, &callingConvetion);
-			// getMethodProps error
-		}
-			
-	}
-	else 
-	{
-		// log error
-	}
+	// Get method's arguments
+	std::vector<CParam*>* arguments = methodInfo.GetArguments();
+	sigBlob = methodInfo.GetMethodSignatureBlob();
+	for (vector<CParam*>::iterator iter = arguments->begin(); iter != arguments->end(); iter++) {
+		LOG4CXX_DEBUG(myMainLogger, (*iter)->paramType);
+	}	
 
 	pMetaDataImport->Release();
-	return hr;
+	return S_OK;
+}
+
+void CProfiler::PrintMethodInfo(FunctionID functionId) {
+	
 }
 
 

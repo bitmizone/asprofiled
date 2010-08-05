@@ -20,6 +20,9 @@ CMethodInfo::~CMethodInfo(void)
 
 	if (this->arguments != NULL) {
 	}
+	if (pMetaDataImport != NULL) {
+		pMetaDataImport->Release();
+	}
 }
 
 void CMethodInfo::Initialize() 
