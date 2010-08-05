@@ -303,6 +303,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\TypeInfo.cpp"
+				>
+			</File>
 			<Filter
 				Name="Astudillo"
 				>
@@ -435,6 +439,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TypeInfo.h"
 				>
 			</File>
 			<Filter

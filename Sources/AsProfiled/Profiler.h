@@ -21,6 +21,8 @@
 #include "ParamParser.h"
 #include "GrammarParser.h"
 #include "AttributeReader.h"
+#include "MethodInfo.h"
+#include "TypeInfo.h"
 
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
@@ -75,6 +77,7 @@ private :
 	HRESULT SetEventMask();
 	HRESULT GetFullMethodName(FunctionID functionId, LPWSTR wszMethod);
 	HRESULT GetFunctionData(FunctionID functionId);
+	void PrintMethodInfo(FunctionID functionId);
 	
 	void ParseParam(PCCOR_SIGNATURE signature);
 
