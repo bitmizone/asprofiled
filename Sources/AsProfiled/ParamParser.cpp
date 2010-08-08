@@ -23,80 +23,80 @@ PCCOR_SIGNATURE CParamParser::ParseSignature(PCCOR_SIGNATURE signature, CParam& 
 	switch (corSignature) 
 	{	
 	case ELEMENT_TYPE_VOID:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"void");
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"void");
 		break;							
 	case ELEMENT_TYPE_BOOLEAN:	
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"bool");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"bool");	
 		break;			
 	case ELEMENT_TYPE_CHAR:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE , L"wchar");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE , L"wchar");	
 		break;							
 	case ELEMENT_TYPE_I1:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"int8");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"int8");	
 		break;		 		
 	case ELEMENT_TYPE_U1:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"unsigned int8");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"unsigned int8");	
 		break;	 		
 	case ELEMENT_TYPE_I2:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"int16");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"int16");	
 		break;		
 	case ELEMENT_TYPE_U2:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"unsigned int16");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"unsigned int16");	
 		break;					
 	case ELEMENT_TYPE_I4:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"int32");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"int32");	
 		break;        
 	case ELEMENT_TYPE_U4:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"unsigned int32");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"unsigned int32");	
 		break;				
 	case ELEMENT_TYPE_I8:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"int64");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"int64");	
 		break;				
 	case ELEMENT_TYPE_U8:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"unsigned int64");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"unsigned int64");	
 		break;		
 	case ELEMENT_TYPE_R4:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"float32");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"float32");	
 		break;					
 	case ELEMENT_TYPE_R8:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"float64");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"float64");	
 		break;			 		
 	case ELEMENT_TYPE_STRING:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"String");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"String");	
 		break;	
 	case ELEMENT_TYPE_VAR:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"class variable(unsigned int8)");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"class variable(unsigned int8)");	
 		break;		
 	case ELEMENT_TYPE_MVAR:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"method variable(unsigned int8)");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"method variable(unsigned int8)");	
 		break;					         
 	case ELEMENT_TYPE_TYPEDBYREF:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"refany");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"refany");	
 		break;		 		
 	case ELEMENT_TYPE_I:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"int");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"int");	
 		break;			
 	case ELEMENT_TYPE_U:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"unsigned int");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"unsigned int");	
 		break;			  		
 	case ELEMENT_TYPE_OBJECT:
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"Object");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"Object");	
 		break;		       
 	case ELEMENT_TYPE_SZARRAY:	 
 		signature = ParseSignature(signature, param); 
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE,  L"[]");
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE,  L"[]");
 		break;				
 	case ELEMENT_TYPE_PINNED:
 		signature = ParseSignature( signature, param); 
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"pinned");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"pinned");	
 		break;	        
 	case ELEMENT_TYPE_PTR:   
 		signature = ParseSignature(signature, param); 
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"*");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"*");	
 		break;           
 	case ELEMENT_TYPE_BYREF:   
 		signature = ParseSignature(signature, param); 
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"&");	
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"&");	
 		break;
 	case ELEMENT_TYPE_VALUETYPE:   
 	case ELEMENT_TYPE_CLASS:	
@@ -117,25 +117,25 @@ PCCOR_SIGNATURE CParamParser::ParseSignature(PCCOR_SIGNATURE signature, CParam& 
 				pMetaData.GetTypeDefProps(token, className, NAME_BUFFER_SIZE, NULL, NULL, NULL );
 			}
 
-			wcscat_s(param.paramType, NAME_BUFFER_SIZE, className );
+			wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, className );
 		}
 		break;		
 	case ELEMENT_TYPE_GENERICINST:
 		{
 			signature = ParseSignature( signature, param); 
 
-			wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"<");	
+			wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"<");	
 			ULONG arguments = CorSigUncompressData(signature);
 			for (ULONG i = 0; i < arguments; ++i)
 			{
 				if(i != 0)
 				{
-					wcscat_s(param.paramType, NAME_BUFFER_SIZE, L", ");	
+					wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L", ");	
 				}
 
 				signature = ParseSignature( signature, param);
 			}
-			wcscat_s(param.paramType, NAME_BUFFER_SIZE, L">");	
+			wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L">");	
 		}
 		break;		        
 	case ELEMENT_TYPE_ARRAY:	
@@ -144,7 +144,7 @@ PCCOR_SIGNATURE CParamParser::ParseSignature(PCCOR_SIGNATURE signature, CParam& 
 			ULONG rank = CorSigUncompressData(signature);													
 			if ( rank == 0 ) 
 			{
-				wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"[?]");
+				wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"[?]");
 			}
 			else 
 			{		
@@ -165,12 +165,12 @@ PCCOR_SIGNATURE CParamParser::ParseSignature(PCCOR_SIGNATURE signature, CParam& 
 					lower[i] = CorSigUncompressData( signature ); 
 				}
 
-				wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"[");	
+				wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"[");	
 				for (ULONG i = 0; i < rank; ++i)	
 				{					
 					if (i > 0) 
 					{
-						wcscat_s(param.paramType, NAME_BUFFER_SIZE, L",");
+						wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L",");
 					}
 
 					if (lower[i] == 0)
@@ -180,7 +180,7 @@ PCCOR_SIGNATURE CParamParser::ParseSignature(PCCOR_SIGNATURE signature, CParam& 
 							WCHAR *size = new WCHAR[NAME_BUFFER_SIZE];
 							size[0] = '\0';
 							wsprintf(size, L"%d", sizes[i]);											
-							wcscat_s(param.paramType, NAME_BUFFER_SIZE, size);
+							wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, size);
 						}
 					}	
 					else	
@@ -188,19 +188,19 @@ PCCOR_SIGNATURE CParamParser::ParseSignature(PCCOR_SIGNATURE signature, CParam& 
 						WCHAR *low = new WCHAR[NAME_BUFFER_SIZE];
 						low[0] = '\0';
 						wsprintf(low, L"%d", lower[i]);
-						wcscat_s(param.paramType, NAME_BUFFER_SIZE, low);
-						wcscat_s(param.paramType, 3, L"...");	
+						wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, low);
+						wcscat_s(param.paramTypeAsString, 3, L"...");	
 
 						if (sizes[i] != 0)	
 						{
 							WCHAR *size = new WCHAR[NAME_BUFFER_SIZE];
 							size[0] = '\0';
 							wsprintf(size, L"%d", (lower[i] + sizes[i] + 1));
-							wcscat_s(param.paramType, NAME_BUFFER_SIZE,  size);
+							wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE,  size);
 						}
 					}
 				}
-				wcscat_s(param.paramType, NAME_BUFFER_SIZE, L"]");
+				wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, L"]");
 			}
 		} 
 		break;   		    
@@ -210,7 +210,7 @@ PCCOR_SIGNATURE CParamParser::ParseSignature(PCCOR_SIGNATURE signature, CParam& 
 		WCHAR *elementType = new WCHAR[NAME_BUFFER_SIZE];
 		elementType[0] = '\0';
 		wsprintf(elementType, L"<UNKNOWN:0x%X>", corSignature);
-		wcscat_s(param.paramType, NAME_BUFFER_SIZE, elementType);
+		wcscat_s(param.paramTypeAsString, NAME_BUFFER_SIZE, elementType);
 		break;				                      				            
 	}
 

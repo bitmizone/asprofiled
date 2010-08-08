@@ -9,7 +9,7 @@ public:
 	CParam(void);
 	~CParam(void);
 	WCHAR* paramName;
-	WCHAR* paramType;
+	WCHAR* paramTypeAsString;
 	CorElementType elementType;
 	PCCOR_SIGNATURE beginningOfParamSignature;
 

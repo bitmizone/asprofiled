@@ -9,6 +9,8 @@
 
 enum StateOfReadingMethodBlob { BEGINNING, CALLING_CONVENTION_READ, ARGUMENTS_COUNT_READ, RETURN_VALUE_TYPE_READ, ARGUMENTS_TYPES_READ };
 
+const int MaxParametersCount = 1024;
+
 class CMethodInfo
 {
 public:
