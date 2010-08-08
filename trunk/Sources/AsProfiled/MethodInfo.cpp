@@ -132,6 +132,16 @@ std::vector<CParam*>* CMethodInfo::GetArguments() {
 		this->GetReturnValue();
 		return this->GetArguments();
 	}
+	HCORENUM parametersEnum = NULL;
+	ULONG tempArgumentsCount;
+	ULONG parameterNameLength;
+	mdParamDef argumentsTokens[MaxParametersCount];
+	this->pMetaDataImport->EnumParams(&parametersEnum, this->methodToken, argumentsTokens, MaxParametersCount, &tempArgumentsCount);
+	ASSERT(tempArgumentsCount == this->argumentsCount);
+	for (ULONG i = 0; i < tempArgumentsCount; ++i) {
+		CParam* argument = this->arguments->at(i);
+		this->pMetaDataImport->GetParamProps(argumentsTokens[i], NULL, NULL, argument->paramName, NAME_BUFFER_SIZE, &parameterNameLength, NULL, NULL, NULL, NULL);
+    }
 	return this->arguments;
 }
 

@@ -141,15 +141,17 @@ void CProfiler::PrintMethodInfo(CMethodInfo& methodInfo) {
 	returnType[0] = '\0';
 	CParamParser* paramParser = new CParamParser(*methodInfo.GetMetaDataImport());
 	CParam* param = methodInfo.GetReturnValue();
-	LOG4CXX_DEBUG(myMainLogger, param->paramType);
+	LOG4CXX_DEBUG(myMainLogger, param->paramTypeAsString);
 	
 
 	// Get method's arguments
 	std::vector<CParam*>* arguments = methodInfo.GetArguments();
 	for (vector<CParam*>::iterator iter = arguments->begin(); iter != arguments->end(); iter++) {
-		LOG4CXX_DEBUG(myMainLogger, (*iter)->paramType);
-		LOG4CXX_DEBUG(myMainLogger, static_cast<int>((*iter)->elementType));
-		cout << hex << static_cast<int>((*iter)->elementType) << endl;
+		LOG4CXX_DEBUG(myMainLogger, (*iter)->paramTypeAsString);
+		// should match with CorElementType enum
+		//LOG4CXX_DEBUG(myMainLogger, static_cast<int>((*iter)->elementType));
+		//cout << hex << static_cast<int>((*iter)->elementType) << endl; 
+		LOG4CXX_INFO(myMainLogger, (*iter)->paramName);
 	}	
 }
 
