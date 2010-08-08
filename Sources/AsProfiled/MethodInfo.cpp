@@ -2,11 +2,13 @@
 #include "MethodInfo.h"
 
 CMethodInfo::CMethodInfo(FunctionID functionIdArg, 
-						 CComQIPtr<ICorProfilerInfo2> ICorProfilerInfo2) : 
+						 CComQIPtr<ICorProfilerInfo2> ICorProfilerInfo2,
+						 COR_PRF_FUNCTION_ARGUMENT_INFO* functionArguments) : 
 							functionId(functionIdArg), 
-							iCorProfilerInfo2(ICorProfilerInfo2)
+							iCorProfilerInfo2(ICorProfilerInfo2),
+							argumentsInfo(functionArguments)
 {
-
+	Initialize();
 }
 
 CMethodInfo::~CMethodInfo(void)
@@ -97,7 +99,7 @@ CParam* CMethodInfo::GetReturnValue() {
 	}
 	if (this->state == ARGUMENTS_COUNT_READ) {
 		this->returnValue = new CParam();
-		this->methodSignatureBlob = paramParser->ParseSignature(this->methodSignatureBlob, returnValue->paramType);
+		this->methodSignatureBlob = paramParser->ParseSignature(this->methodSignatureBlob, *returnValue);
 		this->state = RETURN_VALUE_TYPE_READ;
 	}else{
 		this->GetArgumentsCount();
@@ -105,6 +107,11 @@ CParam* CMethodInfo::GetReturnValue() {
 	}
 	return this->returnValue;
 }
+
+
+//read agrument value
+
+
 
 std::vector<CParam*>* CMethodInfo::GetArguments() {
 	if (this->arguments != NULL) {
@@ -115,7 +122,7 @@ std::vector<CParam*>* CMethodInfo::GetArguments() {
 		for ( ULONG i = 0; (this->methodSignatureBlob != NULL) && (i < this->argumentsCount); ++i )
 		{
 			CParam* argument = new CParam();
-			this->methodSignatureBlob = paramParser->ParseSignature(this->methodSignatureBlob, argument->paramType);
+			this->methodSignatureBlob = paramParser->ParseSignature(this->methodSignatureBlob, *argument);
 			if ( this->methodSignatureBlob != NULL )
 			{
 				this->arguments->push_back(argument);
@@ -137,18 +144,19 @@ PCCOR_SIGNATURE CMethodInfo::GetMethodSignatureBlob() {
 }
 
 mdTypeDef CMethodInfo::GetTypeToken() {
-	if (this->typeDefToken == NULL) {
+	if (this->typeDefToken == mdTypeDefNil) {
 		this->InitializeInternals();
 	}
 	return this->typeDefToken;
 }
 
 
-
+// Gets metaData object for importing and manipulating existing metadata
 IMetaDataImport* CMethodInfo::GetMetaDataImport() 
 {
 	return this->pMetaDataImport;
 }
+
 mdMethodDef CMethodInfo::GetMethodToken() 
 {
 	return this->methodToken;

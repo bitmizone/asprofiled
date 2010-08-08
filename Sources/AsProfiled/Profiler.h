@@ -75,9 +75,9 @@ private :
 	CComQIPtr<ICorProfilerInfo2> _ICorProfilerInfo2;
 	
 	HRESULT SetEventMask();
-	HRESULT GetFullMethodName(FunctionID functionId, LPWSTR wszMethod);
+	HRESULT GetFullMethodName(CMethodInfo& methodInfo, LPWSTR wszMethod);
 	HRESULT GetFunctionData(FunctionID functionId);
-	void PrintMethodInfo(FunctionID functionId);
+	void PrintMethodInfo(CMethodInfo& methodInfo);
 	
 	void ParseParam(PCCOR_SIGNATURE signature);
 

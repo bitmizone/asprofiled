@@ -37,16 +37,16 @@ void CProfiler::MapFunction(FunctionID functionId) {
 
 // Function called by .NET runtime when function is invoked
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
-	
-	// buffer for function name
+	// Create methodInfo object which has the entry point for reading every metadata related to called method
+	CMethodInfo methodInfo(functionID, _ICorProfilerInfo2, argumentInfo);
+	// Buffer for function name
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
-	// read function name
-	HRESULT hr = GetFullMethodName(functionID, szMethodName);
-	
+	// Read method's full qualified name
+	HRESULT hr = GetFullMethodName(methodInfo, szMethodName);
 	LOG4CXX_INFO(myMainLogger, szMethodName);
-	// Declaration of pointer to IMetaDataImport interface, 
-	// which provides methods for importing and manipulating existing metadata
-	IMetaDataImport* metaDataImport = NULL;
+
+	PrintMethodInfo(methodInfo);
+
 	// A pointer that references the metadata for called function 
 	mdToken token = mdTokenNil;
 	mdMethodDef mdMethod = mdTypeDefNil;
@@ -65,21 +65,18 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	// Parameter's type
 	DWORD corElementType = 0;
 	
-	// Retrieve function's metadata 
-	 _ICorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionID, IID_IMetaDataImport, (IUnknown**) &metaDataImport, &token);
-	
-	// Get enumerator to interate over parameters
-	metaDataImport->EnumParams(&paramsEnum, token, params, 1024, &paramsCount);
 	ULONG32 pcTypeArgs = 0;		
-	metaDataImport->CloseEnum(paramsEnum);	
 
 	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
 	_ICorProfilerInfo2->GetStringLayout(&bufferLengthOffset, &stringLengthOffset, &bufferOffset);
 
-	// HRESULT hh = _ICorProfilerInfo2->GetFunctionInfo2(functionID, func, &classId, &moduleId, &token, paramsCount, &pcTypeArgs, typeArgs);
 	bool enableStringInfo = false;
+	LOG4CXX_DEBUG(myMainLogger, "1. no of args " << methodInfo.GetArgumentsCount());
+	LOG4CXX_DEBUG(myMainLogger, "2. no of rngs " << argumentInfo->numRanges);
 	for (UINT i = 0 ; i < argumentInfo->numRanges ; i++) {
 		COR_PRF_FUNCTION_ARGUMENT_RANGE range = argumentInfo->ranges[i];
+		LOG4CXX_DEBUG(myMainLogger, "address " << range.startAddress);
+		LOG4CXX_DEBUG(myMainLogger, "length " << range.length);
 
 		if (i == 0 || range.length == 0) 
 		{
@@ -88,18 +85,13 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 		ObjectID* id = reinterpret_cast<ObjectID*>( range.startAddress);
 		ULONG size = 0;
 		if (enableStringInfo) {
-			/*DWORD stringLen = 0;
-			UINT_PTR* tp = reinterpret_cast<UINT_PTR*>(id);*/
 			ObjectID stringOID;
 			DWORD stringLength;
 			WCHAR tempString[NAME_BUFFER_SIZE];  
 			memcpy(&stringOID, ((const void *)(range.startAddress)), range.length);
 			memcpy(&stringLength, ((const void *)(stringOID + stringLengthOffset)), sizeof(DWORD));
 			memcpy(tempString, ((const void *)(stringOID + bufferOffset)), stringLength * sizeof(DWORD));
-			//tempString[stringLength * sizeof(DWORD)] = '\0'; 
-			LOG4CXX_DEBUG(myMainLogger, tempString);
-			
-			//UINT stringLen = *(tp + stringLengthOffset);
+			LOG4CXX_INFO(myMainLogger, tempString);
 			LOG4CXX_DEBUG(myMainLogger, "len = " << stringLength)
 		}
 		if (*id == 0x1000) {
@@ -118,63 +110,47 @@ HRESULT CProfiler::GetFunctionData(FunctionID functionId)
 	return S_OK;
 }
 
-HRESULT CProfiler::GetFullMethodName(FunctionID functionId, LPWSTR wszMethod) {
-	IMetaDataImport* pMetaDataImport = 0;
-	mdMethodDef methodToken = mdTypeDefNil;
-	mdTypeDef typeDefToken = mdTypeDefNil;	
+HRESULT CProfiler::GetFullMethodName(CMethodInfo& methodInfo, LPWSTR wszMethod) {
 	
-	PCCOR_SIGNATURE sigBlob = NULL;
-	
-	CMethodInfo methodInfo(functionId, _ICorProfilerInfo2);
-	methodInfo.Initialize();
-
-	pMetaDataImport = methodInfo.GetMetaDataImport();
-	methodToken = methodInfo.GetMethodToken();
-	
-	sigBlob = methodInfo.GetMethodSignatureBlob();
-	methodInfo.GetMethodName();
-	typeDefToken = methodInfo.GetTypeToken();
-	CTypeInfo typeInfo(pMetaDataImport, typeDefToken);
+	CTypeInfo typeInfo(methodInfo.GetMetaDataImport(), methodInfo.GetTypeToken());
 
 	wstring fullMethodName(typeInfo.GetName());
 	fullMethodName =  fullMethodName.append(L".");
 	fullMethodName = fullMethodName.append(methodInfo.GetMethodName());
 	memcpy(wszMethod, fullMethodName.c_str(), (fullMethodName.size() + 1) * sizeof(WCHAR) );
+
+	return S_OK;
+}
+
+void CProfiler::PrintMethodInfo(CMethodInfo& methodInfo) {
 	
-	this->attributeReader->Initialize(methodToken, pMetaDataImport);
+	CTypeInfo typeInfo(methodInfo.GetMetaDataImport(), methodInfo.GetTypeToken());
+	
+	this->attributeReader->Initialize(methodInfo.GetMethodToken(), methodInfo.GetMetaDataImport());
 	this->attributeReader->PrintAttributesInfo();
 
 	ULONG callConv = methodInfo.GetCallingConvention();
 	ULONG paramsCount = 0;
 
 	// Get calling convention 
-	sigBlob = methodInfo.GetMethodSignatureBlob();
 	paramsCount = methodInfo.GetArgumentsCount();
-	sigBlob = methodInfo.GetMethodSignatureBlob();
 	LOG4CXX_DEBUG(myMainLogger, "# of arguments: " << methodInfo.GetArgumentsCount());
 	
 	// Get function's return type
 	LPWSTR returnType = new WCHAR[NAME_BUFFER_SIZE];
 	returnType[0] = '\0';
-	CParamParser* paramParser = new CParamParser(*pMetaDataImport);
+	CParamParser* paramParser = new CParamParser(*methodInfo.GetMetaDataImport());
 	CParam* param = methodInfo.GetReturnValue();
-	sigBlob = methodInfo.GetMethodSignatureBlob();
 	LOG4CXX_DEBUG(myMainLogger, param->paramType);
 	
 
 	// Get method's arguments
 	std::vector<CParam*>* arguments = methodInfo.GetArguments();
-	sigBlob = methodInfo.GetMethodSignatureBlob();
 	for (vector<CParam*>::iterator iter = arguments->begin(); iter != arguments->end(); iter++) {
 		LOG4CXX_DEBUG(myMainLogger, (*iter)->paramType);
+		LOG4CXX_DEBUG(myMainLogger, static_cast<int>((*iter)->elementType));
+		cout << hex << static_cast<int>((*iter)->elementType) << endl;
 	}	
-
-	pMetaDataImport->Release();
-	return S_OK;
-}
-
-void CProfiler::PrintMethodInfo(FunctionID functionId) {
-	
 }
 
 
