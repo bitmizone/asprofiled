@@ -36,6 +36,10 @@ public:
 
 	
 private:
+
+	void AssignArgumentsNames();
+	void AssignArgumentsData();
+
 	// fields
 	CComQIPtr<ICorProfilerInfo2> iCorProfilerInfo2;
 	// Object for operating and extracting metadata
