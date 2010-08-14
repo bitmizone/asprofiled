@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "profiler.h"
-
+#include "MethodInfo.h"
 
 using namespace std;;
 using namespace log4cxx;
@@ -67,37 +67,44 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	
 	ULONG32 pcTypeArgs = 0;		
 
+	this->attributeReader->Initialize(methodInfo.GetMethodToken(), methodInfo.GetMetaDataImport());
+	//this->attributeReader->PrintAttributesInfo();
+	this->attributeReader->ReadAttributes();
+
 	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
 	_ICorProfilerInfo2->GetStringLayout(&bufferLengthOffset, &stringLengthOffset, &bufferOffset);
 
-	bool enableStringInfo = false;
-	LOG4CXX_DEBUG(myMainLogger, "1. no of args " << methodInfo.GetArgumentsCount());
-	LOG4CXX_DEBUG(myMainLogger, "2. no of rngs " << argumentInfo->numRanges);
-	for (UINT i = 0 ; i < argumentInfo->numRanges ; i++) {
-		COR_PRF_FUNCTION_ARGUMENT_RANGE range = argumentInfo->ranges[i];
-		LOG4CXX_DEBUG(myMainLogger, "address " << range.startAddress);
-		LOG4CXX_DEBUG(myMainLogger, "length " << range.length);
+	// WORKING EXAMPLE OF READING STRING VALUE
+	// DO NOT DELETE
 
-		if (i == 0 || range.length == 0) 
-		{
-			continue;
-		}
-		ObjectID* id = reinterpret_cast<ObjectID*>( range.startAddress);
-		ULONG size = 0;
-		if (enableStringInfo) {
-			ObjectID stringOID;
-			DWORD stringLength;
-			WCHAR tempString[NAME_BUFFER_SIZE];  
-			memcpy(&stringOID, ((const void *)(range.startAddress)), range.length);
-			memcpy(&stringLength, ((const void *)(stringOID + stringLengthOffset)), sizeof(DWORD));
-			memcpy(tempString, ((const void *)(stringOID + bufferOffset)), stringLength * sizeof(DWORD));
-			LOG4CXX_INFO(myMainLogger, tempString);
-			LOG4CXX_DEBUG(myMainLogger, "len = " << stringLength)
-		}
-		if (*id == 0x1000) {
-			enableStringInfo = true;
-		}
-	}
+	//bool enableStringInfo = false;
+	//LOG4CXX_DEBUG(myMainLogger, "1. no of args " << methodInfo.GetArgumentsCount());
+	//LOG4CXX_DEBUG(myMainLogger, "2. no of rngs " << argumentInfo->numRanges);
+	//for (UINT i = 0 ; i < argumentInfo->numRanges ; i++) {
+	//	COR_PRF_FUNCTION_ARGUMENT_RANGE range = argumentInfo->ranges[i];
+	//	LOG4CXX_DEBUG(myMainLogger, "address " << range.startAddress);
+	//	LOG4CXX_DEBUG(myMainLogger, "length " << range.length);
+
+	//	if (i == 0 || range.length == 0) 
+	//	{
+	//		continue;
+	//	}
+	//	ObjectID* id = reinterpret_cast<ObjectID*>( range.startAddress);
+	//	ULONG size = 0;
+	//	if (enableStringInfo) {
+	//		ObjectID stringOID;
+	//		DWORD stringLength;
+	//		WCHAR tempString[NAME_BUFFER_SIZE];  
+	//		memcpy(&stringOID, ((const void *)(range.startAddress)), range.length);
+	//		memcpy(&stringLength, ((const void *)(stringOID + stringLengthOffset)), sizeof(DWORD));
+	//		memcpy(tempString, ((const void *)(stringOID + bufferOffset)), stringLength * sizeof(DWORD));
+	//		LOG4CXX_INFO(myMainLogger, tempString);
+	//		LOG4CXX_DEBUG(myMainLogger, "len = " << stringLength)
+	//	}
+	//	if (*id == 0x1000) {
+	//		enableStringInfo = true;
+	//	}
+	//}
 }
 
 void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange) {
@@ -126,8 +133,6 @@ void CProfiler::PrintMethodInfo(CMethodInfo& methodInfo) {
 	
 	CTypeInfo typeInfo(methodInfo.GetMetaDataImport(), methodInfo.GetTypeToken());
 	
-	this->attributeReader->Initialize(methodInfo.GetMethodToken(), methodInfo.GetMetaDataImport());
-	this->attributeReader->PrintAttributesInfo();
 
 	ULONG callConv = methodInfo.GetCallingConvention();
 	ULONG paramsCount = 0;
@@ -151,7 +156,8 @@ void CProfiler::PrintMethodInfo(CMethodInfo& methodInfo) {
 		// should match with CorElementType enum
 		//LOG4CXX_DEBUG(myMainLogger, static_cast<int>((*iter)->elementType));
 		//cout << hex << static_cast<int>((*iter)->elementType) << endl; 
-		LOG4CXX_INFO(myMainLogger, (*iter)->paramName);
+		LOG4CXX_DEBUG(myMainLogger, (*iter)->paramName);
+		LOG4CXX_DEBUG(myMainLogger, (*iter)->data);
 	}	
 }
 

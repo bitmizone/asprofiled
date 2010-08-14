@@ -132,6 +132,27 @@ std::vector<CParam*>* CMethodInfo::GetArguments() {
 		this->GetReturnValue();
 		return this->GetArguments();
 	}
+	
+	AssignArgumentsNames();
+	AssignArgumentsData();
+	return this->arguments;
+}
+
+void CMethodInfo::AssignArgumentsData() {
+	UINT_PTR argumentData = NULL;
+	if (this->argumentsInfo->numRanges == 0) {
+		return;
+	}
+	COR_PRF_FUNCTION_ARGUMENT_RANGE currentRange = this->argumentsInfo->ranges[0];
+	for (UINT32 i = 0; i < this->argumentsCount; ++i) {
+		CParam* argument = this->arguments->at(i);
+		argument->ReadData(currentRange.startAddress);
+		break;
+	}
+	
+}
+
+void CMethodInfo::AssignArgumentsNames() {
 	HCORENUM parametersEnum = NULL;
 	ULONG tempArgumentsCount;
 	ULONG parameterNameLength;
@@ -142,9 +163,7 @@ std::vector<CParam*>* CMethodInfo::GetArguments() {
 		CParam* argument = this->arguments->at(i);
 		this->pMetaDataImport->GetParamProps(argumentsTokens[i], NULL, NULL, argument->paramName, NAME_BUFFER_SIZE, &parameterNameLength, NULL, NULL, NULL, NULL);
     }
-	return this->arguments;
 }
-
 
 PCCOR_SIGNATURE CMethodInfo::GetMethodSignatureBlob() {
 	if (methodSignatureBlob == NULL) {

@@ -2,7 +2,7 @@
 #include "AttributeReader.h"
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
-
+#include "common.h"
 using namespace log4cxx;
 
 LoggerPtr attributeLogger(Logger::getLogger("attributeReader"));
@@ -10,7 +10,7 @@ LoggerPtr attributeLogger(Logger::getLogger("attributeReader"));
 CAttributeReader::CAttributeReader(void)
 {
 	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
-	attributeLogger->setLevel(Level::toLevel(log4cxx::Level::FATAL_INT));
+	attributeLogger->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
 }
 
 CAttributeReader::~CAttributeReader(void)
@@ -35,6 +35,7 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 
 	pMetaDataImport->CountEnum(phEnum, &this->attributesCount);
 	this->metadataCustomAttributes = new mdCustomAttribute[this->attributesCount];
+	phEnum = NULL;
 	pMetaDataImport->EnumCustomAttributes(&phEnum, this->methodToken, 0, 
 												this->metadataCustomAttributes, attributesCount, NULL);
 
@@ -43,29 +44,31 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 
 void CAttributeReader::PrintAttributesInfo() {
 
-	LOG4CXX_DEBUG(attributeLogger, "------Attributes Info------");
-	LOG4CXX_DEBUG(attributeLogger, "No of attributes: " << this->attributesCount);
-	LOG4CXX_DEBUG(attributeLogger,"------End Of Attribute Info------");
+	LOG4CXX_INFO(attributeLogger, "------Attributes Info------");
+	LOG4CXX_INFO(attributeLogger, "No of attributes: " << this->attributesCount);
+	LOG4CXX_INFO(attributeLogger,"------End Of Attribute Info------");
 }
 
 void CAttributeReader::ReadAttributes() {
 	HRESULT hr;
+	
 	for (ULONG i = 0 ; i < this->attributesCount ; ++i) {
 
 		// get info about custom attribute
 		mdCustomAttribute *currentAttribute = &this->metadataCustomAttributes[i];
-		
+		// LOG4CXX_INFO(attributeLogger, "address" << currentAttribute);
 		const void* attributeBlob = NULL;
 		ULONG attributeBlobSize = 0;
 		mdMethodDef attributeConstructor = mdTokenNil;
 		pMetaDataImport->GetCustomAttributeProps(*currentAttribute, NULL, &attributeConstructor, &attributeBlob, &attributeBlobSize); 
-
+		//ASSERT(attributeConstructor != mdTokenNil);
+		//LOG4CXX_INFO(attributeLogger, "Blob size " << attributeBlobSize);
 		LOG4CXX_DEBUG(attributeLogger, "Attribute ctor token value: " <<  attributeConstructor);
 		LOG4CXX_DEBUG(attributeLogger, "Custom attribute token value: " << *currentAttribute);
 
 		// should be always equal 1
 		INT16 prolog =  *((UINT16*) attributeBlob);
-		LOG4CXX_DEBUG(attributeLogger, "prolog (always=1) = " << prolog);
+		LOG4CXX_INFO(attributeLogger, "prolog (always=1) = " << prolog);
 
 		PCCOR_SIGNATURE methodMetadataBlob = 0;
 		ULONG metaDataBlobSize = 0;
@@ -79,10 +82,17 @@ void CAttributeReader::ReadAttributes() {
 											&metaDataBlobSize, 
 											NULL, 
 											NULL);
-		CProfilerHelper::GetInstance().ParseCallingConvention(methodMetadataBlob);
+
+		ASSERT(hr == S_OK);
+
+		//CProfilerHelper::GetInstance().ParseCallingConvention(methodMetadataBlob);
 		ULONG argsCount = CProfilerHelper::GetInstance().GetArgumentsCount(methodMetadataBlob);	
 
 		if (argsCount == 3) {
+			WCHAR* argument = CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
+			PrintCharArray(argument);
+			std::cout << std::endl;
+			//LOG4CXX_INFO(attributeLogger, argument);
 						//////////////////////////////////////////
 						///////// GRAMMAR PARSER SECTION//////////
 						

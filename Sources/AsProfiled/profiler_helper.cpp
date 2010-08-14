@@ -60,7 +60,6 @@ void CProfilerHelper::ParseCallingConvention(PCCOR_SIGNATURE& data) {
 ULONG CProfilerHelper::GetArgumentsCount(PCCOR_SIGNATURE &data) {
 	ULONG argsCount = 0;
 	CorSigUncompressData(data, &argsCount);
-	std::cout << "ParamCount " << argsCount << std::endl;
 	return argsCount;
 }
 
@@ -71,9 +70,8 @@ WCHAR* CProfilerHelper::ParseAttributeMetaData(const void* attributeBlob, ULONG 
 	static UINT8 threeBytesLengthUnicodeMarker = 14;
 	static UINT8 fourBytesLengthUnicodeMarker = 30;
 	UINT8* blob = (UINT8*) attributeBlob;
-	ToBinary((void*)blob, blobSize, 0);
+	//ToBinary((void*)blob, blobSize, 0);
 	ULONG prolog = *((INT16*)blob);
-	std::cout << " PROLOG = "<< prolog << std::endl;
 	// move forward
 	// skip prolog
 	blob += 2;
@@ -85,9 +83,9 @@ WCHAR* CProfilerHelper::ParseAttributeMetaData(const void* attributeBlob, ULONG 
 	
 	ULONG packedLen = 0; 
 	CorSigUncompressData(blob, &packedLen);
-	std::cout<< "PackedLen is " << packedLen << std::endl;
+	//std::cout<< "PackedLen is " << packedLen << std::endl;
 	ULONG consumedBytes = 0 ;
-	WCHAR* arg = new WCHAR[1024];
+	WCHAR* arg = new WCHAR[packedLen];
 	UINT index=0;
 	while (consumedBytes <= packedLen) {
 		UINT8 byte = *blob;
@@ -107,6 +105,5 @@ WCHAR* CProfilerHelper::ParseAttributeMetaData(const void* attributeBlob, ULONG 
 		
 	}
 	arg[index] = '\0';
-	PrintCharArray(arg);
 	return arg;
 }
