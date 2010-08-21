@@ -16,6 +16,8 @@ class CMethodInfo
 public:
 	
 	CMethodInfo(FunctionID functionIdArg, CComQIPtr<ICorProfilerInfo2> ICorProfilerInfo2, COR_PRF_FUNCTION_ARGUMENT_INFO* functionArguments);
+	CMethodInfo(IMetaDataImport* metaDataImport, mdMethodDef methodTokenArg);
+	CMethodInfo();
 	~CMethodInfo(void);
 	void Initialize();
 	void InitializeInternals();
@@ -36,7 +38,7 @@ public:
 
 	
 private:
-
+	void SetDefaultValues();
 	void AssignArgumentsNames();
 	void AssignArgumentsData();
 

@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{775AA558-DF4A-4635-BEED-F482DB7909A5}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{792EE120-AD8A-4390-BB3D-7E62EE994B9D}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestApplication</RootNamespace>
-    <AssemblyName>TestApplication</AssemblyName>
+    <RootNamespace>AsPro</RootNamespace>
+    <AssemblyName>AsPro</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -45,15 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calculator\Calculator.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="AsProfiled.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AsContracts\AsContracts.csproj">
-      <Project>{F1DA7836-5537-4C92-998A-1C4A60BC0DCB}</Project>
-      <Name>AsContracts</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

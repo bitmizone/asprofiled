@@ -8,9 +8,19 @@ CMethodInfo::CMethodInfo(FunctionID functionIdArg,
 							iCorProfilerInfo2(ICorProfilerInfo2),
 							argumentsInfo(functionArguments)
 {
+	this->SetDefaultValues();
 	Initialize();
+	this->paramParser = new CParamParser(*pMetaDataImport);
 }
 
+CMethodInfo::CMethodInfo() { }
+
+CMethodInfo::CMethodInfo(IMetaDataImport* metaDataImport, mdMethodDef methodTokenArg) :
+						pMetaDataImport(metaDataImport), methodToken(methodTokenArg) 
+{
+	this->SetDefaultValues();
+	this->paramParser = new CParamParser(*pMetaDataImport);
+}
 CMethodInfo::~CMethodInfo(void)
 {
 	if (methodName != NULL) {
@@ -20,18 +30,13 @@ CMethodInfo::~CMethodInfo(void)
 		delete this->paramParser;
 	}
 
-	if (this->arguments != NULL) {
-	}
-	if (pMetaDataImport != NULL) {
-		pMetaDataImport->Release();
-	}
+	//if (this->arguments != NULL) {
+	//}
 }
 
-void CMethodInfo::Initialize() 
+void CMethodInfo::SetDefaultValues() 
 {
-	this->methodToken = mdTypeDefNil;
 	this->typeDefToken = mdTypeDefNil;	
-	this->pMetaDataImport = NULL;
 	this->methodSignatureBlob = NULL;
 	this->methodName = NULL;
 	this->methodNameLength = 0;
@@ -41,20 +46,24 @@ void CMethodInfo::Initialize()
 	this->argumentsCount = 0;
 	this->returnValue = NULL;
 	this->arguments = NULL;
+	this->methodName = new WCHAR[NAME_BUFFER_SIZE];
+}
 
+void CMethodInfo::Initialize() 
+{
 	HRESULT hr = this->iCorProfilerInfo2->GetTokenAndMetaDataFromFunction(functionId, IID_IMetaDataImport, 
 																			(LPUNKNOWN *) &pMetaDataImport, 
-																			&methodToken);
-	this->paramParser = new CParamParser(*pMetaDataImport);
+																			&methodToken);	
 }
 
 void CMethodInfo::InitializeInternals() 
 {
-	this->methodName = new WCHAR[NAME_BUFFER_SIZE];
+	
 	this->pMetaDataImport->GetMethodProps(methodToken, &this->typeDefToken, this->methodName, 
 											NAME_BUFFER_SIZE, &this->methodNameLength, NULL, 
 											&this->methodSignatureBlob, &this->methodSignatureBlobSize,
 											NULL, NULL);
+	this->state = BEGINNING;
 }
 
 WCHAR* CMethodInfo::GetMethodName() {
