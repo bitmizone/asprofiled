@@ -43,7 +43,7 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
 	// Read method's full qualified name
 	HRESULT hr = GetFullMethodName(methodInfo, szMethodName);
-	LOG4CXX_INFO(myMainLogger, szMethodName);
+	LOG4CXX_DEBUG(myMainLogger, szMethodName);
 
 	PrintMethodInfo(methodInfo);
 

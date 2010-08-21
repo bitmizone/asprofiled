@@ -3,6 +3,9 @@
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
 #include "common.h"
+#include "MethodInfo.h"
+#include "TypeInfo.h"
+
 using namespace log4cxx;
 
 LoggerPtr attributeLogger(Logger::getLogger("attributeReader"));
@@ -61,19 +64,19 @@ void CAttributeReader::ReadAttributes() {
 		ULONG attributeBlobSize = 0;
 		mdMethodDef attributeConstructor = mdTokenNil;
 		pMetaDataImport->GetCustomAttributeProps(*currentAttribute, NULL, &attributeConstructor, &attributeBlob, &attributeBlobSize); 
-		//ASSERT(attributeConstructor != mdTokenNil);
+		ASSERT(attributeConstructor != mdTokenNil);
 		//LOG4CXX_INFO(attributeLogger, "Blob size " << attributeBlobSize);
-		LOG4CXX_DEBUG(attributeLogger, "Attribute ctor token value: " <<  attributeConstructor);
-		LOG4CXX_DEBUG(attributeLogger, "Custom attribute token value: " << *currentAttribute);
 
 		// should be always equal 1
 		INT16 prolog =  *((UINT16*) attributeBlob);
 		LOG4CXX_INFO(attributeLogger, "prolog (always=1) = " << prolog);
-
+		
 		PCCOR_SIGNATURE methodMetadataBlob = 0;
 		ULONG metaDataBlobSize = 0;
+		mdTypeDef typeDefToken = mdTokenNil;
+		
 		hr = pMetaDataImport->GetMethodProps(attributeConstructor, 
-											NULL, 
+											&typeDefToken, 
 											NULL, 
 											NULL, 
 											NULL, 
@@ -82,14 +85,18 @@ void CAttributeReader::ReadAttributes() {
 											&metaDataBlobSize, 
 											NULL, 
 											NULL);
-
+		
 		ASSERT(hr == S_OK);
+		CMethodInfo attributeMethodInfo(this->pMetaDataImport, attributeConstructor);
+		CTypeInfo* typeInfo = new CTypeInfo(pMetaDataImport, typeDefToken);
 
-		//CProfilerHelper::GetInstance().ParseCallingConvention(methodMetadataBlob);
-		ULONG argsCount = CProfilerHelper::GetInstance().GetArgumentsCount(methodMetadataBlob);	
-
-		if (argsCount == 3) {
+		std::wstring attributeName(typeInfo->GetName());
+		LOG4CXX_INFO(attributeLogger, attributeName.c_str());
+		LOG4CXX_INFO(attributeLogger, "Attribute arguments count: " << attributeMethodInfo.GetArgumentsCount());
+		ULONG argsCount = attributeMethodInfo.GetArgumentsCount();	
+		if (attributeName.find(L"AsContractAttribute") != std::string::npos) {
 			WCHAR* argument = CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
+			std::cout << "FOUND" << std::endl;
 			PrintCharArray(argument);
 			std::cout << std::endl;
 			//LOG4CXX_INFO(attributeLogger, argument);
@@ -137,23 +144,8 @@ void CAttributeReader::ReadAttributes() {
 						//}
 
 		}
-		
-		//mdMethodDef typeToken = mdTokenNil;
-		//hr = pMetaDataImport->GetCustomAttributeProps(metadataCustomAttr[i], NULL, &typeToken, NULL, NULL);
-		//LPWSTR typeName = new WCHAR[NAME_BUFFER_SIZE];
-		//typeName[0] = '\0';
-		//hr = pMetaDataImport->GetMethodProps(typeToken, NULL, typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL, NULL, NULL, NULL);
-		//hr = pMetaDataImport->GetTypeDefProps(metadataCustomAttr[i], typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL);
-		//mdTypeDef typeOfAttribute = mdTokenNil;
-		//pMetaDataImport->GetMemberRefProps(typeToken, &typeOfAttribute, typeName, NAME_BUFFER_SIZE, NULL, NULL, NULL);
-
-		//cout << endl;
-		//PrintCharArray(typeName);
-		//cout << endl;
-
-		//LPWSTR typeOwner = new WCHAR[NAME_BUFFER_SIZE];
-		//pMetaDataImport->GetTypeRefProps(typeOfAttribute, NULL, typeOwner, NAME_BUFFER_SIZE, NULL);
-		//PrintCharArray(typeOwner);
+				
+		delete typeInfo;
 	}
 }
 
