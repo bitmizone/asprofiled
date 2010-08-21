@@ -9,7 +9,7 @@ namespace TestApplication.Calculator
     class  Calculator : Object
     {
         //[AsContract(PreCondition="bieda", Invariant="", PostCondition="")] // named args
-        [AsContract(null, "biedactwo > 4", null)] // fixed args
+        [AsContract("hahahah", "biedactwo > 4", null)] // fixed args
         public int Div(bool t, int divided, int divisor, string val)
         {
             return 0;// divided / divisor;

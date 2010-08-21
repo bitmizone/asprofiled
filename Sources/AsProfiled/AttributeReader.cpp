@@ -89,16 +89,18 @@ void CAttributeReader::ReadAttributes() {
 		ASSERT(hr == S_OK);
 		CMethodInfo attributeMethodInfo(this->pMetaDataImport, attributeConstructor);
 		CTypeInfo* typeInfo = new CTypeInfo(pMetaDataImport, typeDefToken);
-
+		ULONG argsCount = attributeMethodInfo.GetArgumentsCount();
 		std::wstring attributeName(typeInfo->GetName());
 		LOG4CXX_INFO(attributeLogger, attributeName.c_str());
-		LOG4CXX_INFO(attributeLogger, "Attribute arguments count: " << attributeMethodInfo.GetArgumentsCount());
-		ULONG argsCount = attributeMethodInfo.GetArgumentsCount();	
+		LOG4CXX_INFO(attributeLogger, "Attribute arguments count: " << argsCount);
 		if (attributeName.find(L"AsContractAttribute") != std::string::npos) {
-			WCHAR* argument = CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize);
-			std::cout << "FOUND" << std::endl;
-			PrintCharArray(argument);
-			std::cout << std::endl;
+			
+		std::vector<WCHAR*>* arguments = CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeBlob, attributeBlobSize, argsCount);
+		std::cout << "FOUND" << std::endl;
+
+		//PrintCharArray(argument);
+		/*std::cout << std::endl;*/
+			
 			//LOG4CXX_INFO(attributeLogger, argument);
 						//////////////////////////////////////////
 						///////// GRAMMAR PARSER SECTION//////////
