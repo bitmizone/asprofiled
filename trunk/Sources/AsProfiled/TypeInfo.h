@@ -1,6 +1,7 @@
 #pragma once
 #include "cor.h"
 #include "common.h"
+#include <string>
 
 class CTypeInfo
 {

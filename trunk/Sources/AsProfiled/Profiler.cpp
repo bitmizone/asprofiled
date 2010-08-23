@@ -69,8 +69,13 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 
 	this->attributeReader->Initialize(methodInfo.GetMethodToken(), methodInfo.GetMetaDataImport());
 	//this->attributeReader->PrintAttributesInfo();
-	this->attributeReader->ReadAttributes();
-
+	
+	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 1);
+	if (attributeInfo == NULL) {
+		LOG4CXX_INFO(myMainLogger, "attribute not found");
+	}else{
+		LOG4CXX_INFO(myMainLogger, attributeInfo->typeName);
+	}
 	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
 	_ICorProfilerInfo2->GetStringLayout(&bufferLengthOffset, &stringLengthOffset, &bufferOffset);
 

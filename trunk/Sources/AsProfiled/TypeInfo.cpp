@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "TypeInfo.h"
-
+#include <string>
 CTypeInfo::CTypeInfo(IMetaDataImport* pMetaDataImport, mdTypeDef typeToken) : 
 	metaDataImport(pMetaDataImport), typeDefToken(typeToken)
 {
@@ -17,5 +17,5 @@ WCHAR* CTypeInfo::GetName(void) {
 		name = new WCHAR[NAME_BUFFER_SIZE];
 		this->metaDataImport->GetTypeDefProps(typeDefToken, this->name, NAME_BUFFER_SIZE, &c, NULL, NULL);
 	}
-	return this->name;	
+	return this->name;
 }
