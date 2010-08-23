@@ -77,11 +77,10 @@ std::vector<WCHAR*>* CProfilerHelper::ParseAttributeMetaData(const void* attribu
 	blob += 2;
 	ULONG stringLength = 0;
 	std::vector<WCHAR*>* argumentsValues = new std::vector<WCHAR*>();
-	ASSERT(1 == 0);
+
 	for (ULONG i = 0; i < argumentsCount; ++i) {
 		WCHAR* argument = NULL;
 		if (*blob == 0xFF) { // string is null
-			std::cout << "string is null" << std::endl;
 			argument = new WCHAR[1];
 			argument[0] = '\0';
 			argumentsValues->push_back(argument);

@@ -14,6 +14,7 @@ public:
 	CGrammarParser(std::string cgtFilePath);
 	~CGrammarParser(void);
 	bool Initialize(void);
+	std::vector<Token*> Scan(std::wstring argument);
 private:
 	std::string filePath;
 	CGTFile *cgtFile;
