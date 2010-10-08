@@ -319,6 +319,10 @@
 				RelativePath=".\TypeInfo.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ValueReader.cpp"
+				>
+			</File>
 			<Filter
 				Name="Astudillo"
 				>
@@ -467,6 +471,10 @@
 			</File>
 			<File
 				RelativePath=".\TypeInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ValueReader.h"
 				>
 			</File>
 			<Filter
