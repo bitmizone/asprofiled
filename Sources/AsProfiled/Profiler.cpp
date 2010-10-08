@@ -288,13 +288,6 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 	LOG4CXX_DEBUG(myMainLogger, "Program has started");
 	
 	LOG4CXX_DEBUG(myMainLogger, "Initializing grammar parser...");
-	string filePath = "C:\\grammar";
-	grammarParser = new CGrammarParser(filePath);
-	bool success = grammarParser->Initialize();
-	if (success == false) {
-		// LOG4CXX_FATAL(myMainLogger, "File "  << filePath.c_str() << " not found");
-		//exit(1);
-	}
 
 	LOG4CXX_TRACE(myMainLogger, "Initializing attribute reader");
 	attributeReader = new CAttributeReader();

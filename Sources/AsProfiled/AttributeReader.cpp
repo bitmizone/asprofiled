@@ -14,7 +14,7 @@ CAttributeReader::CAttributeReader(void)
 {
 	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
 	attributeLogger->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
-	this->parser = new CGrammarParser("c:\\grammar.cgt");
+	this->parser = new CGrammarParser("c:\\grammarRet.cgt");
 	ASSERT(this->parser->Initialize());
 }
 
