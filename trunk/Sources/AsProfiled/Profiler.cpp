@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "profiler.h"
 #include "MethodInfo.h"
-
+#include "AttributeInfo.h"
 using namespace std;;
 using namespace log4cxx;
 
@@ -68,9 +68,8 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	ULONG32 pcTypeArgs = 0;		
 
 	this->attributeReader->Initialize(methodInfo.GetMethodToken(), methodInfo.GetMetaDataImport());
-	//this->attributeReader->PrintAttributesInfo();
 	
-	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 1);
+	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 3);
 	if (attributeInfo == NULL) {
 		LOG4CXX_INFO(myMainLogger, "attribute not found");
 	}else{

@@ -226,10 +226,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\AsProfiledAttributeWrapper.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\AttributeArgument.cpp"
 				>
 			</File>
@@ -401,10 +397,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\AsProfiledAttributeWrapper.h"
-				>
-			</File>
 			<File
 				RelativePath=".\AttributeArgument.h"
 				>

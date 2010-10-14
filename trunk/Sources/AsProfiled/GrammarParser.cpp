@@ -57,16 +57,6 @@ std::vector<Token*> CGrammarParser::Scan(std::wstring argument) {
 		wcout << st << endl;
 	}
 	return tokens;
-	/*
-	return result;*/
 }
 
-//CGTFile    cgtFile;
-						//Symbol     *rdc;
-						//DFA        *dfa;
-						//LALR       *lalr;
-						//ErrorTable       *myErrors;
-						//  SimpleErrorRep   myReporter; 
-						//bool ok = cgtFile.load("c:\\grammar.cgt");
-						//std::cout << ok << std::endl;
 						
