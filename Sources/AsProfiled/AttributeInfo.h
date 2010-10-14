@@ -3,6 +3,7 @@
 #include "cor.h"
 #include "AttributeArgument.h"
 
+// Holds informations about attribute 
 class CAttributeInfo
 {
 public:

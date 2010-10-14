@@ -31,7 +31,8 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 	mdCustomAttribute tokensOfCustomAttributes[1];
 	HCORENUM phEnum = NULL;
 	this->attributesCount = 0;
-		
+	
+	// enum through attributes
 	do {
 		pMetaDataImport->EnumCustomAttributes(&phEnum, this->methodToken, 0, 
 												tokensOfCustomAttributes, 1, &(this->attributesCount));
@@ -60,7 +61,9 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 		attributeInfo->argumentsCount = attributeMethodInfo.GetArgumentsCount();
 		attributeInfo->typeName = typeInfo.GetName();
 
-		std::vector<WCHAR*>* argumentsValues = CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeInfo->attributeBlob, attributeInfo->attributeBlobSize, attributeInfo->argumentsCount);
+		std::vector<WCHAR*>* argumentsValues = CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeInfo->attributeBlob, 
+																									attributeInfo->attributeBlobSize, 
+																									attributeInfo->argumentsCount);
 		
 		attributeInfo->arguments = new std::vector<CAttributeArgument*>();
 		
@@ -72,7 +75,7 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 			std::wstring argumentValue(argumentsValues->at(i));
 			if (argumentValue.compare(L"") != 0) 
 			{
-				attributeArgument->tokens =  parser->Scan(argumentValue);
+				attributeArgument->tokens = parser->Scan(argumentValue);
 			}
 
 			attributeInfo->arguments->push_back(attributeArgument);
@@ -103,7 +106,7 @@ CAttributeInfo* CAttributeReader::GetAttribute(std::wstring attributeName, ULONG
 	
 	for (ULONG i = 0; i < this->attributesCount; i++) {
 		std::wstring typeName(this->attributesInfo->at(i)->typeName);
-		if (typeName.find(attributeName) != std::string::npos && this->attributesInfo->at(i)->argumentsCount >= numberOfAttributeParameter) 
+		if (typeName.find(attributeName) != std::string::npos && this->attributesInfo->at(i)->argumentsCount == numberOfAttributeParameter) 
 		{
 			return attributesInfo->at(i);
 		}
