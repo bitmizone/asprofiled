@@ -4,6 +4,7 @@
 #include "profiler.h"
 #include "MethodInfo.h"
 #include "AttributeInfo.h"
+#include "AttributeArgument.h"
 using namespace std;;
 using namespace log4cxx;
 
@@ -72,8 +73,17 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 3);
 	if (attributeInfo == NULL) {
 		LOG4CXX_INFO(myMainLogger, "attribute not found");
+		
 	}else{
 		LOG4CXX_INFO(myMainLogger, attributeInfo->typeName);
+		ASSERT(false);
+		std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
+		for (ULONG i = 0 ; i < arguments->size(); ++i) {
+			CAttributeArgument* arg = arguments->at(i);
+			for (ULONG j = 0; j < arg->tokens.size(); ++j) {
+				LOG4CXX_INFO(myMainLogger, arg->tokens.at(i)->kind);
+			}
+		}
 	}
 	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
 	_ICorProfilerInfo2->GetStringLayout(&bufferLengthOffset, &stringLengthOffset, &bufferOffset);
