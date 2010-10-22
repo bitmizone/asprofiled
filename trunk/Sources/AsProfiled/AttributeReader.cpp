@@ -66,12 +66,14 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 																									attributeInfo->argumentsCount);
 		
 		attributeInfo->arguments = new std::vector<CAttributeArgument*>();
-		
 		for (ULONG i = 0; i < argumentsValues->size(); ++i) 
 		{
 			CAttributeArgument* attributeArgument = new CAttributeArgument();
 			attributeArgument->argumentValue = argumentsValues->at(i);
-			
+			std::wstring st(typeInfo.GetName());
+			if (st.find(L"AsContractAttribute") != std::wstring::npos) {
+				 ASSERT(false);
+			}
 			std::wstring argumentValue(argumentsValues->at(i));
 			if (argumentValue.compare(L"") != 0) 
 			{

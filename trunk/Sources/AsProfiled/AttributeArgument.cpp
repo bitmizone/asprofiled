@@ -13,6 +13,7 @@ CAttributeArgument::~CAttributeArgument(void)
 }
 
 void CAttributeArgument::AssignTokenValues(std::vector<CParam*> *params) {
+	ASSERT(false);
 	for (ULONG i = 0; i < tokens.size(); ++i) {
 		std::wstring tokenName(tokens.at(i)->symbol);
 		if (tokenName.compare(L"Identifier") != 0) {
