@@ -238,6 +238,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ClousureEvaluator.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\common.cpp"
 				>
 			</File>
@@ -410,6 +414,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ClousureEvaluator.h"
+				>
+			</File>
+			<File
 				RelativePath=".\common.h"
 				>
 			</File>
@@ -427,6 +435,10 @@
 			</File>
 			<File
 				RelativePath=".\MethodInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Operator.h"
 				>
 			</File>
 			<File

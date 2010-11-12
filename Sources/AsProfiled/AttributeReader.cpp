@@ -72,7 +72,7 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 			attributeArgument->argumentValue = argumentsValues->at(i);
 			std::wstring st(typeInfo.GetName());
 			if (st.find(L"AsContractAttribute") != std::wstring::npos) {
-				 ASSERT(false);
+				 //ASSERT(false);
 			}
 			std::wstring argumentValue(argumentsValues->at(i));
 			if (argumentValue.compare(L"") != 0) 

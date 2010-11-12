@@ -47,7 +47,12 @@ std::vector<Token*> CGrammarParser::Scan(std::wstring argument) {
 		}
 	}
 
-	std::vector<Token*> tokens = dfa->getTokens();
+	std::vector<Token*> tokens;
+	
+	for (vector<Token*>::iterator i = dfa->getTokens().begin(); i != dfa->getTokens().end(); ++i) {
+		tokens.push_back((*i)->newInstance());
+	}
+
 	this->lalr = cgtFile->getParser();
 	rdc = lalr->parse(tokens, true, true);
 	
