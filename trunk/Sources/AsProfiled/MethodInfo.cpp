@@ -167,7 +167,7 @@ void CMethodInfo::AssignArgumentsNames() {
 	ULONG parameterNameLength;
 	mdParamDef argumentsTokens[MaxParametersCount];
 	this->pMetaDataImport->EnumParams(&parametersEnum, this->methodToken, argumentsTokens, MaxParametersCount, &tempArgumentsCount);
-	ASSERT(tempArgumentsCount == this->argumentsCount);
+//	ASSERT(tempArgumentsCount == this->argumentsCount);
 	for (ULONG i = 0; i < tempArgumentsCount; ++i) {
 		CParam* argument = this->arguments->at(i);
 		this->pMetaDataImport->GetParamProps(argumentsTokens[i], NULL, NULL, argument->paramName, NAME_BUFFER_SIZE, &parameterNameLength, NULL, NULL, NULL, NULL);

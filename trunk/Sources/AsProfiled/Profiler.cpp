@@ -73,15 +73,17 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 3);
 	if (attributeInfo == NULL) {
 		LOG4CXX_INFO(myMainLogger, "attribute not found");
-		
 	}else{
 		LOG4CXX_INFO(myMainLogger, attributeInfo->typeName);
-		ASSERT(false);
+		//ASSERT(false);
 		std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
 		for (ULONG i = 0 ; i < arguments->size(); ++i) {
 			CAttributeArgument* arg = arguments->at(i);
+			LOG4CXX_INFO(myMainLogger, arg->argumentValue);
+			//ASSERT(false);
 			for (ULONG j = 0; j < arg->tokens.size(); ++j) {
-				LOG4CXX_INFO(myMainLogger, arg->tokens.at(i)->kind);
+				LOG4CXX_INFO(myMainLogger, arg->tokens.at(j)->image);
+				LOG4CXX_INFO(myMainLogger, arg->tokens.at(j)->symbol);
 			}
 		}
 	}
