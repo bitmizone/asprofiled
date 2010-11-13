@@ -5,6 +5,7 @@
 #include "MethodInfo.h"
 #include "AttributeInfo.h"
 #include "AttributeArgument.h"
+#include "Operator.h"
 using namespace std;;
 using namespace log4cxx;
 
@@ -82,8 +83,9 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 			LOG4CXX_INFO(myMainLogger, arg->argumentValue);
 			//ASSERT(false);
 			for (ULONG j = 0; j < arg->tokens.size(); ++j) {
-				LOG4CXX_INFO(myMainLogger, arg->tokens.at(j)->image);
+				//LOG4CXX_INFO(myMainLogger, arg->tokens.at(j)->image);
 				LOG4CXX_INFO(myMainLogger, arg->tokens.at(j)->symbol);
+				
 			}
 		}
 	}

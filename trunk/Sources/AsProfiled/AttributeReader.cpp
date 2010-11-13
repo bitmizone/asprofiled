@@ -14,7 +14,7 @@ CAttributeReader::CAttributeReader(void)
 {
 	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
 	attributeLogger->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
-	this->parser = new CGrammarParser("c:\\grammarRet.cgt");
+	this->parser = new CGrammarParser("c:\\grammar.cgt");
 	ASSERT(this->parser->Initialize());
 }
 
@@ -72,7 +72,7 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 			attributeArgument->argumentValue = argumentsValues->at(i);
 			std::wstring st(typeInfo.GetName());
 			if (st.find(L"AsContractAttribute") != std::wstring::npos) {
-				 //ASSERT(false);
+				// ASSERT(false);
 			}
 			std::wstring argumentValue(argumentsValues->at(i));
 			if (argumentValue.compare(L"") != 0) 
