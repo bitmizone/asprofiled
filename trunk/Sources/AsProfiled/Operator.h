@@ -1,7 +1,7 @@
 #pragma once
 
 using namespace std;
-
+namespace Operator {
 /// Compare operators
 wstring LessOp = L"<";
 wstring LessOrEqualOp = L"<=";
@@ -39,6 +39,10 @@ enum OperatorType {	NotOp,
                     BitOperatorType
 };
 
+enum TokenTypeEnum { BadToken, Identifier, ReturnValue, Operator, BooleanLiteral, DecimalNumber, StringLiteral, InitialValue, EOS };
+
+
+
 OperatorType GetOperatorType(WCHAR* operatorLiteral) {
 	wstring wstringOperator(operatorLiteral);
 	if (wstringOperator.compare(LessOp) == 0 || wstringOperator.compare(LessOrEqualOp) == 0
@@ -56,6 +60,28 @@ OperatorType GetOperatorType(WCHAR* operatorLiteral) {
 	}
 	return NotOp;
 }	
+
+TokenTypeEnum GetTokenType(WCHAR* tokenLiteral) {
+	wstring wstringToken(tokenLiteral);
+	if (GetOperatorType(tokenLiteral) != NotOp) {
+		return Operator;
+	}else if (wstringToken.compare(L"Identifier") == 0) {
+		return Identifier;
+	}else if (wstringToken.compare(L"ReturnValue") == 0) {
+		return ReturnValue;
+	}else if (wstringToken.compare(L"BooleanLiteral") == 0) {
+		return BooleanLiteral;
+	}else if (wstringToken.compare(L"DecimalNumber") == 0) {
+		return DecimalNumber;
+	}else if (wstringToken.compare(L"StringLiteral") == 0) {
+		return StringLiteral;
+	}else if (wstringToken.compare(L"InitialValue") == 0) {
+		return InitialValue;
+	}else if (wstringToken.compare(L"EOF") == 0) {
+		return EOS;
+	}
+	return BadToken;
+}
 
 CmpOperator GetCmpOperator(WCHAR* operatorAsString) {
 	wstring stringRepresentation(operatorAsString);
@@ -113,4 +139,5 @@ AddOperator GetAddOperator(WCHAR* operatorAsString) {
 		return Minus;
 	}
 	return NotAdd;
+}
 }

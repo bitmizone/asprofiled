@@ -83,7 +83,7 @@ private :
 
 	CGrammarParser* grammarParser;
 	CAttributeReader* attributeReader;
-
+	std::map<FunctionID, CMethodInfo*>* functionsMap;
 	
 };
 

@@ -5,7 +5,8 @@
 #include "MethodInfo.h"
 #include "AttributeInfo.h"
 #include "AttributeArgument.h"
-#include "Operator.h"
+#include "ClousureEvaluator.h"
+#include <map>
 using namespace std;;
 using namespace log4cxx;
 
@@ -33,21 +34,20 @@ UINT_PTR CProfiler::FunctionMapper(FunctionID functionId, BOOL *pbHookFunction) 
 
 // Do whatever we want with function ID
 void CProfiler::MapFunction(FunctionID functionId) {
-		//cout << "map function" << endl;
-
+		//cout << "map f" << functionId << endl;
 }
 
 // Function called by .NET runtime when function is invoked
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
 	// Create methodInfo object which has the entry point for reading every metadata related to called method
-	CMethodInfo methodInfo(functionID, _ICorProfilerInfo2, argumentInfo);
+	CMethodInfo* methodInfo = new CMethodInfo(functionID, _ICorProfilerInfo2, argumentInfo);
 	// Buffer for function name
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
 	// Read method's full qualified name
-	HRESULT hr = GetFullMethodName(methodInfo, szMethodName);
+	HRESULT hr = GetFullMethodName(*methodInfo, szMethodName);
 	LOG4CXX_DEBUG(myMainLogger, szMethodName);
 
-	PrintMethodInfo(methodInfo);
+	PrintMethodInfo(*methodInfo);
 
 	// A pointer that references the metadata for called function 
 	mdToken token = mdTokenNil;
@@ -69,25 +69,16 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	
 	ULONG32 pcTypeArgs = 0;		
 
-	this->attributeReader->Initialize(methodInfo.GetMethodToken(), methodInfo.GetMetaDataImport());
+	this->attributeReader->Initialize(methodInfo->GetMethodToken(), methodInfo->GetMetaDataImport());
 	
 	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 3);
 	if (attributeInfo == NULL) {
-		LOG4CXX_INFO(myMainLogger, "attribute not found");
+		LOG4CXX_DEBUG(myMainLogger, "attribute not found");
 	}else{
+ 		CClousureEvaluator evaluator(methodInfo, attributeInfo);
 		LOG4CXX_INFO(myMainLogger, attributeInfo->typeName);
-		//ASSERT(false);
-		std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
-		for (ULONG i = 0 ; i < arguments->size(); ++i) {
-			CAttributeArgument* arg = arguments->at(i);
-			LOG4CXX_INFO(myMainLogger, arg->argumentValue);
-			//ASSERT(false);
-			for (ULONG j = 0; j < arg->tokens.size(); ++j) {
-				//LOG4CXX_INFO(myMainLogger, arg->tokens.at(j)->image);
-				LOG4CXX_INFO(myMainLogger, arg->tokens.at(j)->symbol);
-				
-			}
-		}
+		evaluator.EvalPreCondition();
+		
 	}
 	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
 	_ICorProfilerInfo2->GetStringLayout(&bufferLengthOffset, &stringLengthOffset, &bufferOffset);
@@ -123,9 +114,19 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	//		enableStringInfo = true;
 	//	}
 	//}
+	functionsMap->insert(pair<FunctionID, CMethodInfo*>( functionID, methodInfo));
+	LOG4CXX_INFO(myMainLogger, methodInfo->GetMethodName());
 }
 
 void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange) {
+	//cout << "leave " << functionID << endl;
+	std::map<FunctionID, CMethodInfo*>::iterator iter;
+	iter = functionsMap->find(functionID);
+	if (iter == functionsMap->end()) {
+		return;
+	}
+	CMethodInfo* info = iter->second;
+	LOG4CXX_INFO(myMainLogger, info->GetMethodName());
 	
 }
 
@@ -185,8 +186,8 @@ void _stdcall FunctionEnterGlobal(FunctionID functionID, UINT_PTR clientData, CO
 	
 }
 
-void _stdcall FunctionLeaveGlobal(FunctionID qfunctionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
-	
+void _stdcall FunctionLeaveGlobal(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange) {
+	_cProfilerGlobalHandler->FunctionLeave(functionID, clientData, func, retvalRange);
 	
 }
 
@@ -304,6 +305,7 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 
 	LOG4CXX_TRACE(myMainLogger, "Initializing attribute reader");
 	attributeReader = new CAttributeReader();
+	functionsMap = new map<FunctionID, CMethodInfo*>();
 
     return S_OK;
 } 
@@ -311,6 +313,7 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 STDMETHODIMP CProfiler::Shutdown() {
 	delete grammarParser;
 	delete attributeReader;
+	
 	LOG4CXX_DEBUG(myMainLogger, "Program has ended");
 	return S_OK;
 }

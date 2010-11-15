@@ -13,7 +13,7 @@ LoggerPtr attributeLogger(Logger::getLogger("attributeReader"));
 CAttributeReader::CAttributeReader(void)
 {
 	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
-	attributeLogger->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
+	attributeLogger->setLevel(Level::toLevel(log4cxx::Level::WARN_INT));
 	this->parser = new CGrammarParser("c:\\grammar.cgt");
 	ASSERT(this->parser->Initialize());
 }
