@@ -35,7 +35,7 @@ public:
 
 	std::vector<CParam*>* GetArguments();
 	StateOfReadingMethodBlob GetStateOfReadingMethodBlob();
-
+	bool ReadArgumentsValues(COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) ;
 	
 private:
 	void SetDefaultValues();

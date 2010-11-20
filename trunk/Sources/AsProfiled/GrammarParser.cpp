@@ -55,7 +55,6 @@ std::vector<Token*> CGrammarParser::Scan(std::wstring argument) {
 
 	this->lalr = cgtFile->getParser();
 	rdc = lalr->parse(tokens, true, true);
-	
 	// lalr->printReductionTree(rdc,0);
 	for ( vector<Token*>::iterator i = tokens.begin(); i != tokens.end(); i++) {
 		std::wstring st((*i)->symbol);

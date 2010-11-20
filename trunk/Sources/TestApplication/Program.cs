@@ -11,7 +11,7 @@ namespace TestApplication
         static void Main(string[] args)
         {
             Calculator.Calculator calculatorInstance = new TestApplication.Calculator.Calculator();
-            calculatorInstance.Div(true, 2, 4096, "barnaba > 5 habla bhable bhable bhable bhable bhable bhable ");
+            calculatorInstance.Div(false, 2, 4096, "barnaba > 5 habla bhable bhable bhable bhable bhable bhable ");
             TestFalse(false);
             TestTrue(true);
             Random r = new Random();
