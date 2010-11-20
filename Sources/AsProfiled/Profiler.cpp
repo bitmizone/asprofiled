@@ -45,6 +45,7 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
 	// Read method's full qualified name
 	HRESULT hr = GetFullMethodName(*methodInfo, szMethodName);
+	
 	LOG4CXX_DEBUG(myMainLogger, szMethodName);
 
 	PrintMethodInfo(*methodInfo);
@@ -56,8 +57,6 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	HCORENUM paramsEnum = NULL;
 	// Arguments count
 	ULONG paramsCount = 0;
-	// Token to param's metadata
-	mdParamDef params[1024];
 	// Param postion in function signature
 	ULONG paramPosition = 0;
 	// Parameter name lenght
@@ -75,10 +74,11 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	if (attributeInfo == NULL) {
 		LOG4CXX_DEBUG(myMainLogger, "attribute not found");
 	}else{
- 		CClousureEvaluator evaluator(methodInfo, attributeInfo);
+		methodInfo->ReadArgumentsValues(argumentInfo);
+		CClousureEvaluator* evaluator = new CClousureEvaluator(methodInfo, attributeInfo, _ICorProfilerInfo2);
+		functionsMap->insert(pair<FunctionID, CClousureEvaluator*>( functionID, evaluator));
 		LOG4CXX_INFO(myMainLogger, attributeInfo->typeName);
-		evaluator.EvalPreCondition();
-		
+		evaluator->EvalPreCondition(argumentInfo);
 	}
 	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
 	_ICorProfilerInfo2->GetStringLayout(&bufferLengthOffset, &stringLengthOffset, &bufferOffset);
@@ -114,19 +114,19 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	//		enableStringInfo = true;
 	//	}
 	//}
-	functionsMap->insert(pair<FunctionID, CMethodInfo*>( functionID, methodInfo));
+
 	LOG4CXX_INFO(myMainLogger, methodInfo->GetMethodName());
 }
 
 void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange) {
 	//cout << "leave " << functionID << endl;
-	std::map<FunctionID, CMethodInfo*>::iterator iter;
+	std::map<FunctionID, CClousureEvaluator*>::iterator iter;
 	iter = functionsMap->find(functionID);
 	if (iter == functionsMap->end()) {
 		return;
 	}
-	CMethodInfo* info = iter->second;
-	LOG4CXX_INFO(myMainLogger, info->GetMethodName());
+	CClousureEvaluator* evaluator = iter->second;
+	LOG4CXX_INFO(myMainLogger, evaluator->GetMethodInfo()->GetMethodName() );
 	
 }
 
@@ -305,7 +305,7 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 
 	LOG4CXX_TRACE(myMainLogger, "Initializing attribute reader");
 	attributeReader = new CAttributeReader();
-	functionsMap = new map<FunctionID, CMethodInfo*>();
+	functionsMap = new map<FunctionID, CClousureEvaluator*>();
 
     return S_OK;
 } 

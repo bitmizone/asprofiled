@@ -4,16 +4,21 @@
 #include "MethodInfo.h"
 #include "AttributeArgument.h"
 #include "Operator.h"
-
+#include "ValueReader.h"
+#include <vector>
 using namespace log4cxx;
 using namespace std;
 
 
 LoggerPtr clousureEvaluatorLogger(Logger::getLogger("ce"));
 
-CClousureEvaluator::CClousureEvaluator(CMethodInfo* methodInfo, CAttributeInfo* attributeInfoArg)
+CClousureEvaluator::CClousureEvaluator(CMethodInfo* methodInfoArg, CAttributeInfo* attributeInfoArg, ICorProfilerInfo2* corProfilerInfo)
 {
 	this->attributeInfo = attributeInfoArg;
+	this->methodInfo = methodInfoArg;
+	this->cpi = corProfilerInfo;
+	this->initialized = false;
+	this->tokenToParamMap = new std::map<wstring, CParam*>();
 	// Configure Log4cxx
 	if (clousureEvaluatorLogger->isInfoEnabled() == false) {
 		BasicConfigurator::configure();
@@ -27,20 +32,132 @@ CClousureEvaluator::~CClousureEvaluator(void)
 	
 }
 
-bool CClousureEvaluator::EvalPreCondition() {
+bool CClousureEvaluator::EvalPreCondition(COR_PRF_FUNCTION_ARGUMENT_INFO* argumentInfo) {
+	if (this->initialized == false) {
+		Initialize();
+	}
 	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
-		for (ULONG i = 0 ; i < arguments->size(); ++i) {
-			CAttributeArgument* arg = arguments->at(i);
-			LOG4CXX_INFO(clousureEvaluatorLogger, arg->argumentValue);
-			for (ULONG j = 0; j < arg->tokens.size(); ++j) {
-				LOG4CXX_INFO(clousureEvaluatorLogger, arg->tokens.at(j)->symbol);
-				Operator::TokenTypeEnum type = Operator::GetTokenType(arg->tokens.at(j)->symbol);
-				LOG4CXX_INFO(clousureEvaluatorLogger, "Token type is " << (int) type);
-			}
+	ASSERT(arguments->size() >= 2);
+	CAttributeArgument* preCondition = arguments->at(0);
+	std::vector<Token*>::iterator iter = preCondition->tokens.begin();
+	ASSERT(false);
+	for ( ; iter != preCondition->tokens.end(); ++iter) {
+		Token* token = (*iter);
+		Operator::TokenTypeEnum tokenType = Operator::GetTokenType(token->symbol);
+		wstring tokenValue(token->image);
+		
+		CParam* param = NULL;
+		map<wstring, CParam*>::iterator iter = tokenToParamMap->find(tokenValue);
+		switch (tokenType) {
+			case Operator::Identifier :
+				
+				if (iter != tokenToParamMap->end()) {
+					param = (*iter).second;
+				}
+				break;
+			default:
+				break;
 		}
+	}
+	
 	return true;
 }
 
 bool CClousureEvaluator::EvalPostCondition() {
+	if (this->initialized == false) {
+		Initialize();
+	}
+	
 	return true;
+}
+
+void CClousureEvaluator::TraceValues() {
+	std::vector<CParam*>* params =  this->methodInfo->GetArguments();
+	vector<CParam*>::iterator iter = params->begin();
+	for (; iter != params->end(); ++iter) {
+		LOG4CXX_INFO(clousureEvaluatorLogger, (*iter)->paramName);
+		CParam* param = *iter;
+		switch ((*iter)->elementType) {
+			case ELEMENT_TYPE_BOOLEAN :
+				CValueReader::GetInstance()->TraceBoolean((*iter)->addressToParameterValue);		
+				break;
+			case ELEMENT_TYPE_I4 :
+				CValueReader::GetInstance()->TraceInt(param->addressToParameterValue);
+				break;
+			case ELEMENT_TYPE_CHAR :
+				CValueReader::GetInstance()->TraceChar(param->addressToParameterValue);
+				break;
+			case ELEMENT_TYPE_I1:
+				CValueReader::GetInstance()->TraceByte(param->addressToParameterValue);
+				break;
+			case ELEMENT_TYPE_I2:
+				CValueReader::GetInstance()->TraceShort(param->addressToParameterValue);
+				break;
+			case ELEMENT_TYPE_STRING:
+				CValueReader::GetInstance()->TraceString(param->addressToParameterValue, cpi);
+				break;
+
+
+			default:
+				
+				break;
+		}
+	}
+}
+
+void CClousureEvaluator::Initialize()
+{
+	ParsePreCondition();
+	//std::vector<CParam*>* params =  this->methodInfo->GetArguments();
+	//vector<CParam*>::iterator iter = params->begin();
+	//for (; iter != params->end(); ++iter) {
+		//CParam* param = (*iter);
+		//for (ULONG i = 0 ; i < arguments->size(); ++i) {
+		//	CParam* arg = arguments->at(i);
+		//	for (ULONG j = 0; j < arg->tokens.size(); ++j) {
+		//		// LOG4CXX_INFO(clousureEvaluatorLogger, arg->tokens.at(j)->symbol);
+		//		// Operator::TokenTypeEnum type = Operator::GetTokenType(arg->tokens.at(j)->symbol);
+		//		// LOG4CXX_INFO(clousureEvaluatorLogger, "Token type is " << (int) type);
+		//	}
+		//}
+	//}
+	this->initialized = true;
+}
+
+void CClousureEvaluator::ParsePreCondition() {
+	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
+	ASSERT(arguments->size() >= 2);
+	ASSERT(false);
+	CAttributeArgument* preCondition = arguments->at(0);
+	for (ULONG j = 0; j < preCondition->tokens.size(); ++j) {
+		std::vector<CParam*>* params =  this->methodInfo->GetArguments();
+		vector<CParam*>::iterator iter = params->begin();
+		for (; iter != params->end(); ++iter) {
+			CParam* param = (*iter);
+			wstring tokenValue(preCondition->tokens.at(j)->image);
+			wstring paramName(param->paramName);
+			if (tokenToParamMap->find(tokenValue) == tokenToParamMap->end()) {
+				if (tokenValue.find(paramName) != wstring.npos) {
+					tokenToParamMap->insert(pair<wstring, CParam*>(tokenValue, param));
+				}
+			}
+		}
+	}
+}
+
+void CClousureEvaluator::ParsePostCondition() {
+	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
+	ASSERT(arguments->size() >= 2);
+	CAttributeArgument* postCondition = arguments->at(1);
+	for (ULONG j = 0; j < postCondition->tokens.size(); ++j) {
+		
+	}
+}
+
+CAttributeInfo* CClousureEvaluator::GetAttributeInfo() {
+	return this->attributeInfo;
+}
+
+CMethodInfo* CClousureEvaluator::GetMethodInfo() {
+	return this->methodInfo;
 }

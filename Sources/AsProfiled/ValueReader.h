@@ -2,23 +2,20 @@
 
 #include "cor.h"
 #include "corprof.h"
-
+#include <iostream>
 class CValueReader
 {
 public:
-	CValueReader(void);
+	static CValueReader* GetInstance();
 	
 	~CValueReader(void);
-
-	
-
 	HRESULT TraceULong(UINT_PTR startAddress);
 
 	HRESULT TraceLong(UINT_PTR startAddress);
 
 	HRESULT TraceUInt(UINT_PTR startAddress);
 
-	HRESULT TraceInt(UINT_PTR startAddress);
+	std::wstring TraceInt(UINT_PTR startAddress);
 
 	HRESULT TraceUShort(UINT_PTR startAddress);
 
@@ -36,10 +33,11 @@ public:
 
 	HRESULT TraceDouble(UINT_PTR startAddress);
 
-	HRESULT TraceString(ObjectID oid, ICorProfilerInfo2 *cpi);
+	HRESULT TraceString(UINT_PTR startAddress, ICorProfilerInfo2 *cpi);
 
 	int ExceptionFilter(unsigned int code, struct _EXCEPTION_POINTERS *ep);
-
+private:
+	CValueReader(void);
 	
 
 };

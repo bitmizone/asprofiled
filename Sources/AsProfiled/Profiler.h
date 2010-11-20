@@ -23,6 +23,7 @@
 #include "AttributeReader.h"
 #include "MethodInfo.h"
 #include "TypeInfo.h"
+#include "ClousureEvaluator.h"
 
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
@@ -83,7 +84,7 @@ private :
 
 	CGrammarParser* grammarParser;
 	CAttributeReader* attributeReader;
-	std::map<FunctionID, CMethodInfo*>* functionsMap;
+	std::map<FunctionID, CClousureEvaluator*>* functionsMap;
 	
 };
 

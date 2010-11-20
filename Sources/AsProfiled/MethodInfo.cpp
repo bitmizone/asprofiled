@@ -120,7 +120,17 @@ CParam* CMethodInfo::GetReturnValue() {
 
 //read agrument value
 
-
+bool CMethodInfo::ReadArgumentsValues(COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) 
+{
+	std::vector<CParam*>* params = GetArguments();
+	std::vector<CParam*>::iterator iter = params->begin();
+	int counter = 0;
+	for ( ; iter != params->end(); ++iter) {
+		CParam* param = (*iter);
+		param->addressToParameterValue = argumentInfo->ranges[++counter].startAddress;
+	}
+	return true;
+}
 
 std::vector<CParam*>* CMethodInfo::GetArguments() {
 	if (this->arguments != NULL) {

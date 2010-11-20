@@ -4,11 +4,23 @@
 #include <log4cxx/basicconfigurator.h>
 using namespace log4cxx;
 
-LoggerPtr valueLogger(Logger::getLogger("attributeReader"));
+LoggerPtr valueLogger(Logger::getLogger("valueLogger"));
+
+CValueReader* CValueReader::GetInstance() {
+	static CValueReader* instance; 
+	if (instance == NULL) {
+		instance = new CValueReader();
+	}
+	return instance;
+}
 
 CValueReader::CValueReader(void)
 {
-	valueLogger->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
+	if (valueLogger->isInfoEnabled() == false) {
+		BasicConfigurator::configure();
+		// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
+		valueLogger->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
+	}
 }
 
 CValueReader::~CValueReader(void)
@@ -38,10 +50,13 @@ HRESULT CValueReader::TraceUInt(UINT_PTR startAddress)
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceInt(UINT_PTR startAddress)
+std::wstring CValueReader::TraceInt(UINT_PTR startAddress)
 {
 	LOG4CXX_INFO(valueLogger, *(int *)startAddress);
 	return S_OK;
+	std::wostringstream stream;
+    stream << *(int *)startAddress;
+	return stream.str();
 }
 
 // ----------------------------------------------------------------------------
@@ -107,9 +122,11 @@ HRESULT CValueReader::TraceDouble(UINT_PTR startAddress)
 
 // ----------------------------------------------------------------------------
 HRESULT CValueReader::TraceString(
-  ObjectID oid,
+  UINT_PTR startAddress,
   ICorProfilerInfo2 *cpi)
 {
+	ObjectID* id = reinterpret_cast<ObjectID*>( startAddress);
+	ObjectID oid = *id;
 	if(oid == mdTokenNil || oid == 0xffffffff) 
 	{
 		LOG4CXX_INFO(valueLogger, "null");
