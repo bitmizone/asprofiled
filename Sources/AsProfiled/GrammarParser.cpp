@@ -30,9 +30,21 @@ bool CGrammarParser::Initialize() {
 	
 	this->cgtFile = new CGTFile();
 	bool loadOk = this->cgtFile->load(const_cast<char*>(this->filePath.c_str()));
+	
 	return loadOk;
 }
 
+Symbol* CGrammarParser::GetReductionTree(std::vector<Token*> tokens) {
+	if (this->lalr == NULL) {
+		if (this->Initialize() == true) {
+			this->lalr = cgtFile->getParser();
+		}else{
+			return NULL;
+		}
+	}
+	return this->lalr->parse(tokens, true, true);
+}
+ 
 std::vector<Token*> CGrammarParser::Scan(std::wstring argument) {
 	dfa = cgtFile->getScanner();
 	
@@ -53,9 +65,6 @@ std::vector<Token*> CGrammarParser::Scan(std::wstring argument) {
 		tokens.push_back((*i)->newInstance());
 	}
 
-	this->lalr = cgtFile->getParser();
-	rdc = lalr->parse(tokens, true, true);
-	// lalr->printReductionTree(rdc,0);
 	for ( vector<Token*>::iterator i = tokens.begin(); i != tokens.end(); i++) {
 		std::wstring st((*i)->symbol);
 		wcout << st << endl;
