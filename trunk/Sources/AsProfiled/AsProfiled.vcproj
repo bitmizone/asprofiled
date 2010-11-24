@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="AsProfiled"
 	ProjectGUID="{F74D07EE-878F-4624-AA97-DD82AE8EA777}"
 	RootNamespace="AsProfiled"
@@ -316,6 +316,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Tree.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TypeInfo.cpp"
 				>
 			</File>
@@ -471,6 +475,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Tree.h"
 				>
 			</File>
 			<File

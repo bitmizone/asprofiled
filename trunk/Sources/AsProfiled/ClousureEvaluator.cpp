@@ -40,7 +40,6 @@ bool CClousureEvaluator::EvalPreCondition(COR_PRF_FUNCTION_ARGUMENT_INFO* argume
 	ASSERT(arguments->size() >= 2);
 	CAttributeArgument* preCondition = arguments->at(0);
 	std::vector<Token*>::iterator iter = preCondition->tokens.begin();
-	ASSERT(false);
 	for ( ; iter != preCondition->tokens.end(); ++iter) {
 		Token* token = (*iter);
 		Operator::TokenTypeEnum tokenType = Operator::GetTokenType(token->symbol);
@@ -127,7 +126,6 @@ void CClousureEvaluator::Initialize()
 void CClousureEvaluator::ParsePreCondition() {
 	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
 	ASSERT(arguments->size() >= 2);
-	ASSERT(false);
 	CAttributeArgument* preCondition = arguments->at(0);
 	for (ULONG j = 0; j < preCondition->tokens.size(); ++j) {
 		std::vector<CParam*>* params =  this->methodInfo->GetArguments();
