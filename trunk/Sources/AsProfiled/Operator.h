@@ -2,6 +2,10 @@
 
 using namespace std;
 namespace Operator {
+
+wstring LeftBracket = L"(";
+wstring RightBracker = L")";
+
 /// Compare operators
 wstring LessOp = L"<";
 wstring LessOrEqualOp = L"<=";
