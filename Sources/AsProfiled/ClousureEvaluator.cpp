@@ -12,6 +12,8 @@ using namespace std;
 
 LoggerPtr clousureEvaluatorLogger(Logger::getLogger("ce"));
 
+CGrammarParser* CClousureEvaluator::parser = new CGrammarParser("c:\\grammar.cgt");
+
 CClousureEvaluator::CClousureEvaluator(CMethodInfo* methodInfoArg, CAttributeInfo* attributeInfoArg, ICorProfilerInfo2* corProfilerInfo)
 {
 	this->attributeInfo = attributeInfoArg;
@@ -32,6 +34,22 @@ CClousureEvaluator::~CClousureEvaluator(void)
 	
 }
 
+void CClousureEvaluator::PrintReductionTree(Symbol* reductionTree) {
+	if (reductionTree == NULL) {
+		return;
+	}
+	if (reductionTree->type == NON_TERMINAL) {
+		NonTerminal* nonTerminal = (NonTerminal*) reductionTree;
+		for (UINT i = 0 ; i < nonTerminal->children.size(); ++i) {
+			PrintReductionTree(nonTerminal->children[i]);
+		}
+	}else {
+		Terminal* terminal = (Terminal*) reductionTree;
+		LOG4CXX_INFO(clousureEvaluatorLogger, terminal->image.c_str());
+		LOG4CXX_INFO(clousureEvaluatorLogger, terminal->symbol.c_str());
+	}
+}
+
 bool CClousureEvaluator::EvalPreCondition(COR_PRF_FUNCTION_ARGUMENT_INFO* argumentInfo) {
 	if (this->initialized == false) {
 		Initialize();
@@ -39,6 +57,9 @@ bool CClousureEvaluator::EvalPreCondition(COR_PRF_FUNCTION_ARGUMENT_INFO* argume
 	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
 	ASSERT(arguments->size() >= 2);
 	CAttributeArgument* preCondition = arguments->at(0);
+	LALR* lalr = parser->GetReductionTree(preCondition->tokens);
+	//this->PrintReductionTree(lalr->parse(preCondition->tokens,true, true));
+	lalr->printReductionTree(lalr->parse(preCondition->tokens, true, true), 0);
 	std::vector<Token*>::iterator iter = preCondition->tokens.begin();
 	for ( ; iter != preCondition->tokens.end(); ++iter) {
 		Token* token = (*iter);

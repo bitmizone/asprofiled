@@ -15,7 +15,7 @@ public:
 	~CGrammarParser(void);
 	bool Initialize(void);
 	std::vector<Token*> Scan(std::wstring argument);
-	Symbol* GetReductionTree(std::vector<Token*> tokens);
+	LALR* GetReductionTree(std::vector<Token*> tokens);
 private:
 	std::string filePath;
 	CGTFile *cgtFile;

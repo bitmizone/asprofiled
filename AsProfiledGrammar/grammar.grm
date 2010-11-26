@@ -59,7 +59,7 @@ InitialValue            = '^'{ID Head}{ID Tail}*(.{ID Head}{ID Tail}*)*
 <Value>             ::= Identifier                                  ! #23
                     |  StringLiteral                                ! #24
                     |  DecimalNumber                                ! #25
-                    |  '(' <Cmp Exp> ')'                            ! #26
+                    |  '(' <Boolean Exp> ')'                            ! #26
                     |  BooleanLiteral                               ! #27
                     |  ReturnValue                                  ! #28
                     |  InitialValue

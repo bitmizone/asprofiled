@@ -6,6 +6,7 @@ CGrammarParser::CGrammarParser(std::string cgtFilePath) : filePath(cgtFilePath)
 { 
 	this->cgtFile = new CGTFile();
 	this->myReporter = new SimpleErrorRep();
+	this->lalr = NULL;
 }
 
 CGrammarParser::~CGrammarParser(void)
@@ -30,19 +31,19 @@ bool CGrammarParser::Initialize() {
 	
 	this->cgtFile = new CGTFile();
 	bool loadOk = this->cgtFile->load(const_cast<char*>(this->filePath.c_str()));
-	
+	ASSERT(loadOk);
 	return loadOk;
 }
 
-Symbol* CGrammarParser::GetReductionTree(std::vector<Token*> tokens) {
+LALR* CGrammarParser::GetReductionTree(std::vector<Token*> tokens) {
 	if (this->lalr == NULL) {
 		if (this->Initialize() == true) {
 			this->lalr = cgtFile->getParser();
-		}else{
+		}else{ 
 			return NULL;
 		}
 	}
-	return this->lalr->parse(tokens, true, true);
+	return this->lalr;
 }
  
 std::vector<Token*> CGrammarParser::Scan(std::wstring argument) {

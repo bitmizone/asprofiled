@@ -6,8 +6,8 @@
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
 #include <map>
+#include "GrammarParser.h"
 using namespace log4cxx;
-
 
 class CClousureEvaluator
 {
@@ -18,7 +18,9 @@ public:
 	CMethodInfo* GetMethodInfo();
 	bool EvalPreCondition(COR_PRF_FUNCTION_ARGUMENT_INFO* argumentInfo);
 	bool EvalPostCondition();
+	
 private:
+	void PrintReductionTree(Symbol* tree);
 	void TraceValues();
 	void Initialize();
 	void ParsePreCondition();
@@ -28,4 +30,5 @@ private:
 	CMethodInfo* methodInfo;
 	ICorProfilerInfo2* cpi;
 	std::map<std::wstring, CParam*>* tokenToParamMap;
+	static CGrammarParser* parser;
 };
