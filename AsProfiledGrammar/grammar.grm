@@ -22,8 +22,7 @@ ReturnValue             = '@returnValue'
 InitialValue            = '^'{ID Head}{ID Tail}*(.{ID Head}{ID Tail}*)*
 
 ! ------------------------------------------------- Rules
-
-<Program>           ::= <Boolean Exp>                               ! #1
+                          
 <Boolean Exp>       ::= <Boolean Exp> <Boolean Operator> <Cmp Exp>  ! #2
                     |   <Cmp Exp>                                   ! #4
 

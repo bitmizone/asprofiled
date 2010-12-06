@@ -2,14 +2,17 @@
 
 #include "common.h"
 #include "cor.h"
-
-class CParam
+#include "Node.h"
+#include "ValueReader.h"
+class CParam : public CNode
 {
 public:
 	CParam(void);
 	~CParam(void);
-	ULONG ReadData(ULONG_PTR startAddress);
-	
+	//ULONG ReadData(ULONG_PTR startAddress);
+	NodeType GetType();
+	std::wstring GetValue();
+
 	WCHAR* paramName;
 	WCHAR* paramTypeAsString;
 	CorElementType elementType;
@@ -19,5 +22,12 @@ public:
 	UINT_PTR addressToParameterValue;
 	ULONG dataLength;
 	UINT data;
+	ICorProfilerInfo2* cpi;
+	void PersistData();
+	CParam* GetCopy();
+	std::wstring persistedValue;
+private:
+	bool isDataPersisted;
+	std::wstring ReadValue();
 	
 };

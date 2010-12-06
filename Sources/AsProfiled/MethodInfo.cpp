@@ -128,6 +128,7 @@ bool CMethodInfo::ReadArgumentsValues(COR_PRF_FUNCTION_ARGUMENT_INFO *argumentIn
 	for ( ; iter != params->end(); ++iter) {
 		CParam* param = (*iter);
 		param->addressToParameterValue = argumentInfo->ranges[++counter].startAddress;
+		
 	}
 	return true;
 }
@@ -165,7 +166,7 @@ void CMethodInfo::AssignArgumentsData() {
 	COR_PRF_FUNCTION_ARGUMENT_RANGE currentRange = this->argumentsInfo->ranges[0];
 	for (UINT32 i = 0; i < this->argumentsCount; ++i) {
 		CParam* argument = this->arguments->at(i);
-		argument->ReadData(currentRange.startAddress);
+		//argument->ReadData(currentRange.startAddress);
 		break;
 	}
 	
@@ -177,7 +178,6 @@ void CMethodInfo::AssignArgumentsNames() {
 	ULONG parameterNameLength;
 	mdParamDef argumentsTokens[MaxParametersCount];
 	this->pMetaDataImport->EnumParams(&parametersEnum, this->methodToken, argumentsTokens, MaxParametersCount, &tempArgumentsCount);
-//	ASSERT(tempArgumentsCount == this->argumentsCount);
 	for (ULONG i = 0; i < tempArgumentsCount; ++i) {
 		CParam* argument = this->arguments->at(i);
 		this->pMetaDataImport->GetParamProps(argumentsTokens[i], NULL, NULL, argument->paramName, NAME_BUFFER_SIZE, &parameterNameLength, NULL, NULL, NULL, NULL);

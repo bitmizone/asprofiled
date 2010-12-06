@@ -7,7 +7,7 @@
 #include "AttributeArgument.h"
 #include "ClousureEvaluator.h"
 #include <map>
-using namespace std;;
+
 using namespace log4cxx;
 
 CProfiler* _cProfilerGlobalHandler = NULL;
@@ -18,7 +18,7 @@ CProfiler::CProfiler()
 	// Configure Log4cxx
 	BasicConfigurator::configure();
 	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
-	myMainLogger->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
+	myMainLogger->setLevel(Level::toLevel(log4cxx::Level::WARN_INT));
 }
 
 
@@ -75,10 +75,10 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 		LOG4CXX_DEBUG(myMainLogger, "attribute not found");
 	}else{
 		methodInfo->ReadArgumentsValues(argumentInfo);
-		CClousureEvaluator* evaluator = new CClousureEvaluator(methodInfo, attributeInfo, _ICorProfilerInfo2);
+		CClousureEvaluator* evaluator = new CClousureEvaluator(methodInfo, attributeInfo, _ICorProfilerInfo2, argumentInfo);
 		functionsMap->insert(pair<FunctionID, CClousureEvaluator*>( functionID, evaluator));
 		LOG4CXX_INFO(myMainLogger, attributeInfo->typeName);
-		evaluator->EvalPreCondition(argumentInfo);
+		evaluator->EvalPreCondition();
 	}
 	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
 	_ICorProfilerInfo2->GetStringLayout(&bufferLengthOffset, &stringLengthOffset, &bufferOffset);
@@ -126,7 +126,8 @@ void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PR
 		return;
 	}
 	CClousureEvaluator* evaluator = iter->second;
-	LOG4CXX_INFO(myMainLogger, evaluator->GetMethodInfo()->GetMethodName() );
+	LOG4CXX_WARN(myMainLogger, evaluator->GetMethodInfo()->GetMethodName() );
+	evaluator->EvalPostCondition(retvalRange);
 	
 }
 

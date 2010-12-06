@@ -41,6 +41,8 @@
     class __declspec(dllexport) LALR;
  #endif
 
+#define DEBUG 0
+
 
  enum Actions {ACTION_SHIFT = 1, ACTION_REDUCE = 2, ACTION_GOTO = 3, ACTION_ACCEPT = 4};
  enum Reductions {REDUCTION_OK, REDUCTION_ERROR, REDUCTION_TEXT_ACCEPTED, REDUCTION_SIMPLIFIED};
