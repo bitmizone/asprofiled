@@ -29,21 +29,21 @@ CValueReader::~CValueReader(void)
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceULong(UINT_PTR startAddress)
+std::wstring CValueReader::TraceULong(UINT_PTR startAddress)
 {
 	LOG4CXX_INFO(valueLogger, *(unsigned long long *)startAddress);
 	return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceLong(UINT_PTR startAddress)
+std::wstring CValueReader::TraceLong(UINT_PTR startAddress)
 {
 	LOG4CXX_INFO(valueLogger, *(long long *)startAddress);
 	return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceUInt(UINT_PTR startAddress)
+std::wstring CValueReader::TraceUInt(UINT_PTR startAddress)
 {
 	LOG4CXX_INFO(valueLogger, *(unsigned int *)startAddress);
 	return S_OK;
@@ -52,76 +52,73 @@ HRESULT CValueReader::TraceUInt(UINT_PTR startAddress)
 // ----------------------------------------------------------------------------
 std::wstring CValueReader::TraceInt(UINT_PTR startAddress)
 {
-	LOG4CXX_INFO(valueLogger, *(int *)startAddress);
-	return S_OK;
 	std::wostringstream stream;
     stream << *(int *)startAddress;
 	return stream.str();
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceUShort(UINT_PTR startAddress)
+std::wstring CValueReader::TraceUShort(UINT_PTR startAddress)
 {
 	LOG4CXX_INFO(valueLogger, *(unsigned short *)startAddress);
 	return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceShort(UINT_PTR startAddress)
+std::wstring CValueReader::TraceShort(UINT_PTR startAddress)
 {
 	LOG4CXX_INFO(valueLogger, *(short *)startAddress);
 	return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceByte(UINT_PTR startAddress)
+std::wstring CValueReader::TraceByte(UINT_PTR startAddress)
 {
 	LOG4CXX_INFO(valueLogger, *(unsigned char *)startAddress);
 	return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceSByte(UINT_PTR startAddress)
+std::wstring CValueReader::TraceSByte(UINT_PTR startAddress)
 {
 	LOG4CXX_INFO(valueLogger, *(char *)startAddress);
 	return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceChar(UINT_PTR startAddress)
+std::wstring CValueReader::TraceChar(UINT_PTR startAddress)
 {
 	LOG4CXX_INFO(valueLogger, *(char*)startAddress);
 	return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceBoolean(UINT_PTR startAddress)
+std::wstring CValueReader::TraceBoolean(UINT_PTR startAddress)
 {
 	if((*(bool*)startAddress)) 
 	{
-		LOG4CXX_INFO(valueLogger, "true");
+		return L"true";
 	}else{
-		LOG4CXX_INFO(valueLogger, "false");
+		return L"false";
 	}
-	return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceFloat(UINT_PTR startAddress)
+std::wstring CValueReader::TraceFloat(UINT_PTR startAddress)
 {
   LOG4CXX_INFO(valueLogger, *(float*)startAddress);
   return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceDouble(UINT_PTR startAddress)
+std::wstring CValueReader::TraceDouble(UINT_PTR startAddress)
 {
   LOG4CXX_INFO(valueLogger, *(double*)startAddress);
   return S_OK;
 }
 
 // ----------------------------------------------------------------------------
-HRESULT CValueReader::TraceString(
+std::wstring CValueReader::TraceString(
   UINT_PTR startAddress,
   ICorProfilerInfo2 *cpi)
 {
@@ -149,10 +146,13 @@ HRESULT CValueReader::TraceString(
 	DWORD bufferLength = *((DWORD *)(oid + bufferLengthOffset));
 	DWORD stringLength = *((DWORD *)(oid + stringLengthOffset));
 	LOG4CXX_INFO(valueLogger, buffer);
+	std::wstring buff(buffer);
+	std::wstring result = L"\"" + buff + L"\"";
+	return result;
   }else{
 	  LOG4CXX_INFO(valueLogger, "?");
   }
-  return hr;
+	return L"";
 }
 
 int CValueReader::ExceptionFilter(unsigned int code, struct _EXCEPTION_POINTERS *ep) {

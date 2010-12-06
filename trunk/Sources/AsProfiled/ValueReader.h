@@ -9,31 +9,31 @@ public:
 	static CValueReader* GetInstance();
 	
 	~CValueReader(void);
-	HRESULT TraceULong(UINT_PTR startAddress);
+	std::wstring TraceULong(UINT_PTR startAddress);
 
-	HRESULT TraceLong(UINT_PTR startAddress);
+	std::wstring TraceLong(UINT_PTR startAddress);
 
-	HRESULT TraceUInt(UINT_PTR startAddress);
+	std::wstring TraceUInt(UINT_PTR startAddress);
 
 	std::wstring TraceInt(UINT_PTR startAddress);
 
-	HRESULT TraceUShort(UINT_PTR startAddress);
+	std::wstring TraceUShort(UINT_PTR startAddress);
 
-	HRESULT TraceShort(UINT_PTR startAddress);
+	std::wstring TraceShort(UINT_PTR startAddress);
 
-	HRESULT TraceByte(UINT_PTR startAddress);
+	std::wstring TraceByte(UINT_PTR startAddress);
 
-	HRESULT TraceSByte(UINT_PTR startAddress);
+	std::wstring TraceSByte(UINT_PTR startAddress);
 
-	HRESULT TraceChar(UINT_PTR startAddress);
+	std::wstring TraceChar(UINT_PTR startAddress);
 
-	HRESULT TraceBoolean(UINT_PTR startAddress);
+	std::wstring TraceBoolean(UINT_PTR startAddress);
 
-	HRESULT TraceFloat(UINT_PTR startAddress);
+	std::wstring TraceFloat(UINT_PTR startAddress);
 
-	HRESULT TraceDouble(UINT_PTR startAddress);
+	std::wstring TraceDouble(UINT_PTR startAddress);
 
-	HRESULT TraceString(UINT_PTR startAddress, ICorProfilerInfo2 *cpi);
+	std::wstring TraceString(UINT_PTR startAddress, ICorProfilerInfo2 *cpi);
 
 	int ExceptionFilter(unsigned int code, struct _EXCEPTION_POINTERS *ep);
 private:

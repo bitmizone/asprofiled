@@ -280,6 +280,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Node.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Operator.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Param.cpp"
 				>
 			</File>
@@ -439,6 +447,10 @@
 			</File>
 			<File
 				RelativePath=".\MethodInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Node.h"
 				>
 			</File>
 			<File

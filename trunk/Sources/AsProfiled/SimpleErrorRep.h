@@ -5,7 +5,6 @@
 
 #include <stdlib.h>
 #include "astudillo\ErrorReporter.h"
-using namespace std;
 
 class SimpleErrorRep : public ErrorReporter {
 public :

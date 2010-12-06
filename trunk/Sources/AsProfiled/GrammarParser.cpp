@@ -66,10 +66,10 @@ std::vector<Token*> CGrammarParser::Scan(std::wstring argument) {
 		tokens.push_back((*i)->newInstance());
 	}
 
-	for ( vector<Token*>::iterator i = tokens.begin(); i != tokens.end(); i++) {
-		std::wstring st((*i)->symbol);
-		wcout << st << endl;
-	}
+	//for ( vector<Token*>::iterator i = tokens.begin(); i != tokens.end(); i++) {
+	//	std::wstring st((*i)->symbol);
+	//	wcout << st << endl;
+	//}
 	return tokens;
 }
 
