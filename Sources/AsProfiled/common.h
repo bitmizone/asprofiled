@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cstdio>
+#include <vector>
 
 #define ATTRIBUTE_CONTRACT_NAME "AsContractAttribute"
 #define NAME_BUFFER_SIZE 2048
@@ -12,5 +13,6 @@
 
 void PrintCharArray(WCHAR*);
 char* ToBinary(void*, int , int);
+std::vector<std::wstring> Split(const std::wstring& text, WCHAR delimiter); 
 
 #endif // end of COMMON

@@ -33,6 +33,7 @@ private:
 	void ParsePostCondition(CParam* returnValue);
 	bool EvaluateNode(CNode* node);
 	bool Eval(std::vector<CNode*>* arguments, std::wstring operatorValue);
+	void BuildParamChain(CParam* param, std::vector<std::wstring> paramPath);
 	COR_PRF_FUNCTION_ARGUMENT_INFO* argumentInfo;
 	COR_PRF_FUNCTION_ARGUMENT_INFO* initialArgumentInfo;
 	CAttributeInfo* attributeInfo;

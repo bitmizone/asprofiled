@@ -138,7 +138,6 @@ HRESULT CProfiler::GetFunctionData(FunctionID functionId)
 }
 
 HRESULT CProfiler::GetFullMethodName(CMethodInfo& methodInfo, LPWSTR wszMethod) {
-	
 	CTypeInfo typeInfo(methodInfo.GetMetaDataImport(), methodInfo.GetTypeToken());
 
 	wstring fullMethodName(typeInfo.GetName());

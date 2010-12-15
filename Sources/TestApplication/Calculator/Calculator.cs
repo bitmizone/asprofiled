@@ -5,14 +5,21 @@ using System.Text;
 
 namespace TestApplication.Calculator
 {
+    class Test
+    {
+        
+    }
 
     class  Calculator : Object
     {
+        public int baba { get; set; }
+        //public int baba = 3;
+        public string Property { get; set; }
         //[AsContract(PreCondition="bieda", Invariant="", PostCondition="")] // named args
         //[AsContract("(t == 2) && (t == 3 && (2 == 3 || 12 == 13))", "biedactwo.baba > 4 && (adam.go == 2 && @returnValue == 2 || 2 == 2)", null)] // fixed args\
         //[AsContract("t == 2 && -t == 3","baba", null)]
-        [AsContract("val == \"baba\" && delta == \"3\"", "val == \"barabara\" && @returnValue == 0", null)]
-        public int Div(bool t, int divided, int divisor, string val, string delta)
+        [AsContract("c.get_baba == 3", "val == \"barabara\" && @returnValue == 0", null)]
+        public int Div(bool t, int divided, int divisor, string val, string delta, Calculator c)
         {
             val = "barabara";
             return 0;// divided / divisor;

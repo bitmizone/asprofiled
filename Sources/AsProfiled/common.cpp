@@ -25,3 +25,24 @@ char* ToBinary(void* p, int cBytes, int cBytesToSkip) {
 	}
 	return binaryRepresentation;
 }
+
+std::vector<std::wstring> Split(const std::wstring& text, WCHAR delimiter) {
+	std::vector<std::wstring> result;
+	std::wstring::size_type start = 0;
+	std::wstring::size_type end = text.find( delimiter, start );
+
+	while( end != std::wstring::npos )
+	{
+		std::wstring token = text.substr( start, end - start );
+
+		result.push_back( token );
+
+		start = end + 1;
+		end   = text.find( delimiter, start );
+	}
+
+	result.push_back( text.substr( start ) );
+
+	return result;
+
+}
