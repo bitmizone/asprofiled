@@ -30,8 +30,6 @@ CMethodInfo::~CMethodInfo(void)
 		delete this->paramParser;
 	}
 
-	//if (this->arguments != NULL) {
-	//}
 }
 
 void CMethodInfo::SetDefaultValues() 
@@ -63,6 +61,8 @@ void CMethodInfo::InitializeInternals()
 											NAME_BUFFER_SIZE, &this->methodNameLength, NULL, 
 											&this->methodSignatureBlob, &this->methodSignatureBlobSize,
 											NULL, NULL);
+	
+
 	this->state = BEGINNING;
 }
 
@@ -133,16 +133,28 @@ bool CMethodInfo::ReadArgumentsValues(COR_PRF_FUNCTION_ARGUMENT_INFO *argumentIn
 	return true;
 }
 
+
 std::vector<CParam*>* CMethodInfo::GetArguments() {
 	if (this->arguments != NULL) {
 		return this->arguments;
 	}
+
 	if (this->state == RETURN_VALUE_TYPE_READ) {
+		HCORENUM argumentsEnum = NULL;
+		mdParamDef* paramsTokens = new mdParamDef[this->argumentsCount];
+		this->pMetaDataImport->EnumParams(&argumentsEnum, NULL, paramsTokens, this->argumentsCount, NULL);
+		
 		this->arguments = new std::vector<CParam*>();
 		for ( ULONG i = 0; (this->methodSignatureBlob != NULL) && (i < this->argumentsCount); ++i )
 		{
 			CParam* argument = new CParam();
-			this->methodSignatureBlob = paramParser->ParseSignature(this->methodSignatureBlob, *argument);
+			argument->paramToken = paramsTokens[i];
+			
+			//this->methodSignatureBlob = 
+				paramParser->ParseSignature(this->methodSignatureBlob, *argument);
+				bool t;
+				bool t2;
+				paramParser->GetType(this->methodSignatureBlob, t, argument->paramTypeToken, t2);
 			if ( this->methodSignatureBlob != NULL )
 			{
 				this->arguments->push_back(argument);

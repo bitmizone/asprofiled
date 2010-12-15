@@ -86,7 +86,6 @@ void CClousureEvaluator::PrintNodeTree(CNode* node, int depth) {
 	for (UINT i = 0 ; i < node->children->size(); ++i) {
 		PrintNodeTree(node->children->at(i), depth+1);
 	}
-
 }
 
 
@@ -293,26 +292,50 @@ bool CClousureEvaluator::EvalPostCondition( COR_PRF_FUNCTION_ARGUMENT_RANGE *ret
 void CClousureEvaluator::Initialize()
 {
 	ParsePreCondition();
+}
+
+void CClousureEvaluator::BuildParamChain(CParam* param, std::vector<std::wstring> paramPath) 
+{
+	IMetaDataImport* metaData = this->methodInfo->GetMetaDataImport();
+	ASSERT(false);
+	mdParamDef* argumentTokens = this->methodInfo->argumentsTokens;
 	
+	// Start from second element, as first one is passed CParam
+	CParam* currentParam = param;
+	for (UINT i = 1; i < 2 /*paramPath.size()*/; ++i) {
+		currentParam->children = new std::vector<CNode*>();
+		mdFieldDef field = NULL;
+		HRESULT hr = metaData->FindMember(param->paramTypeToken, paramPath[i].c_str(), NULL, 0, &field);
+		if (!SUCCEEDED(hr)) 
+			ASSERT(false);
+		CParam* child = new CParam();
+		currentParam = child;
+	}
 }
 
 void CClousureEvaluator::ParsePreCondition() {
+
 	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
 	ASSERT(arguments->size() >= 2);
 	
 	CAttributeArgument* preCondition = arguments->at(0);
 	for (ULONG j = 0; j < preCondition->tokens.size(); ++j) {
 		std::vector<CParam*>* params =  this->methodInfo->GetArguments();
+		wstring tokenValue(preCondition->tokens.at(j)->image);
+		
+		std::vector<std::wstring> parts = Split(tokenValue, '.');
 		vector<CParam*>::iterator iter = params->begin();
 		for (; iter != params->end(); ++iter) {
 			CParam* param = (*iter);
 			param->cpi = this->cpi;
-			wstring tokenValue(preCondition->tokens.at(j)->image);
 			wstring paramName(param->paramName);
 			if (tokenToParamMap->find(tokenValue) == tokenToParamMap->end()) {
 				// HACK
-				if (tokenValue.compare(paramName) == 0) {
+				if (parts[0].compare(paramName) == 0) {
 					tokenToParamMap->insert(pair<wstring, CParam*>(tokenValue, param));
+					if (parts.size() > 1) { // we are dealing with compound type
+						this->BuildParamChain(param, parts);
+					}
 				}
 			}
 		}

@@ -26,6 +26,8 @@ public:
 	void PersistData();
 	CParam* GetCopy();
 	std::wstring persistedValue;
+	mdParamDef paramToken;
+	mdTypeDef paramTypeToken;
 private:
 	bool isDataPersisted;
 	std::wstring ReadValue();

@@ -216,3 +216,31 @@ PCCOR_SIGNATURE CParamParser::ParseSignature(PCCOR_SIGNATURE signature, CParam& 
 
 	return signature;
 }
+
+CorElementType CParamParser::GetType(
+  PCCOR_SIGNATURE& sigBlob, 
+  bool &isByRef, 
+  mdTypeDef &typeDef,
+  bool &isArray)
+{
+  CorElementType type = (CorElementType) *sigBlob++;
+
+  isByRef = (ELEMENT_TYPE_BYREF == type);
+
+  if(isByRef)
+    type = (CorElementType) *sigBlob++;
+
+  isArray = (ELEMENT_TYPE_SZARRAY == type);
+
+  if(isArray)
+    type = (CorElementType) *sigBlob++;
+
+  typeDef = mdTypeDefNil;
+
+  if(ELEMENT_TYPE_VALUETYPE == type || ELEMENT_TYPE_CLASS == type)
+  {
+    sigBlob += CorSigUncompressToken(sigBlob, &typeDef);
+  }
+
+  return type;
+}
