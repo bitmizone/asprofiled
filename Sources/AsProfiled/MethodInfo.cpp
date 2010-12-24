@@ -150,7 +150,6 @@ std::vector<CParam*>* CMethodInfo::GetArguments() {
 			CParam* argument = new CParam();
 			argument->paramToken = paramsTokens[i];
 			
-			//this->methodSignatureBlob = 
 				paramParser->ParseSignature(this->methodSignatureBlob, *argument);
 				bool t;
 				bool t2;

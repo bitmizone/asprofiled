@@ -64,7 +64,6 @@ END_COM_MAP()
 	// STARTUP/SHUTDOWN EVENTS
     STDMETHOD(Initialize)(IUnknown *pICorProfilerInfoUnk);
     STDMETHOD(Shutdown)();
-	
 
 	void FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo);
 	void FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange);

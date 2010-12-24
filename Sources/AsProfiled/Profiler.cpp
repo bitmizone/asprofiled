@@ -6,12 +6,14 @@
 #include "AttributeInfo.h"
 #include "AttributeArgument.h"
 #include "ClousureEvaluator.h"
+#include "CorDebug.h"
 #include <map>
 
 using namespace log4cxx;
 
 CProfiler* _cProfilerGlobalHandler = NULL;
 LoggerPtr myMainLogger(Logger::getLogger("main"));
+
 
 CProfiler::CProfiler() 
 {
@@ -39,6 +41,8 @@ void CProfiler::MapFunction(FunctionID functionId) {
 
 // Function called by .NET runtime when function is invoked
 void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) {
+	
+	
 	// Create methodInfo object which has the entry point for reading every metadata related to called method
 	CMethodInfo* methodInfo = new CMethodInfo(functionID, _ICorProfilerInfo2, argumentInfo);
 	// Buffer for function name
@@ -296,6 +300,7 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 
 	// Register handlers for function enter/leave events
 	_ICorProfilerInfo2->SetEnterLeaveFunctionHooks2( &FunctionEnterHandler, &FunctionLeaveHandler, NULL);
+	
 	
 	// Setting function mapper
 	_ICorProfilerInfo2->SetFunctionIDMapper(FunctionMapper);

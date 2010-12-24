@@ -12,13 +12,13 @@ namespace TestApplication.Calculator
 
     class  Calculator : Object
     {
-        public int baba { get; set; }
+        private int baba = 3;
         //public int baba = 3;
         public string Property { get; set; }
         //[AsContract(PreCondition="bieda", Invariant="", PostCondition="")] // named args
         //[AsContract("(t == 2) && (t == 3 && (2 == 3 || 12 == 13))", "biedactwo.baba > 4 && (adam.go == 2 && @returnValue == 2 || 2 == 2)", null)] // fixed args\
         //[AsContract("t == 2 && -t == 3","baba", null)]
-        [AsContract("c.get_baba == 3", "val == \"barabara\" && @returnValue == 0", null)]
+        [AsContract("c.baba == 3", "val == \"barabara\" && @returnValue == 0", null)]
         public int Div(bool t, int divided, int divisor, string val, string delta, Calculator c)
         {
             val = "barabara";
