@@ -308,6 +308,11 @@ void CClousureEvaluator::BuildParamChain(CParam* param, std::vector<std::wstring
 		HRESULT hr = metaData->FindMember(param->paramTypeToken, paramPath[i].c_str(), NULL, 0, &field);
 		if (!SUCCEEDED(hr)) 
 			ASSERT(false);
+		mdTypeDef paramTypeToken = mdTokenNil;
+		PCCOR_SIGNATURE paramSignature;
+		hr = metaData->GetMemberProps(field, &paramTypeToken, NULL, 0, NULL, NULL, &paramSignature, NULL, NULL, NULL, NULL, NULL, NULL);
+		if (!SUCCEEDED(hr))
+			ASSERT(false);
 		CParam* child = new CParam();
 		currentParam = child;
 	}
