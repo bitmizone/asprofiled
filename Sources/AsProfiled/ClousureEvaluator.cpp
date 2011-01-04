@@ -105,35 +105,61 @@ void CClousureEvaluator::PrintReductionTree(Symbol* reductionTree) {
 		
 	}
 }
-
+CNode* CClousureEvaluator::GoToLeaf(CNode* node) {
+	while (node->children != NULL && node->children->size() == 1) {
+		node = node->children->at(0);
+	}
+	return node;
+}
 bool CClousureEvaluator::Equal(CNode* left, CNode* right) {
-	while (left->children != NULL && left->children->size() == 1) {
-		left = left->children->at(0);
-	}
-	while (right->children != NULL && right->children->size() == 1) {
-		right = right->children->at(0);
-	}
+	left = this->GoToLeaf(left);
+	right = this->GoToLeaf(right);
 
-	if (left->children != NULL) {
-		
-	}
-	if (right->children != NULL) {
-	
-	}
-
-	std::wstring leftVal;
-	std::wstring rightVal; 
-
-	leftVal = left->GetValue();
-	rightVal = right->GetValue();
-
-	return leftVal.compare(rightVal) == 0;
+	return left->GetValue().compare(right->GetValue()) == 0;
 }
 
-bool CClousureEvaluator::And(CNode* leftNode, CNode* rightNode) {
-	bool leftValue = this->EvaluateNode(leftNode);
-	bool rightValue = this->EvaluateNode(rightNode);
+bool CClousureEvaluator::Less(CNode* left, CNode* right) {
+	left = this->GoToLeaf(left);
+	right = this->GoToLeaf(right);
+
+	return left->GetValue().compare(right->GetValue()) == -1;
+}
+bool CClousureEvaluator::LessOrEqual(CNode* left, CNode* right){
+	left = this->GoToLeaf(left);
+	right = this->GoToLeaf(right);
+
+	return left->GetValue().compare(right->GetValue()) <= 0;
+}
+bool CClousureEvaluator::GreaterOrEqual(CNode* left, CNode* right){
+	left = this->GoToLeaf(left);
+	right = this->GoToLeaf(right);
+
+	return left->GetValue().compare(right->GetValue()) >= 0;
+}
+bool CClousureEvaluator::Greater(CNode* left, CNode* right){
+	left = this->GoToLeaf(left);
+	right = this->GoToLeaf(right);
+
+	return left->GetValue().compare(right->GetValue()) == 1;
+}
+
+bool CClousureEvaluator::NotEqual(CNode* left, CNode* right) {
+	left = this->GoToLeaf(left);
+	right = this->GoToLeaf(right);
+
+	return left->GetValue().compare(right->GetValue()) != 1;
+}
+
+bool CClousureEvaluator::And(CNode* left, CNode* right) {
+	bool leftValue = this->EvaluateNode(left);
+	bool rightValue = this->EvaluateNode(right);
 	return leftValue && rightValue;
+}
+
+bool CClousureEvaluator::Or(CNode* left, CNode* right) {
+	bool leftValue = this->EvaluateNode(left);
+	bool rightValue = this->EvaluateNode(right);
+	return leftValue || rightValue;
 }
 
 bool CClousureEvaluator::Eval(std::vector<CNode*>* arguments, std::wstring operatorValue) {
@@ -169,17 +195,27 @@ bool CClousureEvaluator::Eval(std::vector<CNode*>* arguments, std::wstring opera
 			Operator::CmpOperator cmpOperator = Operator::GetCmpOperator(operatorValue.c_str());
 			switch (cmpOperator) {
 				case Operator::Less:
+					result = this->Less(arguments->at(0), arguments->at(2));
+					return result;
 					break;
 				case Operator::LessOrEqual:
+					result = this->LessOrEqual(arguments->at(0), arguments->at(2));
+					return result;
 					break;
 				case Operator::Equal:
 					result = this->Equal(arguments->at(0), arguments->at(2));
 					return result;
 				case Operator::NotEqual:
+					result = this->NotEqual(arguments->at(0), arguments->at(2));
+					return result;
 					break;
 				case Operator::Greater:
+					result = this->Greater(arguments->at(0), arguments->at(2));
+					return result;
 					break;
 				case Operator::GreaterOrEqual:
+					result = this->GreaterOrEqual(arguments->at(0), arguments->at(2));
+					return result;
 					break;
 			}
 		}
@@ -192,6 +228,8 @@ bool CClousureEvaluator::Eval(std::vector<CNode*>* arguments, std::wstring opera
 					return result;
 					break;
 				case Operator::BoolOr:
+					result = this->Or(arguments->at(0), arguments->at(2));
+					return result;
 					break;
 			}
 		}
@@ -208,7 +246,7 @@ bool CClousureEvaluator::Eval(std::vector<CNode*>* arguments, std::wstring opera
 		default:
 			break;
 	}
-	return true;
+	return false;
 }
 
 bool CClousureEvaluator::EvaluateNode(CNode* node) {
@@ -248,27 +286,22 @@ bool CClousureEvaluator::EvalPreCondition() {
 	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
 	ASSERT(arguments->size() >= 2);
 	CAttributeArgument* preCondition = arguments->at(0);
+	if (preCondition->tokens.size() == 0) {
+		return true;
+	}
 	LALR* lalr = parser->GetReductionTree(preCondition->tokens);
 
 	CNode* tree = new CNode();
 	Symbol* parsedTree = lalr->parse(preCondition->tokens, true, true);
 	lalr->printReductionTree(parsedTree, 0);
-	//this->PrintReductionTree(parsedTree);
 	this->RewriteReductionTree(tree, parsedTree);
 	bool result = this->EvaluateNode(tree);
-	//this->PrintNodeTree(tree,0);
-	if (result == true) {
-		LOG4CXX_INFO(clousureEvaluatorLogger, "TRUE !!!");
-	}else{
-		LOG4CXX_INFO(clousureEvaluatorLogger, "FALSE !!!");
-	}
 	return result;
 }
 
 bool CClousureEvaluator::EvalPostCondition( COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange) {
 	CParam* returnValue = this->methodInfo->GetReturnValue();
-	returnValue->addressToParameterValue = retvalRange->startAddress;
-	
+	returnValue->SetAddressToParameterValue(retvalRange->startAddress);
 	ParsePostCondition(returnValue);
 	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
 	ASSERT(arguments->size() >= 2);
@@ -279,33 +312,27 @@ bool CClousureEvaluator::EvalPostCondition( COR_PRF_FUNCTION_ARGUMENT_RANGE *ret
 	lalr->printReductionTree(parsedTree, 0);
 	this->RewriteReductionTree(tree, parsedTree);
 	this->PrintNodeTree(tree,0);
-
 	bool result = this->EvaluateNode(tree);
-	if (result == true) {
-		LOG4CXX_INFO(clousureEvaluatorLogger, "TRUE !!!");
-	}else{
-		LOG4CXX_INFO(clousureEvaluatorLogger, "FALSE !!!");
-	}
 	return result;
 }
 
 void CClousureEvaluator::Initialize()
 {
 	ParsePreCondition();
+	ParsePostCondition(NULL);
 }
 
-void CClousureEvaluator::BuildParamChain(CParam* param, std::vector<std::wstring> paramPath) 
+CParam* CClousureEvaluator::BuildParamChain(CParam* param, std::vector<std::wstring> paramPath) 
 {
 	IMetaDataImport* metaData = this->methodInfo->GetMetaDataImport();
-	ASSERT(false);
+	
 	mdParamDef* argumentTokens = this->methodInfo->argumentsTokens;
 	
 	// Start from second element, as first one is passed CParam
 	CParam* currentParam = param;
-	for (UINT i = 1; i < 2 /*paramPath.size()*/; ++i) {
-		currentParam->children = new std::vector<CNode*>();
+	for (UINT i = 1; i < paramPath.size(); ++i) {
 		mdFieldDef field = NULL;
-		HRESULT hr = metaData->FindMember(param->paramTypeToken, paramPath[i].c_str(), NULL, 0, &field);
+		HRESULT hr = metaData->FindMember(currentParam->paramTypeToken, paramPath[i].c_str(), NULL, 0, &field);
 		if (!SUCCEEDED(hr)) 
 			ASSERT(false);
 		mdTypeDef paramTypeToken = mdTokenNil;
@@ -313,9 +340,46 @@ void CClousureEvaluator::BuildParamChain(CParam* param, std::vector<std::wstring
 		hr = metaData->GetMemberProps(field, &paramTypeToken, NULL, 0, NULL, NULL, &paramSignature, NULL, NULL, NULL, NULL, NULL, NULL);
 		if (!SUCCEEDED(hr))
 			ASSERT(false);
+		
 		CParam* child = new CParam();
+		child->paramName = const_cast<WCHAR*>(paramPath[i].c_str());
+		
+		
+		if(*paramSignature++ == IMAGE_CEE_CS_CALLCONV_FIELD) { }
+		bool a,b;
+		child->SetParameterType(methodInfo->GetParamParser()->GetType(paramSignature, a, paramTypeToken, b));
+		child->paramTypeToken = paramTypeToken;
+		child->cpi = currentParam->cpi;
+
+		ULONG fieldOffsetCount = 0;
+		ObjectID oid = *(ObjectID *)currentParam->GetAddressToParameterValue();
+		ClassID classId = NULL;
+		hr = cpi->GetClassFromObject(oid, &classId);
+		ULONG32 bufferOffset = 0;
+		hr = cpi->GetBoxClassLayout(classId, &bufferOffset);
+		oid = oid + bufferOffset;
+		cpi->GetClassLayout(classId, NULL, 0, &fieldOffsetCount,NULL);
+
+		if(fieldOffsetCount != 0) {
+			COR_FIELD_OFFSET* fieldOffset = new COR_FIELD_OFFSET[fieldOffsetCount];
+			hr = cpi->GetClassLayout(
+				classId,
+				fieldOffset, fieldOffsetCount, &fieldOffsetCount, NULL);
+			for (UINT j = 0 ; j < fieldOffsetCount; ++j) {
+				if (fieldOffset[j].ridOfField == field) {
+					child->SetAddressToParameterValue(oid+fieldOffset[j].ulOffset);
+					if (child->GetParameterType() != ELEMENT_TYPE_CLASS) {
+						std::wstring baba = child->GetValue();
+					}
+				}
+			}
+		}
+
+		currentParam->children = new std::vector<CNode*>();
+		currentParam->children->push_back(child);
 		currentParam = child;
 	}
+	return currentParam;
 }
 
 void CClousureEvaluator::ParsePreCondition() {
@@ -335,7 +399,6 @@ void CClousureEvaluator::ParsePreCondition() {
 			param->cpi = this->cpi;
 			wstring paramName(param->paramName);
 			if (tokenToParamMap->find(tokenValue) == tokenToParamMap->end()) {
-				// HACK
 				if (parts[0].compare(paramName) == 0) {
 					tokenToParamMap->insert(pair<wstring, CParam*>(tokenValue, param));
 					if (parts.size() > 1) { // we are dealing with compound type
@@ -348,36 +411,49 @@ void CClousureEvaluator::ParsePreCondition() {
 }
 
 void CClousureEvaluator::ParsePostCondition(CParam* returnValue) {
-	
 	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
 	ASSERT(arguments->size() >= 2);
 	CAttributeArgument* postCondition = arguments->at(1);
 	for (ULONG j = 0; j < postCondition->tokens.size(); ++j) {
 		std::vector<CParam*>* params =  this->methodInfo->GetArguments();
+		wstring tokenValue(postCondition->tokens.at(j)->image);
+		Operator::TokenTypeEnum tokenType = Operator::GetTokenType(postCondition->tokens.at(j)->symbol);
+		std::vector<std::wstring> parts = Split(tokenValue, '.');
+		if (tokenType == Operator::ReturnValue) {
+			if (returnValue != NULL) {
+				tokenToParamMap->insert(pair<wstring, CParam*>(tokenValue, returnValue));
+				if (parts.size() > 1) { // we are dealing with compound type
+					this->BuildParamChain(returnValue, parts);
+				}
+			}
+		}
+		
 		vector<CParam*>::iterator iter = params->begin();
 		for (; iter != params->end(); ++iter) {
 			CParam* param = (*iter);
-			// Rewrite
 			param->cpi = this->cpi;
-			wstring tokenValue(postCondition->tokens.at(j)->image);
+			
 			wstring paramName(param->paramName);
-			Operator::TokenTypeEnum tokenType = Operator::GetTokenType(postCondition->tokens.at(j)->symbol);
+			
 			if (tokenType == Operator::InitialValue) {
 				paramName = L"^" + paramName;
 			}
 			if (tokenToParamMap->find(tokenValue) == tokenToParamMap->end()) {
-				
-				if (tokenType == Operator::ReturnValue) {
-						tokenToParamMap->insert(pair<wstring, CParam*>(tokenValue, returnValue));
-				}
-				// HACK
-				if (tokenValue.compare(paramName) == 0) {
+				if (parts[0].compare(paramName) == 0) {
 					if (tokenType == Operator::InitialValue) {
 						param = param->GetCopy();
-						param->PersistData();
+						if (parts.size() > 1) {
+							CParam* leaf = this->BuildParamChain(param, parts);
+							leaf->PersistData();
+						}else{
+							param->PersistData();
+						}
 					}
 					
 					tokenToParamMap->insert(pair<wstring, CParam*>(tokenValue, param));
+					if (parts.size() > 1) { // we are dealing with compound type
+						this->BuildParamChain(param, parts);
+					}
 				}
 			}
 		}

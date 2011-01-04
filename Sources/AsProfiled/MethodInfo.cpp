@@ -13,6 +13,11 @@ CMethodInfo::CMethodInfo(FunctionID functionIdArg,
 	this->paramParser = new CParamParser(*pMetaDataImport);
 }
 
+CParamParser* CMethodInfo::GetParamParser()
+{
+	return this->paramParser;
+}
+
 CMethodInfo::CMethodInfo() { }
 
 CMethodInfo::CMethodInfo(IMetaDataImport* metaDataImport, mdMethodDef methodTokenArg) :
@@ -108,7 +113,11 @@ CParam* CMethodInfo::GetReturnValue() {
 	}
 	if (this->state == ARGUMENTS_COUNT_READ) {
 		this->returnValue = new CParam();
-		this->methodSignatureBlob = paramParser->ParseSignature(this->methodSignatureBlob, *returnValue);
+		bool a,b;
+		mdTypeDef typeToken = mdTokenNil;
+		this->returnValue->SetParameterType(paramParser->GetType(this->methodSignatureBlob, a, typeToken, b));
+		this->returnValue->paramTypeToken = typeToken;
+		//this->methodSignatureBlob = paramParser->ParseSignature(this->methodSignatureBlob, *returnValue);
 		this->state = RETURN_VALUE_TYPE_READ;
 	}else{
 		this->GetArgumentsCount();
@@ -117,18 +126,14 @@ CParam* CMethodInfo::GetReturnValue() {
 	return this->returnValue;
 }
 
-
-//read agrument value
-
 bool CMethodInfo::ReadArgumentsValues(COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) 
 {
 	std::vector<CParam*>* params = GetArguments();
 	std::vector<CParam*>::iterator iter = params->begin();
 	int counter = 0;
 	for ( ; iter != params->end(); ++iter) {
-		CParam* param = (*iter);
-		param->addressToParameterValue = argumentInfo->ranges[++counter].startAddress;
-		
+		CParam* param = (*iter);	
+		param->SetAddressToParameterValue(argumentInfo->ranges[++counter].startAddress);
 	}
 	return true;
 }
@@ -153,7 +158,7 @@ std::vector<CParam*>* CMethodInfo::GetArguments() {
 				paramParser->ParseSignature(this->methodSignatureBlob, *argument);
 				bool t;
 				bool t2;
-				paramParser->GetType(this->methodSignatureBlob, t, argument->paramTypeToken, t2);
+				argument->SetParameterType(paramParser->GetType(this->methodSignatureBlob, t, argument->paramTypeToken, t2));
 			if ( this->methodSignatureBlob != NULL )
 			{
 				this->arguments->push_back(argument);

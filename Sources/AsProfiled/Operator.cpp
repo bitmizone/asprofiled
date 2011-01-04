@@ -11,7 +11,7 @@ namespace Operator {
 	std::wstring LessOrEqualOp = L"<=";
 	std::wstring EqualOp = L"==";
 	std::wstring NotEqualOp = L"!=";
-	std::wstring GreaterOp = L"<";
+	std::wstring GreaterOp = L">";
 	std::wstring GreaterOrEqualOp = L"<=";
 
 	///// Boolean operators

@@ -37,6 +37,7 @@ public:
 	StateOfReadingMethodBlob GetStateOfReadingMethodBlob();
 	bool ReadArgumentsValues(COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo) ;
 	mdParamDef argumentsTokens[MaxParametersCount];
+	CParamParser* GetParamParser();
 private:
 	void SetDefaultValues();
 	void AssignArgumentsNames();

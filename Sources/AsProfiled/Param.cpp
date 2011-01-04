@@ -11,8 +11,6 @@ CParam::CParam(void)
 	this->elementType = ELEMENT_TYPE_END;
 	this->beginningOfParamSignature = NULL;
 	this->addressToParameterValue = NULL;
-	this->dataLength = 0;
-	this->data = 0;
 	this->isDataPersisted = false;
 }
 
@@ -32,14 +30,17 @@ CParam* CParam::GetCopy() {
 	copy->isDataPersisted = this->isDataPersisted;
 	copy->evaluated = this->evaluated;
 	copy->elementType = this->elementType;
-	copy->dataLength = this->dataLength;
-	copy->data = this->data;
 	copy->cpi = this->cpi;
 	copy->children = this->children;
 	copy->beginningOfParamSignature = this->beginningOfParamSignature;
 	copy->addressToParameterValue = this->addressToParameterValue;
+	copy->paramTypeToken = this->paramTypeToken;
 	
 	return copy;
+}
+
+void CParam::SetAddressToParameterValue(UINT_PTR address) {
+	this->addressToParameterValue = address;
 }
 
 NodeType CParam::GetType() {
@@ -88,3 +89,14 @@ std::wstring CParam::ReadValue() {
 	}
 }
 
+void CParam::SetParameterType(CorElementType elementType) {
+	this->elementType = elementType;
+}
+
+UINT_PTR CParam::GetAddressToParameterValue(){
+	return this->addressToParameterValue;
+}
+
+CorElementType CParam::GetParameterType() {
+	return this->elementType;
+}
