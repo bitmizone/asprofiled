@@ -33,7 +33,7 @@ private:
 	void ParsePostCondition(CParam* returnValue);
 	bool EvaluateNode(CNode* node);
 	bool Eval(std::vector<CNode*>* arguments, std::wstring operatorValue);
-	void BuildParamChain(CParam* param, std::vector<std::wstring> paramPath);
+	CParam* BuildParamChain(CParam* param, std::vector<std::wstring> paramPath);
 	COR_PRF_FUNCTION_ARGUMENT_INFO* argumentInfo;
 	COR_PRF_FUNCTION_ARGUMENT_INFO* initialArgumentInfo;
 	CAttributeInfo* attributeInfo;
@@ -45,6 +45,13 @@ private:
 
 	/// boolean operations
 	bool And(CNode* leftNode, CNode* rightNode);
+	bool Or(CNode* leftNode, CNode* rightNode);
 	/// cmp operations
+	bool Less(CNode* leftNode, CNode* rightNode);
+	bool LessOrEqual(CNode* leftNode, CNode* rightNode);
 	bool Equal(CNode* leftNode, CNode* rightNode);
+	bool Greater(CNode* leftNode, CNode* rightNode);
+	bool GreaterOrEqual(CNode* leftNode, CNode* rightNode);
+	bool NotEqual(CNode* leftNode, CNode* rightNode);
+	CNode* GoToLeaf(CNode* node);
 };

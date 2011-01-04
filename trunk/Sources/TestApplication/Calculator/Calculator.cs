@@ -12,20 +12,29 @@ namespace TestApplication.Calculator
 
     class  Calculator : Object
     {
-        private int baba = 3;
-        //public int baba = 3;
-        public string Property { get; set; }
-        //[AsContract(PreCondition="bieda", Invariant="", PostCondition="")] // named args
-        //[AsContract("(t == 2) && (t == 3 && (2 == 3 || 12 == 13))", "biedactwo.baba > 4 && (adam.go == 2 && @returnValue == 2 || 2 == 2)", null)] // fixed args\
-        //[AsContract("t == 2 && -t == 3","baba", null)]
-        [AsContract("c.baba == 3", "val == \"barabara\" && @returnValue == 0", null)]
+        private int aa = 2;
+        private TT abba = new TT();
+        [AsContract("c.abba.baba == 31", "^c.abba.baba == 31", null)]
         public int Div(bool t, int divided, int divisor, string val, string delta, Calculator c)
         {
             val = "barabara";
-            return 0;// divided / divisor;
+            TestMe();
+            return 0;
+        }
+
+        [AsContract("", "@returnValue.abba.baba == 31 && @returnValue.aa == 2", null)]
+        public Calculator TestMe()
+        {
+            Calculator c = new Calculator();
+            c.abba.baba = 10;
+            return c;
         }
     }
 
+    class TT
+    {
+        public int baba = 31;
+    }
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class AsContractAttribute : Attribute

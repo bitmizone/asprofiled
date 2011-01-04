@@ -82,44 +82,16 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 		CClousureEvaluator* evaluator = new CClousureEvaluator(methodInfo, attributeInfo, _ICorProfilerInfo2, argumentInfo);
 		functionsMap->insert(pair<FunctionID, CClousureEvaluator*>( functionID, evaluator));
 		LOG4CXX_INFO(myMainLogger, attributeInfo->typeName);
-		evaluator->EvalPreCondition();
+		bool result = evaluator->EvalPreCondition();
+		if (result == true) {
+			LOG4CXX_WARN(myMainLogger, "TRUE !!!");
+		}else{
+			LOG4CXX_WARN(myMainLogger, "FALSE !!!");
+			LOG4CXX_WARN(myMainLogger, methodInfo->GetMethodName());
+			exit(-1);
+		}
 	}
-	ULONG bufferLengthOffset, stringLengthOffset, bufferOffset;
-	_ICorProfilerInfo2->GetStringLayout(&bufferLengthOffset, &stringLengthOffset, &bufferOffset);
-
-	// WORKING EXAMPLE OF READING STRING VALUE
-	// DO NOT DELETE
-
-	//bool enableStringInfo = false;
-	//LOG4CXX_DEBUG(myMainLogger, "1. no of args " << methodInfo.GetArgumentsCount());
-	//LOG4CXX_DEBUG(myMainLogger, "2. no of rngs " << argumentInfo->numRanges);
-	//for (UINT i = 0 ; i < argumentInfo->numRanges ; i++) {
-	//	COR_PRF_FUNCTION_ARGUMENT_RANGE range = argumentInfo->ranges[i];
-	//	LOG4CXX_DEBUG(myMainLogger, "address " << range.startAddress);
-	//	LOG4CXX_DEBUG(myMainLogger, "length " << range.length);
-
-	//	if (i == 0 || range.length == 0) 
-	//	{
-	//		continue;
-	//	}
-	//	ObjectID* id = reinterpret_cast<ObjectID*>( range.startAddress);
-	//	ULONG size = 0;
-	//	if (enableStringInfo) {
-	//		ObjectID stringOID;
-	//		DWORD stringLength;
-	//		WCHAR tempString[NAME_BUFFER_SIZE];  
-	//		memcpy(&stringOID, ((const void *)(range.startAddress)), range.length);
-	//		memcpy(&stringLength, ((const void *)(stringOID + stringLengthOffset)), sizeof(DWORD));
-	//		memcpy(tempString, ((const void *)(stringOID + bufferOffset)), stringLength * sizeof(DWORD));
-	//		LOG4CXX_INFO(myMainLogger, tempString);
-	//		LOG4CXX_DEBUG(myMainLogger, "len = " << stringLength)
-	//	}
-	//	if (*id == 0x1000) {
-	//		enableStringInfo = true;
-	//	}
-	//}
-
-	LOG4CXX_INFO(myMainLogger, methodInfo->GetMethodName());
+	
 }
 
 void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange) {
@@ -130,9 +102,15 @@ void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PR
 		return;
 	}
 	CClousureEvaluator* evaluator = iter->second;
-	LOG4CXX_WARN(myMainLogger, evaluator->GetMethodInfo()->GetMethodName() );
-	evaluator->EvalPostCondition(retvalRange);
 	
+	bool result = evaluator->EvalPostCondition(retvalRange);
+	if (result == true) {
+		LOG4CXX_WARN(myMainLogger, "TRUE !!!");
+	}else{
+		LOG4CXX_WARN(myMainLogger, "FALSE !!!");
+		LOG4CXX_WARN(myMainLogger, evaluator->GetMethodInfo()->GetMethodName());	
+		exit(-1);
+	}	
 }
 
 
@@ -180,7 +158,6 @@ void CProfiler::PrintMethodInfo(CMethodInfo& methodInfo) {
 		//LOG4CXX_DEBUG(myMainLogger, static_cast<int>((*iter)->elementType));
 		//cout << hex << static_cast<int>((*iter)->elementType) << endl; 
 		LOG4CXX_DEBUG(myMainLogger, (*iter)->paramName);
-		LOG4CXX_DEBUG(myMainLogger, (*iter)->data);
 	}	
 }
 
