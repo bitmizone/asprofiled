@@ -18,11 +18,12 @@ Identifier              = {ID Head}{ID Tail}*(.{ID Head}{ID Tail}*)*
 StringLiteral           = '"' ( {String Chars} | '\' {Printable} )* '"'
 DecimalNumber           = {Number Without Zero}{Number}* | {Number}
 BooleanLiteral          = 'true' | 'false'
-ReturnValue             = '@returnValue'
+ReturnValue             = '@returnValue'(.{ID Head}{ID Tail}*)*
 InitialValue            = '^'{ID Head}{ID Tail}*(.{ID Head}{ID Tail}*)*
 
 ! ------------------------------------------------- Rules
-                          
+
+<Program>           ::= <Boolean Exp>                          
 <Boolean Exp>       ::= <Boolean Exp> <Boolean Operator> <Cmp Exp>  ! #2
                     |   <Cmp Exp>                                   ! #4
 
