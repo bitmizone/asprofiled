@@ -17,8 +17,10 @@ namespace TestApplication.Calculator
         [AsContract("c.abba.baba == 31", "^c.abba.baba == 31", null)]
         public int Div(bool t, int divided, int divisor, string val, string delta, Calculator c)
         {
+            if (divided > 0) 
+                Div(t, --divided, divisor,val, delta,c);
             val = "barabara";
-            TestMe();
+            c.abba.baba = 3;
             return 0;
         }
 

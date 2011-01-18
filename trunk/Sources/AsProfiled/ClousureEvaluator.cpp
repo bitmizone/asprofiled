@@ -61,7 +61,7 @@ void CClousureEvaluator::RewriteReductionTree(CNode* parentNode, Symbol* tree) {
 		}
 		childNode->value = terminal->image;
 		parentNode->children->push_back(childNode);
-		LOG4CXX_INFO(clousureEvaluatorLogger, terminal->image.c_str());
+		LOG4CXX_TRACE(clousureEvaluatorLogger, terminal->image.c_str());
 
 		// Identifier, DecimalValue
 		// LOG4CXX_INFO(clousureEvaluatorLogger, terminal->symbol.c_str());
@@ -311,7 +311,7 @@ bool CClousureEvaluator::EvalPostCondition( COR_PRF_FUNCTION_ARGUMENT_RANGE *ret
 	Symbol* parsedTree = lalr->parse(postCondtion->tokens, true, true);
 	lalr->printReductionTree(parsedTree, 0);
 	this->RewriteReductionTree(tree, parsedTree);
-	this->PrintNodeTree(tree,0);
+	//this->PrintNodeTree(tree,0);
 	bool result = this->EvaluateNode(tree);
 	return result;
 }
@@ -451,7 +451,7 @@ void CClousureEvaluator::ParsePostCondition(CParam* returnValue) {
 					}
 					
 					tokenToParamMap->insert(pair<wstring, CParam*>(tokenValue, param));
-					if (parts.size() > 1) { // we are dealing with compound type
+					if (parts.size() > 1 && tokenType != Operator::InitialValue) { // we are dealing with compound type
 						this->BuildParamChain(param, parts);
 					}
 				}
