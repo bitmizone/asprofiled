@@ -1,0 +1,40 @@
+\changetocdepth {2}
+\changetocdepth {2}
+\contentsline {chapter}{Spis tre\'sci}{i}{section*.1}
+\contentsline {chapter}{\chapternumberline {1}Wst\k ep}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}Platforma .NET i CLR}{1}{section.1.1}
+\contentsline {section}{\numberline {1.2}Za\IeC {\l }o\.zenia}{2}{section.1.2}
+\contentsline {chapter}{\chapternumberline {2}Programowanie kontraktowe}{3}{chapter.2}
+\contentsline {section}{\numberline {2.1}Historia}{3}{section.2.1}
+\contentsline {section}{\numberline {2.2}Opis}{4}{section.2.2}
+\contentsline {chapter}{\chapternumberline {3}Profilowanie}{7}{chapter.3}
+\contentsline {section}{\numberline {3.1}Profilowanie \IeC {\textendash } opis}{7}{section.3.1}
+\contentsline {section}{\numberline {3.2}Typy profilowania}{7}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Instrumentacja}{7}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Pr\'obkowanie}{7}{subsection.3.2.2}
+\contentsline {section}{\numberline {3.3}Profilowanie w \'srodowisku .NET}{7}{section.3.3}
+\contentsline {section}{\numberline {3.4}Profilowanie a dynamiczna weryfikacja program\'ow}{7}{section.3.4}
+\contentsline {chapter}{\chapternumberline {4}Om\'owienie funkcjonalno\'sci biblioteki}{9}{chapter.4}
+\contentsline {section}{\numberline {4.1}Kontrakty}{9}{section.4.1}
+\contentsline {section}{\numberline {4.2}Inspekcja nadzorowanego programu}{9}{section.4.2}
+\contentsline {section}{\numberline {4.3}Odczyt i interpretacja metadanych}{9}{section.4.3}
+\contentsline {section}{\numberline {4.4}Odczytywanie warto\'sci obiekt\'ow}{9}{section.4.4}
+\contentsline {section}{\numberline {4.5}Warto\'sci pocz\k atkowe}{9}{section.4.5}
+\contentsline {section}{\numberline {4.6}Warto\'sci zwracane}{9}{section.4.6}
+\contentsline {section}{\numberline {4.7}Ograniczenia}{9}{section.4.7}
+\contentsline {chapter}{\chapternumberline {5}Szczeg\'o\IeC {\l }y implementacji}{11}{chapter.5}
+\contentsline {section}{\numberline {5.1}Atrybuty jako kontrakty}{11}{section.5.1}
+\contentsline {section}{\numberline {5.2}Gramatyka kontrakt\'ow}{11}{section.5.2}
+\contentsline {section}{\numberline {5.3}Om\'owienie i implementacja interfejs\'ow}{11}{section.5.3}
+\contentsline {section}{\numberline {5.4}Odbieranie notyfikacji o zdarzeniach zachodz\k acych w programie}{11}{section.5.4}
+\contentsline {section}{\numberline {5.5}Odczyt metadanych}{11}{section.5.5}
+\contentsline {section}{\numberline {5.6}Inspekcja warto\'sci zmiennych}{11}{section.5.6}
+\contentsline {subsection}{\numberline {5.6.1}Typy proste}{11}{subsection.5.6.1}
+\contentsline {subsection}{\numberline {5.6.2}Typy z\IeC {\l }o\.zone}{11}{subsection.5.6.2}
+\contentsline {section}{\numberline {5.7}Parsowanie wyra\.ze\'n zawartych w kontraktach}{11}{section.5.7}
+\contentsline {section}{\numberline {5.8}Ewaluacja kontrakt\'ow}{11}{section.5.8}
+\contentsline {chapter}{\chapternumberline {6}Por\'ownanie z innymi bibliotekami}{13}{chapter.6}
+\contentsline {section}{\numberline {6.1}CodeContracts}{13}{section.6.1}
+\contentsline {section}{\numberline {6.2}LinFu.Contracts}{13}{section.6.2}
+\contentsline {chapter}{\chapternumberline {7}Podsumowanie}{15}{chapter.7}
+\contentsline {chapter}{Bibliografia}{17}{section*.3}

@@ -1,0 +1,32 @@
+% ********** Rozdzia³ 1 **********
+\chapter{Wstêp}
+\label{sec:chapter1:section1}
+W niniejszej pracy opisano budowê oraz zasadê dzia³ania biblioteki umo¿liwiaj¹cej kontrolê poprawnoœci dzia³ania dowolnego programu dzia³aj¹cego w obrêbie platformy .NET. \\
+Poprawnoœæ ta badana jest poprzez weryfikacjê kontraktów na³o¿onych na poszczególne czêœci programów, w tym wypadku, funkcji (metod).
+Ten rodzaj weryfikacji nazywany jest programowaniem kontraktowym. Pojêcie to zosta³o wprowadzone przez Bertranda Meyera w odniesieniu do jêzyka programowania Eiffel. \\
+
+\section{Platforma .NET i CLR}
+\label{sec:chapter1:section2}
+Zasada dzia³ania opisywanego rozwi¹zania mocno opiera siê na mechanizmach s³u¿¹cych do profilowania aplikacji. Teoria profilowania zosta³a przedstawiona w kolejnych rozdzia³ach.  
+Jak ka¿de podobne rozwi¹zanie tak i to jest silnie zwi¹zane ze œrodowiskiem uruchomieniowym. W tym przypadku jest to platforma .NET stworzona przez firmê Microsoft i przeznaczona dla systemów z rodziny Windows. \\
+Technologia ta nie jest zwi¹zana z ¿adnym konkretnym jêzykiem programowania, a programy mog¹ byæ pisane w jednym z wielu jêzyków – na przyk³ad C++/CLI, C\#, J\#, Delphi 8 dla .NET, Visual Basic .NET.
+Zadaniem kompilatorów jest translacja programów wyra¿onych w w/w jêzyków na jêzyk poœredni CIL (wczeœniej MSIL). Dopiero tak przygotowane programy mog¹ byæ wykonane na maszynie wirtualnej CLR, która to jest œrodowiskiem uruchomieniowym 
+platformy .NET.
+Taka konstrukcja pozwoli³a rozszerzyæ zakres dzia³ania utworzonego rozwi¹zania na wszystkie jêzyki programowania w obrêbie tej platformy, pod warunkiem, ¿e dany jêzyk wspiera konstrukcje programowe zwane atrybutami. 
+
+
+\section{Za³o¿enia}
+\label{sec:chapter1:section3}
+ W celu zapewnienia jak najwiêkszej u¿ytecznoœci, zosta³y przyjête minimalne za³o¿enia co do funkcjonalnoœci jakie musz¹ byæ zawarte w bibliotece.
+Wszystkie z nich zosta³y szczegó³owo opisane w rozdziale czwartym, jednak wprowadzamy je ju¿ teraz, aby w dalszej uzasadniæ decyzje podjête przy konstrukcji kolejnych etapów aplikacji.\\
+\begin{itemize}
+\item biblioteka musi œledziæ proces wykonywania programu po jego uruchomieniu
+\item w celu weryfikacji poprawnoœci programu musi byæ mo¿liwoœæ zdefiniowana kontraktu
+\item musi byæ mo¿liwoœæ odczytania zadanego kontraktu
+\item aplikacja musi wiedzieæ, dla której metody ma siê odbyæ weryfikacja
+\item aplikacja musi umieæ odczytaæ argumenty przekazywane do badanych metod
+\item aplikacja musi zachowywaæ stan pocz¹tkowy argumentów metody do momentu jej zakoñczenia
+\item aplikacja musi byæ w stanie odczytaæ wartoœci zwracane z badanych metod
+\end{itemize}  
+
+% ********** Koniec rozdzia³u **********
