@@ -14,7 +14,7 @@ namespace TestApplication.Calculator
     {
         private int aa = 2;
         private TT abba = new TT();
-        [AsContract("c.abba.baba == 31", "^c.abba.baba == 31", null)]
+        [AsContract("c.abba.baba == 31 && divided > 1", "^c.abba.baba == 31", null)]
         public int Div(bool t, int divided, int divisor, string val, string delta, Calculator c)
         {
             if (divided > 0) 
