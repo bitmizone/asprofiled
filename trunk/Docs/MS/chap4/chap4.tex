@@ -2,11 +2,40 @@
 \chapter{Omówienie funkcjonalnoœci biblioteki}
 W tym rozdziale szczegó³owo opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka.
 \section{Kontrakty}
-Podstawowym elementem, dziêki któremu mo¿liwa jest weryfikacja metod, jest oczywiœcie mo¿liwoœæ definiowania kontraktu. Jak ju¿ zosta³o wspomniane we wczeœniejszych rozdzia³ach kontrakty definiujemy za pomoc¹ atrybutów. 
+Podstawowym elementem, dziêki któremu mo¿liwa jest weryfikacja metod, jest oczywiœcie mo¿liwoœæ definiowania kontraktu. Jak ju¿ zosta³o wspomniane we wczeœniejszych rozdzia³ach kontrakty definiujemy za pomoc¹ atrybutów. \\
 
-W tym celu konieczne by³o utworzenie klasy 
+Atrybuty s¹ to znaczniki o charakterze deklaracyjnym zawieraj¹ce
+informacjê o elementach programu (np. klasach, typach wyliczeniowych, metodach) przeznaczon¹ dla œrodowiska wykonania programu.
+Co jest w tym kontekœcie istotne to i¿ s¹ one pamiêtane jako meta-dane elementu programu.
+
+Definicja atrybutów jest jedynym elementem, wchodz¹cym bezpoœrednio w sk³ad omawianego rozwi¹zania, który musi znajdowaæ siê po stronie weryfikowanej aplikacji.
+
 \section{Inspekcja nadzorowanego programu}
-\section{Odczyt i interpretacja metadanych}
+Jak to zosta³o wspomniane we wczeœniejszych rozdzia³ach, aplikacja weryfikuj¹ca kontrakty ma postaæ biblioteki COM i jako taka musi byæ wczeœniej zarejestrowana w systemie. Do tego celu u¿ywana jest aplikacja o nazwie regsrv32.exe, która to jest czêœci¹ narzêdzi dostarczanych wraz z platform¹ .NET.
+Zadaniem tego narzêdzia jest pobranie identyfikatora biblioteki i umieszczenie w rejestrze systemu klucza przechowuj¹cego ten identyfikator oraz œcie¿kê w systemie pliku pod która znajduje siê biblioteka.\\
+
+Rozpoczêcie procesu profilowania/weryfikacji aplikacji odbywa siê poprzez uruchomienie programu z linii poleceñ w odpowiednio przygotowanym œrodowisku.
+Etap ten polega na ustawieniu zmiennych œrodowiskowych, instruuj¹cych maszynê wirtualn¹ CLR, aby ta wysy³a³a powiadomienia na temat zdarzeñ zachodz¹cych wewn¹trz uruchamianej aplikacji. 
+Proces ten wygl¹da w sposób nastêpuj¹cy: 
+
+\lstset{language=VBScript}
+\begin{lstlisting}
+SET COR_ENABLE_PROFILING=1
+SET COR_PROFILER={GUID}
+\end{lstlisting} 
+
+Powy¿sze zmienne s¹ nastêpnie odczytywane przez œrodowisko uruchomieniowe.
+Pierwsza z nich informuje maszynê wirtualn¹, ¿e ta powinna przesy³aæ informacje o zdarzeniach do biblioteki, której po³o¿enie okreœlanie jest przy wykorzystaniu identyfikatora GUID.\\
+
+Liczba i rodzaj wysy³anych powiadomieñ okreœlany jest wewn¹trz biblioteki profiluj¹cej. W szczegó³ach temat ten opisany jest w kolejnym rozdziale.
+
+\section{Odczyt metadanych}
+Metadane w kontekœcie platformy .NET, to dodatkowe informacje opisuj¹ce sk³adowe jêzyka. S¹ usystematyzowanym sposobem reprezentowania wszystkich informacji, których CLI u¿ywa do lokalizowania i ³adowania klas, u³o¿enia obiektów w pamiêci, wywo³ywania metod, translacji jêzyka CIL do kodu natywnego.
+
+Every CLI PE/COFF module (see Partition II) carries a
+compact metadata binary that is emitted into the module by the CLI-enabled development tool or compiler. 
+\subsection{Reprezentacja metadanych}
+\subsection{interpretacja metadanych}
 \section{Odczytywanie wartoœci obiektów}
 \section{Wartoœci pocz¹tkowe}
 \section{Wartoœci zwracane}
