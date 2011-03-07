@@ -1,14 +1,7 @@
 %*********** Rodzia³ 4 ************
 \chapter{Omówienie funkcjonalnoœci biblioteki}
 W tym rozdziale szczegó³owo opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka.
-\section{Kontrakty}
-Podstawowym elementem, dziêki któremu mo¿liwa jest weryfikacja metod, jest oczywiœcie mo¿liwoœæ definiowania kontraktu. Jak ju¿ zosta³o wspomniane we wczeœniejszych rozdzia³ach kontrakty definiujemy za pomoc¹ atrybutów. \\
 
-Atrybuty s¹ to znaczniki o charakterze deklaracyjnym zawieraj¹ce
-informacjê o elementach programu (np. klasach, typach wyliczeniowych, metodach) przeznaczon¹ dla œrodowiska wykonania programu.
-Co jest w tym kontekœcie istotne to i¿ s¹ one pamiêtane jako meta-dane elementu programu.
-
-Definicja atrybutów jest jedynym elementem, wchodz¹cym bezpoœrednio w sk³ad omawianego rozwi¹zania, który musi znajdowaæ siê po stronie weryfikowanej aplikacji.
 
 \section{Inspekcja nadzorowanego programu}
 Jak to zosta³o wspomniane we wczeœniejszych rozdzia³ach, aplikacja weryfikuj¹ca kontrakty ma postaæ biblioteki COM i jako taka musi byæ wczeœniej zarejestrowana w systemie. Do tego celu u¿ywana jest aplikacja o nazwie regsrv32.exe, która to jest czêœci¹ narzêdzi dostarczanych wraz z platform¹ .NET.
@@ -29,14 +22,323 @@ Pierwsza z nich informuje maszynê wirtualn¹, ¿e ta powinna przesy³aæ informacje 
 
 Liczba i rodzaj wysy³anych powiadomieñ okreœlany jest wewn¹trz biblioteki profiluj¹cej. W szczegó³ach temat ten opisany jest w kolejnym rozdziale.
 
-\section{Odczyt metadanych}
+\section{Kontrakty}
+Podstawowym elementem, dziêki któremu mo¿liwa jest weryfikacja metod, jest oczywiœcie mo¿liwoœæ definiowania kontraktu. Jak ju¿ zosta³o wspomniane we wczeœniejszych rozdzia³ach kontrakty definiujemy za pomoc¹ atrybutów. \\
+
+Atrybuty s¹ to znaczniki o charakterze deklaracyjnym zawieraj¹ce
+informacjê o elementach programu (np. klasach, typach wyliczeniowych, metodach) przeznaczon¹ dla œrodowiska wykonania programu.
+Co jest w tym kontekœcie istotne to i¿ s¹ one pamiêtane jako meta-dane elementu programu.
+
+Definicja atrybutów jest jedynym elementem, wchodz¹cym bezpoœrednio w sk³ad omawianego rozwi¹zania, który musi znajdowaæ siê po stronie weryfikowanej aplikacji.
+
+Jak ju¿ zosta³o wspomniane atrybuty okreœlaj¹ce kontrakt maj¹ postaæ: \\
+AsContract(Warunek pocz¹tkowy, Warunek koñcowy)
+
+Oba warunki zdefiniowane s¹ poprzez pewne, okreœlone przez u¿ytkownika wyra¿enie. Te z kolei maj¹ postaæ okreœlon¹ przez zadan¹ gramatykê, której definicjê przedstawiono w nastêpnym rozdziale dotycz¹cych implementacji.
+Nale¿y tu jednak wspomnieæ, i¿ oba warunki zapisywane s¹ jako ³añcuchy znakowe, tak wiêc konieczne jest ich parsowanie, w celu otrzymania drzewa rozbioru takiego wyra¿enia.
+Kolejnym krokiem jest ewaluacja tego drzewa, aby mo¿na by³o okreœliæ czy udekorowana metoda spe³nia na³o¿ony na ni¹ kontrakt.
+
+
+
+\section{Metadane}
 Metadane w kontekœcie platformy .NET, to dodatkowe informacje opisuj¹ce sk³adowe jêzyka. S¹ usystematyzowanym sposobem reprezentowania wszystkich informacji, których CLI u¿ywa do lokalizowania i ³adowania klas, u³o¿enia obiektów w pamiêci, wywo³ywania metod, translacji jêzyka CIL do kodu natywnego.
 
-Every CLI PE/COFF module (see Partition II) carries a
-compact metadata binary that is emitted into the module by the CLI-enabled development tool or compiler. 
+Dane te, emitowane przez kompilator, przechowywane s¹ wewn¹trz ka¿dego wykonywalnego programu w postaci binarnej.
+
 \subsection{Reprezentacja metadanych}
-\subsection{interpretacja metadanych}
+W ramach systemu Windows zdefiniowany jest format plików wykonywalnych - PE (eng. Portable Executables), okreœlaj¹cy strukturê jak¹ musi posiadaæ ka¿dy program, aby móg³ byæ uruchomiony w systemie.
+%%% RYSUNEK 
+Aplikacje przeznaczone na platformê .NET naturalnie równie¿ musz¹ byæ zorganizowane w sposób zgodny z tym standardem.
+
+ 
+One field in the CLI header is the RVA for the metadata directory, which gives access to all the metadata used by the assembly
+
+
+
+Metadata stores declarative information about runtime types (classes, value types,
+and interfaces), global-functions and global-variable. Each such abstraction in a
+given metadata scope carries an identity as an mdToken (metadata token), where
+an mdToken is used by the metadata engine to index into a specific metadata data
+table in that scope. The metadata APIs return a token from each Define method and
+it is this token that, when passed into the appropriate Get method, is used to obtain
+its associated attributes.
+
+A metadata token is a 4-byte value. The most significant byte (MSB) specifies the token type and consequently identifies the abstraction and its associated metadata table. For example, a value of 1 in the MSB means that the token is an mdTypeRef token, which represents a type reference, and that its metadata is stored in the TypeRef metadata table; a value of 4 in the MSB corresponds to an mdFieldDef token. The CorTokenType enumeration is used to specify the token types.
+
+The lower three bytes, referred to as the record identifier (RID), contain the index of the row within the metadata table to which the token's MSB refers. For example, the metadata token with value 0x02000007 refers to row 7 in the TypeDef table in the current scope. Similarly, token 0x0400001A refers to row 26 (decimal) in the FieldDef table in the current scope. Row zero of a metadata table never contains data, so a metadata token whose RID is zero is referred to as a nil token. The metadata API defines a host of such nil tokens, one for each token type, such as mdTypeRefNil, with the value 0x01000000.
+
+
+
+
+
+To be more concrete: a metadata token is a 4-byte value. The most-significant byte
+specifies what type of token this is. For example, a value of 1 means it’s a TypeDef
+token, whilst a value of 4 means it’s a FieldDef token. (For the full list, with their
+values, see the CorTokenType enumeration in CorHdr.h) The lower 3 bytes give the
+index of the row, within a MetaData table, that the token refers to. We call those
+lower 3 bytes the RID, or Record IDentifier. So, for example, the metadata token
+with value 0x01000007 is a ‘shorthand’ way to refer to row number 7 in the TypeDef
+table, in the current scope. Similarly, token 0x0400001A refers to row number 26
+(decimal) in the FieldDef table in the current scope. We never store anything in row
+zero of a metadata table. So a metadata token, whose RID is zero, we call a “nil”
+token. The metadata API defines a host of such nil tokens – one for each token type
+(for example, mdTypeDefNil, with value 0x01000000).
+
+The following table lists the metadata token types, the abstraction that each token type represents, and the name of the metadata table that contains the abstraction's metadata. All token types are variations of mdToken, which is the basic token type.
+
+Token Type
+	
+
+Metadata Table
+	
+
+Abstraction
+
+mdModule
+	
+
+Module
+	
+
+Module: A compilation unit, an executable, or some other development unit, deployment unit, or run-time unit. It is possible (though not required) to declare attributes on the module as a whole, including a name, a GUID, custom attributes, and so forth.
+
+mdModuleRef
+	
+
+ModuleRef
+	
+
+Module reference: A compile-time reference to a module, which records the source for type and member imports.
+
+mdTypeDef
+	
+
+TypeDef
+	
+
+Type declaration: Declaration of either a runtime reference type (class or interface) or a value type.
+
+mdTypeRef
+	
+
+TypeRef
+	
+
+Type reference: Reference to either a runtime reference type or a value type. In a sense, the collection of type references in a module is the collection of compile-time import dependencies.
+
+mdMethodDef
+	
+
+MethodDef
+	
+
+Method definition: Definition of a method as a member of a class or interface, or as a global module-level method.
+
+mdParamDef
+	
+
+ParamDef
+	
+
+Parameter declaration: Definition of an optional data structure that stores additional metadata for the parameter. It is not necessary to emit a data structure for each parameter in a method. However, when there is additional metadata to persist for the parameter, such as marshaling or type-mapping information, an optional parameter data structure can be created.
+
+mdFieldDef
+	
+
+FieldDef
+	
+
+Field declaration: Declaration of a variable as a data member of a class or interface, or declaration of a global, module-level variable.
+
+mdProperty
+	
+
+Property
+	
+
+Property declaration: Declaration of a property as a member of a class or interface.
+
+mdEvent
+	
+
+Event
+	
+
+Event declaration: Declaration of a named event as a member of a class or interface.
+
+mdMemberRef
+	
+
+MemberRef
+	
+
+Member reference: Reference to a method or field. A member reference is generated in metadata for every method invocation or field access that is made by any implementation in the current module, and a token is persisted in the Microsoft intermediate language (MSIL) stream. There is no runtime support for property or event references.
+
+mdIfaceImpl
+	
+
+IfaceImpl
+	
+
+Interface implementation: A specific class’s implementation of a specific interface. This metadata abstraction enables the storing of information that is the intersection of that which is specific to neither the class nor the interface.
+
+mdMethodImpl
+	
+
+MethodImpl
+	
+
+Method implementation: A specific class’s implementation of a method that is inherited using interface inheritance. This metadata abstraction enables information to be persisted that is specific to the implementation rather than to the contract. Method declaration information cannot be modified by the implementing class.
+
+mdCustomAttribute
+	
+
+CustomAttribute
+	
+
+Custom attribute: An arbitrary data structure associated with any metadata object that can be referenced with an mdToken. (An exception is that custom attributes themselves cannot have custom attributes.)
+
+mdPermission
+	
+
+Permission
+	
+
+Permission set: A declarative security permission set associated with mdTypeDef, mdMethodDef, and mdAssembly. For more information, see Adding Declarative Security Support.
+
+mdTypeSpec
+	
+
+TypeSpec
+	
+
+Type constructor: A method that obtains a token for a type (such as a boxed value type) that can be used as input to any MSIL instruction that takes a type.
+
+mdSignature
+	
+
+Signature
+	
+
+Stand-alone signature: A local variable signature in the portable executable (PE) file or a method signature that is passed to an MSIL instruction.
+
+mdString
+	
+
+String
+	
+
+User string: A string that is passed to an MSIL instruction.
+
+
+
+
+
+\subsection{Interpretacja metadanych}
+
+Do zaimplementowania procesu weryfikacji aplikacji przy obranym tutaj podejœciu zachodzi naturalna potrzeba interpretacji metadanych. W tym celu musimy wiedzieæ jak¹ postaæ maj¹ poszczególne typy metadanych i w jaki sposób nale¿y je interpretowaæ. 
+Proces ten rozpoczyna siê od pobrania wartoœci tokenu odpowiedniego typu. 
+W ogólnym przypadku nale¿a³oby rozwa¿yæ wszystkie ich rodzaje, w tej sytuacji mo¿emy siê jednak ograniczyæ do tych, które zosta³y wykorzystane w bibliotece :
+
+
+Tokeny odpowiedniego rodzaju uzyskiwane s¹ poprzez wywo³ania odpowiednich metod na obiektach implementuj¹cych okreœlone interfejsów.
+Dziêki informacj¹ zawartych w metadanych mo¿liwy jest odczyt niezbêdnych informacji. W opisywanej bibliotece zaimplementowano uzyskiwanie nastêpuj¹cych danych: \\
+
+Metody:
+GetMethodName
+GetCallingConvention
+GetArgumentsCount
+GetReturnValue
+ReadArgumentsValues
+GetAttribute
+
+Parametry:
+GetType
+
+Typy:
+GetName
+
+Atrybuty:
+ParseAttributeMetaData
+
 \section{Odczytywanie wartoœci obiektów}
+Metadane odgrywaj¹ kluczow¹ rolê w procesie odczytywania wartoœci argumentów funkcji w czasie jej wykonywania. Dziêki tym informacjom mo¿na wyznaczyæ typ dowolnego obiektu, w szczególnoœci argumentów funkcji.
+Dziêki temu mo¿liwe jest odczytanie aktualnej wartoœci argumentu w kontekœcie dzia³aj¹cego programu. Typ definiuje sposób u³o¿enia obiektu w pamiêci oraz okreœla jego strukturê wewnêtrzn¹.
+Aktualny stan obiektu jest uzyskiwany poprzez inspekcje danych binarnych, do których odniesienie znajduje siê wewn¹trz metadanych obiektu.
+
+The word signature is conventionally used to describe the type info for a function or method; that is, the type of
+each of its parameters, and the type of its return value. Within metadata, the word signature is also used to
+describe the type info for fields, properties, and local variables. Each Signature is stored as a (counted) byte
+array in the Blob heap. There are several kinds of Signature, as follows:
+• MethodRefSig (differs from a MethodDefSig only for VARARG calls)
+• MethodDefSig
+• FieldSig
+• PropertySig
+• LocalVarSig
+• TypeSpec
+• MethodSpec
+The value of the first byte of a Signature 'blob' indicates what kind of Signature it is. Its lowest 4 bits hold one
+of the following: C, DEFAULT, FASTCALL, STDCALL, THISCALL, or VARARG (whose values are defined in §23.2.3),
+which qualify method signatures; FIELD, which denotes a field signature (whose value is defined in §23.2.4); or
+PROPERTY, which denotes a property signature (whose value is defined in §23.2.5). This subclause defines the
+binary 'blob' format for each kind of Signature. In the syntax diagrams that accompany many of the definitions,
+Partition II 153
+shading is used to combine into a single diagram what would otherwise be multiple diagrams; the
+accompanying text describes the use of shading.
+Signatures are compressed before being stored into the Blob heap (described below) by compressing the
+integers embedded in the signature. The maximum encodable integer is 29 bits long, 0x1FFFFFFF. The
+compression algorithm used is as follows (bit 0 is the least significant bit):
+• If the value lies between 0 (0x00) and 127 (0x7F), inclusive, encode as a one-byte integer (bit 7 is
+clear, value held in bits 6 through 0)
+• If the value lies between 28 (0x80) and 214 – 1 (0x3FFF), inclusive, encode as a 2-byte integer
+with bit 15 set, bit 14 clear (value held in bits 13 through 0)
+• Otherwise, encode as a 4-byte integer, with bit 31 set, bit 30 set, bit 29 clear (value held in bits 28
+through 0)
+• A null string should be represented with the reserved single byte 0xFF, and no following data
+
+Struktura elementów okreœlona jest w ECMA Partition 2
+\begin{figure}[t]
+\centering
+\includegraphics[width=5in]{MethodDefSig}
+\caption{}
+\label{fig:}
+\end{figure}
+
+This diagram uses the following abbreviations:
+HASTHIS = 0x20, used to encode the keyword instance in the calling convention, see §15.3
+EXPLICITTHIS = 0x40, used to encode the keyword explicit in the calling convention, see §15.3
+DEFAULT = 0x0, used to encode the keyword default in the calling convention, see §15.3
+VARARG = 0x5, used to encode the keyword vararg in the calling convention, see §15.3
+GENERIC = 0x10, used to indicate that the method has one or more generic parameters.
+The first byte of the Signature holds bits for HASTHIS, EXPLICITTHIS and calling convention (DEFAULT, VARARG,
+or GENERIC). These are ORed together.
+GenParamCount is the number of generic parameters for the method. This is a compressed int32. [Note: For
+generic methods, both MethodDef and MemberRef shall include the GENERIC calling convention, together with
+GenParamCount; these are significant for binding—they enable the CLI to overload on generic methods by the
+number of generic parameters they include. end note]
+ParamCount is an integer that holds the number of parameters (0 or more). It can be any number between 0
+and 0x1FFFFFFF. The compiler compresses it too (see Partition II Metadata Validation) – before storing into
+the 'blob' (ParamCount counts just the method parameters – it does not include the method’s return type)
+The RetType item describes the type of the method’s return value (§23.2.11)
+The Param item describes the type of each of the method’s parameters. There shall be ParamCount instances
+of the Param item (§23.2.10)
+
 \section{Wartoœci pocz¹tkowe}
+
+Termin wartoœci pocz¹tkowe odnosi siê do stanu argumentów w momencie wywo³ania metody. Zgodnie z za³o¿eniami z rozdzia³u pierwszego, biblioteka powinna udostêpniaæ funkcjonalnoœæ definiowania kontraktów z³o¿onych z odwo³añ do pocz¹tkowych wartoœci obiektów. Naturalnie, stan obiektów mo¿e ulec zmianie w czasie dzia³ania metody, nale¿a³o wiêc przedsiêwzi¹æ kroki umo¿liwiaj¹ce tego rodzaju odwo³ania do pocz¹tkowych wartoœci obiektów. 
+
+Jedyn¹ sytuacj¹ jak¹ nale¿a³o rozwa¿yæ, jest w przypadku kontraktów, w których odwo³ania do wartoœci pocz¹tkowych ma miejsce w warunkach koñcowych.
+Rzecz jasna, odwo³ania do tych wartoœci nie maj¹ sensu w przypadku warunków pocz¹tkowych, gdy¿ te ewaluowane s¹ zanim sterowanie dojdzie do momentu wykonywania instrukcji wewn¹trz metody, a które mog³yby zmodyfikowaæ stan obiektu. 
+Z drugiej strony, co wynika ze specyfiki otrzymywanych powiadomieñ, odczytywanie argumentów jest mo¿liwe tylko w momencie wywo³ywania metody. Co za tym idzie, niezbêdne jest zachowanie stanu obiektu w tym momencie i odwo³ywanie siê do niego w czasie weryfikacji warunków pocz¹tkowych. Dodatkowo, nie wystarczy zachowanie referencji do obiektu. Wynika to z faktu, i¿ pomimo przekazywanie argumentów do metody odbywa siê poprzez kopiowanie, to kopiowana jest tylko referencja do obiektu, a nie sam obiekt. Oczywiœcie kopia referencji dalej wskazuje na ten sam obiekt, wiêc zmieniaj¹c jego stan przy jej u¿ycia, zmieniany jest oryginalny obiekt.
+Z tego powodu niezbêdne okazuje siê kopiowanie poszczególnych wartoœci do których wystêpuje odwo³anie w warunkach koñcowych.
+Konieczne jest wiêc przeprowadzanie preprocessingu, tzn. w chwili otrzymania notyfikacji o wywo³aniu metody przeprowadzona zostaje analiza zarówno warunków pocz¹tkowych (co jest jasne) i warunków koñcowych kontraktu. W czasie tej analizy warunek koñcowy sprawdzany jest pod k¹tem wystêpowania elementów odnosz¹cych siê do stanu pocz¹tkowego argumentów funkcji. Nastêpnie odpowiednie argumenty poddawane s¹ inspekcji, a nastêpnie wy³uskiwana jest wartoœæ sk³adowej obiektu, do którego odniesienie znajduje siê w warunku koñcowym. Ta wartoœæ zapisywana jest w pamiêci podrêcznej aplikacji, do której dostêp jest mo¿liwy do momentu otrzymania powiadomienia o wyjœciu z zasiêgu weryfikowanej metody, kiedy to mo¿e zostaæ u¿yta do weryfikacji warunku koñcowego.\\
+
+
 \section{Wartoœci zwracane}
+
+Kolejnym elementem jest mo¿liwoœæ weryfikacji kontraktów zawieraj¹cych w sobie odniesienia do wartoœci zwracanej przez metodê.
+Takie odniesienia maj¹ tylko sens przy warunkach koñcowych, po odebraniu notyfikacji o zdarzeniu opuszczenia metody. 
+
+
+
 \section{Ograniczenia}

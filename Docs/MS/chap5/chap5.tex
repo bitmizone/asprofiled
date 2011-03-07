@@ -1,11 +1,171 @@
 %*********** Rodzial 4 ************
 \chapter{Szczegó³y implementacji}
+W tym rozdziale opisano szczegó³y dotycz¹ce implementacyjne biblioteki.
 \section{Atrybuty jako kontrakty}
-Opis klasy AsProfiledAttribute.
-Wyra¿enia jako kontrakty.
+Kontrakty definiowane s¹ jako atrybuty, którymi dekorowane s¹ metody.
+Definicja atrybutów ogranicza siê do elementarnej klasy, której ca³a definicja zawarta jest w nastêpuj¹cym bloku kodu:
+\lstset{language=Java}
+\begin{lstlisting}
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+public class AsContractAttribute : Attribute
+{
+  public AsContractAttribute(string preCondition, string postCondition) 
+  { }
+  
+  public string PostCondition { get; set; } 
+  
+  public string PreCondition { get; set; }
+}
+\end{lstlisting} 
+Linia nr 1 okreœla, i¿ atrybut mo¿e byæ przypisywany tylko do metod i mo¿e wystêpowaæ tylko jeden raz.
+
+Centralnym elementem tej klasy jest dwuparametrowy konstruktor, przyjmuj¹cy dwa napisy jako parametry. Te w³aœnie napisy okreœlaj¹ kontrakt.
+
+Wyra¿enia opisuj¹ce kontrakty muszê byæ ewaluowalne do dwóch wartoœci: prawdy albo fa³szu, co oznacza odpowiednio, ¿e kontrakt jest lub te¿ nie zosta³ spe³niony.
+
 \section{Gramatyka kontraktów}
+Mo¿liwy zbiór wyra¿eñ wyra¿alnych poprzez kontrakty definiowany jest poprzez gramatykê bezkontekstow¹.
+Gramatyka ta zosta³a wykorzystana w aplikacji GOLD Parsing System, która na tej podstawie generuje tablicê stanów dla deterministycznego automatu skoñczonego. Poni¿ej znajduje siê jej definicja :
+
+\lstset{showspaces=false, showstringspaces=false,
+showtabs=false}
+\begin{lstlisting}
+
+"Start Symbol" = <Program>
+
+! Sets
+
+{ID Head}      = {Letter} + [_]
+{ID Tail}      = {Alphanumeric} + [_]
+{String Chars} = {Printable} + {HT} - ["\]
+{Number Without Zero} = {Number} - [0]
+
+! Terminals
+
+Identifier = {ID Head}{ID Tail}*(.{ID Head}{ID Tail}*)*
+StringLiteral = '"' ( {String Chars} | '\' {Printable} )* '"'
+DecimalNumber = {Number Without Zero}{Number}* | {Number}
+BooleanLiteral = 'true' | 'false'
+ReturnValue = '@returnValue'(.{ID Head}{ID Tail}*)*
+InitialValue = '^'{ID Head}{ID Tail}*(.{ID Head}{ID Tail}*)*
+
+! Rules
+
+<Program>           ::= <Boolean Exp>                          
+<Boolean Exp>       ::= <Boolean Exp> <Boolean Operator> <Cmp Exp>
+                    |   <Cmp Exp>                                 
+
+<Boolean Operator>  ::= '||'
+                    |   '&&'
+
+<Cmp Exp>           ::= <Cmp Exp> <Cmp Operator> <Add Exp>    
+                    |   <Add Exp>                      
+<Cmp Operator>      ::= '>'
+                    |   '<'                              
+                    |   '<='
+                    |   '>='
+                    |   '=='
+                    |   '!='                       
+
+<Add Exp>           ::= <Add Exp> <Add Operator> <Mult Exp>   
+                    |   <Mult Exp>                    
+<Add Operator>      ::= '+'
+                    |   '-'
+
+<Mult Exp>          ::= <Mult Exp> <Mult Operator> <Negate Exp>  
+                    |   <Bit Exp>                               
+<Mult Operator>     ::= '*'
+                    |   '/'
+<Bit Exp>           ::= <Bit Exp> <Bit Operator> <Negate Exp>     
+                    |  <Negate Exp>                            
+<Bit Operator>      ::= '&'
+                    |   '|'
+                            
+<Negate Exp>        ::= <Negate Operator> <Value>                
+                    |  <Value>                                   
+<Negate Operator>   ::= '-'
+<Value>             ::= Identifier                               
+                    |  StringLiteral                             
+                    |  DecimalNumber                             
+                    |  '(' <Boolean Exp> ')'    
+                    |  BooleanLiteral
+                    |  ReturnValue                                
+                    |  InitialValue
+
+\end{lstlisting}
+
+Poni¿ej przedstawiono kilka przyk³adów wyra¿eñ, które mog¹ byæ zbudowane przy u¿yciu regu³ zawartych w gramatyce:
+
+
 
 \section{Omówienie i implementacja interfejsów}
+AsProfiled jak ka¿da bibliotek typu COM udostêpnia swoj¹ funkcjonalnoœæ poprzez interfejsy. Niezale¿nie od przeznaczenia biblioteki musi ona przynajmniej implementowaæ interfejs IUnknown, dziêki któremu mo¿liwe jest uzyskanie uchwytu do pozosta³ych interfejsów definiuj¹cych okreœlone funkcjonalnoœci.
+W tym przypadku konieczne jest uzyskanie uchwytu do obiektu implementuj¹cego interfejs ICorProfilerCallback2. To poprzez niego odbywa ca³a komunikacja pomiêdzy maszyn¹ CLR a bibliotek¹ AsProfiled. Interfejs ten zawiera kilkadziesi¹t metod, poprzez które maszyna wirtualna mo¿e powiadomiæ odbiorcê o zdarzeniach zachodz¹cych w obrêbie profilowanego programu.
+Pe³na jego definicja znajduje siê w za³¹czniku (A).
+Na potrzeby tej pracy wystarczaj¹ce jest omówienie dwóch z nich, mianowicie :\\
+
+\lstset{showspaces=false, showstringspaces=false,showtabs=false, breaklines=true, linenumbers=left}
+\begin{lstlisting}
+STDMETHOD(Initialize)(IUnknown *pICorProfilerInfoUnk);
+STDMETHOD(Shutdown)();
+\end{lstlisting}
+
+Naturalnie, implementuj¹c dowolny interfejs, niezbêdne jest zdefiniowanie ka¿dej zawartej w nim metody, jednak w przypadku metod, które nie stanowi¹ przedmiotu zainteresowania wystarczaj¹ce jest zwrócenie rezultatu œwiadcz¹cego o poprawnym wykonaniu metody. W tym przypadku, tak¹ wartoœci¹ jest S_OK (0), standardowo okreœlaj¹c¹ poprawne zakoñczenie wykonywania funkcji.\\
+
+Metody listingu (1), jak sama nazwa wskazuje, s¹ wywo³ywane podczas inicjalizacji biblioteki i w momencie zakoñczenia wykonywania programu.
+W ramach funkcji Shutdown() zwyczajowo zwalniane s¹ uchwyty do obiektów wykorzystywanych w bibliotece.
+Przeciwnie do niej, w metodzie Initialize() tworzone s¹ obiekty, do których dostêp jest potrzebny w kontekœcie ca³ej biblioteki, jest to odpowiednie miejsce na inicjalizacjê globalnych wskaŸników.
+
+W tym miejscu nastêpuje uzyskanie uchwytu do obiektu typu ICorProfilerInfo2, który do udostêpnia zestaw metod pozwalaj¹cych na komunikacje ze œrodowiskiem CLR, umo¿liwiaj¹cych jej monitorowanie i uzyskiwanie dodatkowych informacji o programie.
+
+Kolejnym krokiem jest zarejestrowanie tego obiektu jako odbiorcy okreœlonych zdarzeñ okreœlonych poni¿ej:
+ 
+\lstset{showspaces=false, showstringspaces=false,showtabs=false, breaklines=true, linenumbers=left}
+\begin{lstlisting}
+COR_PRF_MONITOR_NONE	= 0,
+COR_PRF_MONITOR_FUNCTION_UNLOADS	= 0x1,
+COR_PRF_MONITOR_CLASS_LOADS	= 0x2,
+COR_PRF_MONITOR_MODULE_LOADS	= 0x4,
+COR_PRF_MONITOR_ASSEMBLY_LOADS	= 0x8,
+COR_PRF_MONITOR_APPDOMAIN_LOADS	= 0x10,
+COR_PRF_MONITOR_JIT_COMPILATION	= 0x20,
+COR_PRF_MONITOR_EXCEPTIONS	= 0x40,
+COR_PRF_MONITOR_GC	= 0x80,
+COR_PRF_MONITOR_OBJECT_ALLOCATED	= 0x100,
+COR_PRF_MONITOR_THREADS	= 0x200,
+COR_PRF_MONITOR_REMOTING	= 0x400,
+COR_PRF_MONITOR_CODE_TRANSITIONS	= 0x800,
+COR_PRF_MONITOR_ENTERLEAVE	= 0x1000,
+COR_PRF_MONITOR_CCW	= 0x2000,
+COR_PRF_MONITOR_REMOTING_COOKIE	= 0x4000 | COR_PRF_MONITOR_REMOTING,
+COR_PRF_MONITOR_REMOTING_ASYNC	= 0x8000 | COR_PRF_MONITOR_REMOTING,
+COR_PRF_MONITOR_SUSPENDS	= 0x10000,
+COR_PRF_MONITOR_CACHE_SEARCHES	= 0x20000,
+COR_PRF_MONITOR_CLR_EXCEPTIONS	= 0x1000000,
+COR_PRF_MONITOR_ALL	= 0x107ffff,
+COR_PRF_ENABLE_REJIT	= 0x40000,
+COR_PRF_ENABLE_INPROC_DEBUGGING	= 0x80000,
+COR_PRF_ENABLE_JIT_MAPS	= 0x100000,
+COR_PRF_DISABLE_INLINING	= 0x200000,
+COR_PRF_DISABLE_OPTIMIZATIONS	= 0x400000,
+COR_PRF_ENABLE_OBJECT_ALLOCATED	= 0x800000,
+COR_PRF_ENABLE_FUNCTION_ARGS	= 0x2000000,
+COR_PRF_ENABLE_FUNCTION_RETVAL	= 0x4000000,
+COR_PRF_ENABLE_FRAME_INFO	= 0x8000000,
+COR_PRF_ENABLE_STACK_SNAPSHOT	= 0x10000000,
+COR_PRF_USE_PROFILE_IMAGES	= 0x20000000,
+\end{lstlisting}
+
+Do realizacji celów przedstawionych przed bibliotek¹ AsProfiled potrzebne jest okreœlenie nastêpuj¹cej kombinacji flag:
+
+COR_PRF_MONITOR_ENTERLEAVE | 
+COR_PRF_ENABLE_FUNCTION_RETVAL |  
+COR_PRF_ENABLE_FUNCTION_ARGS |
+COR_PRF_ENABLE_FRAME_INFO
+
+
+
+
 ICorProfiler
 IMetaData
 \section{Odbieranie notyfikacji o zdarzeniach zachodz¹cych w programie}
