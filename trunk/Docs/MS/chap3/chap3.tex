@@ -2,6 +2,64 @@
 \chapter{Profilowanie}
  
 \section{Profilowanie – opis}
+Profiling, in this document, means monitoring the performance and memory usage of
+a program, which is executing on the Common Language Runtime (CLR). This
+document details the interfaces, provided by the Runtime, to access such
+information. Typically, a very limited audience will use these APIs – developers of
+profiling tools.
+Just to give the flavor, a typical use for profiling is to measure how much time
+(elapsed, or wall-clock, and/or CPU time) is spent within each routine, or within all
+code that is executed from a given root routine. To do this, a profiler asks the
+Runtime to inform it whenever execution enters or leaves each routine; the profiler
+notes the wall-clock and CPU time for each such event, and accumulates the results
+at the end of the program. Note that the term routine is being in this document to
+indicate a section of code that has an entry point and an exit point. Different
+languages use different names for this same concept -- function, procedure, method,
+co-routine, subroutine, etc.
+Profiling a CLR program requires more support than profiling conventionally compiled
+machine code. This is because the CLR has introduced new concepts such as
+application domains, garbage collection, managed exception handling, JIT
+compilation of code (converting Microsoft Intermediate Language into native machine
+code) etc that the existing conventional profiling mechanisms are unable to identify
+and provide useful information. The profiling APIs provide this missing information in
+an efficient way that causes minimal impact on the performance of the CLR.
+Note that JIT-compiling routines at runtime provide good opportunities, as the APIs
+allow a profiler to change the in-memory MSIL code stream for a routine, and then
+request that it be JIT-compiled anew. In this way, the profiler can dynamically add
+instrumentation code to particular routines that need deeper investigation. Although
+this approach is possible in conventional scenarios, it’s much easier to do this for the
+CLR.
+
+
+
+
+Expose information that existing profilers will require for a user to determine and
+analyze performance of a program run on the CLR. Specifically:
+.. Common Language Runtime startup and shutdown events
+.. Application domain creation and shutdown events
+.. Assembly loading and unloading events
+.. Module load/unload events
+.. Com VTable creation and destruction events
+.. JIT-compiles, and code pitching events
+.. Class load/unload events
+.. Thread birth/death/synchronization
+.. Routine entry/exit events
+.. Exceptions
+.. Transitions between managed and unmanaged execution
+.. Transitions between different Runtime contexts
+.. Information about Runtime suspensions
+Profiling
+Page 9
+.. Information about the Runtime memory heap and garbage collection activity
+• Callable from any COM-compatible language
+• Efficient, in terms of CPU and memory consumption – the act of profiling should
+not cause such a big change upon the program being profiled that the results are
+misleading
+• Useful to both sampling and non-sampling profilers. [A sampling profiler inspects
+the profilee at regular clock ticks – maybe 5 milliseconds apart, say. A nonsampling
+profiler is informed of events, synchronously with the thread that
+causes them]
+
 
 \section{Typy profilowania}
 \subsection{Instrumentacja}
