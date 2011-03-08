@@ -21,7 +21,7 @@ Linia nr 1 okreœla, i¿ atrybut mo¿e byæ przypisywany tylko do metod i mo¿e wystê
 
 Centralnym elementem tej klasy jest dwuparametrowy konstruktor, przyjmuj¹cy dwa napisy jako parametry. Te w³aœnie napisy okreœlaj¹ kontrakt.
 
-Wyra¿enia opisuj¹ce kontrakty muszê byæ ewaluowalne do dwóch wartoœci: prawdy albo fa³szu, co oznacza odpowiednio, ¿e kontrakt jest lub te¿ nie zosta³ spe³niony.
+Wyra¿enia opisuj¹ce kontrakty muszê byæ obliczalne do jednej z dwóch wartoœci: prawdy albo fa³szu, co oznacza odpowiednio, ¿e kontrakt zosta³ lub te¿ nie zosta³ spe³niony.
 
 \section{Gramatyka kontraktów}
 Mo¿liwy zbiór wyra¿eñ wyra¿alnych poprzez kontrakty definiowany jest poprzez gramatykê bezkontekstow¹.
@@ -37,7 +37,7 @@ showtabs=false}
 
 {ID Head}      = {Letter} + [_]
 {ID Tail}      = {Alphanumeric} + [_]
-{String Chars} = {Printable} + {HT} - ["\]
+{String Chars} = {Printable} + {HT} - [\\]
 {Number Without Zero} = {Number} - [0]
 
 ! Terminals
@@ -104,13 +104,13 @@ W tym przypadku konieczne jest uzyskanie uchwytu do obiektu implementuj¹cego int
 Pe³na jego definicja znajduje siê w za³¹czniku (A).
 Na potrzeby tej pracy wystarczaj¹ce jest omówienie dwóch z nich, mianowicie :\\
 
-\lstset{showspaces=false, showstringspaces=false,showtabs=false, breaklines=true, linenumbers=left}
+\lstset{showspaces=false, showstringspaces=false,showtabs=false, breaklines=true}
 \begin{lstlisting}
 STDMETHOD(Initialize)(IUnknown *pICorProfilerInfoUnk);
 STDMETHOD(Shutdown)();
 \end{lstlisting}
 
-Naturalnie, implementuj¹c dowolny interfejs, niezbêdne jest zdefiniowanie ka¿dej zawartej w nim metody, jednak w przypadku metod, które nie stanowi¹ przedmiotu zainteresowania wystarczaj¹ce jest zwrócenie rezultatu œwiadcz¹cego o poprawnym wykonaniu metody. W tym przypadku, tak¹ wartoœci¹ jest S_OK (0), standardowo okreœlaj¹c¹ poprawne zakoñczenie wykonywania funkcji.\\
+Naturalnie, implementuj¹c dowolny interfejs, niezbêdne jest zdefiniowanie ka¿dej zawartej w nim metody, jednak w przypadku metod, które nie stanowi¹ przedmiotu zainteresowania wystarczaj¹ce jest zwrócenie rezultatu œwiadcz¹cego o poprawnym wykonaniu metody. W tym przypadku, tak¹ wartoœci¹ jest S\_OK (0), standardowo okreœlaj¹c¹ poprawne zakoñczenie wykonywania funkcji.\\
 
 Metody listingu (1), jak sama nazwa wskazuje, s¹ wywo³ywane podczas inicjalizacji biblioteki i w momencie zakoñczenia wykonywania programu.
 W ramach funkcji Shutdown() zwyczajowo zwalniane s¹ uchwyty do obiektów wykorzystywanych w bibliotece.
@@ -120,7 +120,7 @@ W tym miejscu nastêpuje uzyskanie uchwytu do obiektu typu ICorProfilerInfo2, któ
 
 Kolejnym krokiem jest zarejestrowanie tego obiektu jako odbiorcy okreœlonych zdarzeñ okreœlonych poni¿ej:
  
-\lstset{showspaces=false, showstringspaces=false,showtabs=false, breaklines=true, linenumbers=left}
+\lstset{showspaces=false, showstringspaces=false, showtabs=false}
 \begin{lstlisting}
 COR_PRF_MONITOR_NONE	= 0,
 COR_PRF_MONITOR_FUNCTION_UNLOADS	= 0x1,
@@ -158,18 +158,55 @@ COR_PRF_USE_PROFILE_IMAGES	= 0x20000000,
 
 Do realizacji celów przedstawionych przed bibliotek¹ AsProfiled potrzebne jest okreœlenie nastêpuj¹cej kombinacji flag:
 
-COR_PRF_MONITOR_ENTERLEAVE | 
-COR_PRF_ENABLE_FUNCTION_RETVAL |  
+\begin{lstlisting}
+COR_PRF_MONITOR_ENTERLEAVE |
+COR_PRF_ENABLE_FUNCTION_RETVAL |
 COR_PRF_ENABLE_FUNCTION_ARGS |
 COR_PRF_ENABLE_FRAME_INFO
-
-
+\end{lstlisting}
+Pozwala to na otrzymywanie komunikatów na temat wejœcia/wyjœcia do/z metody wraz z danymi na temat jej argumentów i wartoœci zwracanej.
 
 
 ICorProfiler
 IMetaData
 \section{Odbieranie notyfikacji o zdarzeniach zachodz¹cych w programie}
+W zadaniu ewaluacji kontraktów nak³adanych na metody, kluczowe jest, aby biblioteka mog³a odbieraæ zdarzenia na temat wywo³ania metody oraz wyjœcia z niej. W tym celu niezbêdne jest przekazanie informacji do maszyny CLR, na temat funkcji, które te zdarzenia bêd¹ obs³ugiwa³y. Cel ten realizowany jest poprzez wywo³anie metody o sygnaturze
+
+\begin{lstlisting}
+HRESULT SetEnterLeaveFunctionHooks2(
+    [in] FunctionEnter2    *pFuncEnter,
+    [in] FunctionLeave2    *pFuncLeave,
+    [in] FunctionTailcall2 *pFuncTailcall);
+\end{lstlisting}
+
+na rzecz obiektu implementuj¹cego interfejs ICorProfilerInfo2.
+Jako argumenty podawane s¹ wskaŸniki do funkcji zdefiniowanej w ramach biblioteki AsProfiled. 
+Zgodnie z dokumentacj¹ MSDN, metody te musz¹ zostaæ udekorowane atrybutem \_\_declspec(naked) co oznacza ze kompilator nie generuje dla tych funkcji tzw. prologu ani epilogu, czyli odpowiednich fragmentów kodu, które przywracaj¹ odpowiedni stan stosu oraz rejestrów. 
+Po wykonaniu tych czynnoœci mo¿liwe jest przekazanie sterowania do innych funkcji, gdzie przetwarzanie zdarzenia jest kontynuowane.
+W ramach AsProfiled funkcje te s¹ zadeklarowane w sposób nastêpuj¹cy:
+
+\begin{lstlisting}
+// deklaracja funkcji wywo³ywanej w momencie wejœcia do metody
+FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo);
+\end{lstlisting}
+oraz
+\begin{lstlisting}
+// deklaracja funkcji wywo³ywanej w momencie wyjœcia z metody
+FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange);
+\end{lstlisting}
+
+,gdzie
+functionID - identyfikator funkcji, który mo¿e byæ u¿yty do uzyskania dostêpu do jej metadanych \\
+argumentInfo - wska¿nik do struktury COR_PRF_FUNCTION_ARGUMENT_INFO, która okreœla po³o¿enie argumentów funkcji w pamiêci \\
+retvalRange - wskaŸnik do struktury  COR_PRF_FUNCTION_ARGUMENT_RANGE, która okreœla po³o¿enie wyniku funkcji w pamiêci \\
+
+Te funkcje maj¹ jasne prze³o¿enie na zadanie ewaluacji kontraktów. W ramach funkcji FunctionEnter odbywa siê sprawdzenie warunków pocz¹tkowych, a implementacja FunctionLeave zawiera w sobie sprawdzenie warunków koñcowych.
+
 \section{Odczyt metadanych}
+W tym podrozdziale opisano kolejny krok procesu ewaluacji kontraktu, jakim jest interpretacja metadanych w celu uzyskania informacji o wywo³ywanych metodach i jej argumentach.
+Wywo³anie ka¿dej z metod kontrolowanego programu powoduje wywo³anie metody FunctionEnter. W ramach tej funkcji odczytywane s¹ informacje na temat metody, co do której otrzymano powiadomienie. Jest to mo¿liwe dziêki otrzymywaniu jej identyfikatora w postaci argumentu functionID funkcji FunctionEnter, a nastêpnie wykorzystaniu go do uzyskania dostêpu do metadanych.
+
+
 \section{Inspekcja wartoœci zmiennych}
 \subsection{Typy proste}
 Bloby, odczytywanie wartosci
