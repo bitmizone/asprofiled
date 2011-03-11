@@ -21,24 +21,24 @@
 \contentsline {subsection}{\numberline {4.3.1}Reprezentacja metadanych}{10}{subsection.4.3.1}
 \contentsline {subsection}{\numberline {4.3.2}Interpretacja metadanych}{14}{subsection.4.3.2}
 \contentsline {section}{\numberline {4.4}Odczytywanie warto\'sci obiekt\'ow}{14}{section.4.4}
-\contentsline {section}{\numberline {4.5}Warto\'sci pocz\k atkowe}{15}{section.4.5}
-\contentsline {section}{\numberline {4.6}Warto\'sci zwracane}{16}{section.4.6}
-\contentsline {section}{\numberline {4.7}Ograniczenia}{16}{section.4.7}
+\contentsline {section}{\numberline {4.5}Warto\'sci pocz\k atkowe}{16}{section.4.5}
+\contentsline {section}{\numberline {4.6}Warto\'sci zwracane}{17}{section.4.6}
+\contentsline {section}{\numberline {4.7}Ograniczenia}{17}{section.4.7}
 \contentsline {chapter}{\chapternumberline {5}Szczeg\'o\IeC {\l }y implementacji}{19}{chapter.5}
 \contentsline {section}{\numberline {5.1}Atrybuty jako kontrakty}{19}{section.5.1}
 \contentsline {section}{\numberline {5.2}Gramatyka kontrakt\'ow}{20}{section.5.2}
 \contentsline {section}{\numberline {5.3}Om\'owienie i implementacja interfejs\'ow}{21}{section.5.3}
 \contentsline {section}{\numberline {5.4}Odbieranie notyfikacji o zdarzeniach zachodz\k acych w programie}{23}{section.5.4}
 \contentsline {section}{\numberline {5.5}Odczyt metadanych}{24}{section.5.5}
-\contentsline {section}{\numberline {5.6}Inspekcja warto\'sci zmiennych}{24}{section.5.6}
-\contentsline {subsection}{\numberline {5.6.1}Typy proste}{24}{subsection.5.6.1}
-\contentsline {subsection}{\numberline {5.6.2}Typy z\IeC {\l }o\.zone}{24}{subsection.5.6.2}
-\contentsline {section}{\numberline {5.7}Parsowanie wyra\.ze\'n zawartych w kontraktach}{24}{section.5.7}
-\contentsline {section}{\numberline {5.8}Ewaluacja kontrakt\'ow}{24}{section.5.8}
-\contentsline {subsection}{\numberline {5.8.1}Ramki funkcji}{24}{subsection.5.8.1}
-\contentsline {subsection}{\numberline {5.8.2}Zachowywanie warto\'sci pocz\k atkowych}{24}{subsection.5.8.2}
-\contentsline {chapter}{\chapternumberline {6}Por\'ownanie z innymi bibliotekami}{25}{chapter.6}
-\contentsline {section}{\numberline {6.1}CodeContracts}{25}{section.6.1}
-\contentsline {section}{\numberline {6.2}LinFu.Contracts}{25}{section.6.2}
-\contentsline {chapter}{\chapternumberline {7}Podsumowanie}{27}{chapter.7}
-\contentsline {chapter}{Bibliografia}{29}{section*.3}
+\contentsline {section}{\numberline {5.6}Parsowanie wyra\.ze\'n zawartych w kontraktach}{25}{section.5.6}
+\contentsline {section}{\numberline {5.7}Inspekcja warto\'sci zmiennych}{27}{section.5.7}
+\contentsline {subsection}{\numberline {5.7.1}Typy proste}{27}{subsection.5.7.1}
+\contentsline {subsection}{\numberline {5.7.2}Typy z\IeC {\l }o\.zone}{27}{subsection.5.7.2}
+\contentsline {section}{\numberline {5.8}Ewaluacja kontrakt\'ow}{27}{section.5.8}
+\contentsline {subsection}{\numberline {5.8.1}Ramki funkcji}{27}{subsection.5.8.1}
+\contentsline {subsection}{\numberline {5.8.2}Zachowywanie warto\'sci pocz\k atkowych}{27}{subsection.5.8.2}
+\contentsline {chapter}{\chapternumberline {6}Por\'ownanie z innymi bibliotekami}{29}{chapter.6}
+\contentsline {section}{\numberline {6.1}CodeContracts}{29}{section.6.1}
+\contentsline {section}{\numberline {6.2}LinFu.Contracts}{29}{section.6.2}
+\contentsline {chapter}{\chapternumberline {7}Podsumowanie}{31}{chapter.7}
+\contentsline {chapter}{Bibliografia}{33}{section*.3}

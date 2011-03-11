@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (MiKTeX 2.9) (preloaded format=latex 2011.2.13)  8 MAR 2011 20:51
+This is pdfTeX, Version 3.1415926-1.40.11 (MiKTeX 2.9) (preloaded format=pdflatex 2011.3.9)  10 MAR 2011 23:48
 entering extended mode
 **MS.tex
 (C:\Dev\asprofiled\Docs\MS\MS.tex
@@ -24,7 +24,7 @@ ment class
 \l@nohyphenation=\language70
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ifpdf.sty"
 Package: ifpdf 2010/01/28 v2.1 Provides the ifpdf switch (HO)
-Package ifpdf Info: pdfTeX in pdf mode not detected.
+Package ifpdf Info: pdfTeX in pdf mode detected.
 )
 Class memoir Info: An `ifetex' package is being emulated on input line 251.
 
@@ -359,10 +359,11 @@ Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 ("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
 File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
 )
-Package graphics Info: Driver file: dvips.def on input line 91.
+Package graphics Info: Driver file: pdftex.def on input line 91.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\dvips.def"
-File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+("C:\Program Files\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
+File: pdftex.def 2010/09/14 v0.05b Graphics/color for pdfTeX
+\Gread@gobject=\count137
 ))
 \Gin@req@height=\dimen147
 \Gin@req@width=\dimen148
@@ -392,13 +393,13 @@ Package: amsbsy 1999/11/29 v1.2d
 ("C:\Program Files\MiKTeX 2.9\tex\latex\ams\math\amsopn.sty"
 Package: amsopn 1999/12/14 v2.01 operator names
 )
-\inf@bad=\count137
+\inf@bad=\count138
 LaTeX Info: Redefining \frac on input line 211.
-\uproot@=\count138
-\leftroot@=\count139
+\uproot@=\count139
+\leftroot@=\count140
 LaTeX Info: Redefining \overline on input line 307.
-\classnum@=\count140
-\DOTSCASE@=\count141
+\classnum@=\count141
+\DOTSCASE@=\count142
 LaTeX Info: Redefining \ldots on input line 379.
 LaTeX Info: Redefining \dots on input line 382.
 LaTeX Info: Redefining \cdots on input line 467.
@@ -407,15 +408,15 @@ LaTeX Info: Redefining \cdots on input line 467.
 \big@size=\dimen153
 LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
-\macc@depth=\count142
-\c@MaxMatrixCols=\count143
+\macc@depth=\count143
+\c@MaxMatrixCols=\count144
 \dotsspace@=\muskip10
-\c@parentequation=\count144
-\dspbrk@lvl=\count145
+\c@parentequation=\count145
+\dspbrk@lvl=\count146
 \tag@help=\toks24
-\row@=\count146
-\column@=\count147
-\maxfields@=\count148
+\row@=\count147
+\column@=\count148
+\maxfields@=\count149
 \andhelp@=\toks25
 \eqnshift@=\dimen154
 \alignsep@=\dimen155
@@ -468,16 +469,16 @@ Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
 \LTright=\skip189
 \LTpre=\skip190
 \LTpost=\skip191
-\LTchunksize=\count149
+\LTchunksize=\count150
 \LTcapwidth=\dimen160
 \LT@head=\box30
 \LT@firsthead=\box31
 \LT@foot=\box32
 \LT@lastfoot=\box33
-\LT@cols=\count150
-\LT@rows=\count151
-\c@LT@tables=\count152
-\c@LT@chunks=\count153
+\LT@cols=\count151
+\LT@rows=\count152
+\c@LT@tables=\count153
+\c@LT@chunks=\count154
 \LT@p@ftn=\toks34
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\rotating\rotating.sty"
@@ -486,30 +487,30 @@ Package: rotating 2009/03/28 v2.16a rotated objects in LaTeX
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\ifthen.sty"
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 )
-\c@r@tfl@t=\count154
+\c@r@tfl@t=\count155
 \rotFPtop=\skip192
 \rotFPbot=\skip193
 \rot@float@box=\box34
 \rot@mess@toks=\toks35
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\listings.sty"
-\lst@mode=\count155
+\lst@mode=\count156
 \lst@gtempboxa=\box35
 \lst@token=\toks36
-\lst@length=\count156
+\lst@length=\count157
 \lst@currlwidth=\dimen161
-\lst@column=\count157
-\lst@pos=\count158
+\lst@column=\count158
+\lst@pos=\count159
 \lst@lostspace=\dimen162
 \lst@width=\dimen163
-\lst@newlines=\count159
-\lst@lineno=\count160
+\lst@newlines=\count160
+\lst@lineno=\count161
 \lst@maxwidth=\dimen164
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstmisc.sty"
 File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
-\c@lstnumber=\count161
-\lst@skipnumbers=\count162
+\c@lstnumber=\count162
+\lst@skipnumbers=\count163
 \lst@framebox=\box36
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\listings.cfg"
@@ -571,6 +572,59 @@ Package: inputenc 2008/03/30 v1.1d Input encoding file
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\cp1250.def"
 File: cp1250.def 2008/03/30 v1.1d Input encoding file
 ))
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\color.sty"
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\xcolor\xcolor.sty"
+Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+LaTeX Info: Redefining \color on input line 702.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1341.
+Package xcolor Info: Model `RGB' extended on input line 1353.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1357.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
+)
+
+Class memoir Warning: You are using the caption package with the memoir 
+(memoir)              class. This may cause unexpected or inconsistent 
+(memoir)              results if you use any of memoir's captioning facilities.
+
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\caption\caption.sty"
+Package: caption 2010/01/09 v3.1m Customizing captions (AR)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\caption\caption3.sty"
+Package: caption3 2010/01/14 v3.1m caption3 kernel (AR)
+\captionmargin=\dimen165
+\captionmargin@=\dimen166
+\captionwidth=\dimen167
+\caption@indent=\dimen168
+\caption@parindent=\dimen169
+\caption@hangindent=\dimen170
+)
+\c@ContinuedFloat=\count164
+Package caption Info: listings package is loaded.
+Package caption Info: longtable package is loaded.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\caption\ltcaption.sty"
+Package: ltcaption 2008/03/28 v1.2 longtable captions (AR)
+)
+Package caption Info: rotating package is loaded.
+)
 \MS@idxfile=\write4
 
 Writing index file MS.idx 
@@ -578,27 +632,7 @@ Writing index file MS.idx
 Package: citeref 1999/27/05
 
 Package citeref v1.1 <1999/27/05> (Bjoern Briel)
-) ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\color.sty"
-Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
-File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
-)
-Package color Info: Driver file: dvips.def on input line 130.
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\dvipsnam.def"
-File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
-))
-Package color Info: Redefining color yellow on input line 35.
-Package color Info: Redefining color red on input line 49.
-Package color Info: Redefining color magenta on input line 55.
-Package color Info: Redefining color blue on input line 76.
-Package color Info: Redefining color cyan on input line 78.
-Package color Info: Redefining color green on input line 88.
-Package color Info: Redefining color black on input line 100.
-Package color Info: Redefining color white on input line 101.
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hyperref.sty"
+) ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hyperref.sty"
 Package: hyperref 2010/10/30 v6.81t Hypertext links for LaTeX
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
@@ -644,9 +678,9 @@ Package: letltxmacro 2008/06/24 v1.3 Let assignment for LaTeX macros (HO)
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\kvoptions.sty"
 Package: kvoptions 2010/02/22 v3.7 Keyval support for LaTeX options (HO)
 )
-\@linkdim=\dimen165
-\Hy@linkcounter=\count163
-\Hy@pagecounter=\count164
+\@linkdim=\dimen171
+\Hy@linkcounter=\count165
+\Hy@pagecounter=\count166
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\pd1enc.def"
 File: pd1enc.def 2010/10/30 v6.81t Hyperref: PDFDocEncoding definition (HO)
@@ -654,10 +688,23 @@ File: pd1enc.def 2010/10/30 v6.81t Hyperref: PDFDocEncoding definition (HO)
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\intcalc.sty"
 Package: intcalc 2007/09/27 v1.1 Expandable integer calculations (HO)
 )
-\Hy@SavedSpaceFactor=\count165
+\Hy@SavedSpaceFactor=\count167
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\hyperref.cfg"
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Option `plainpages' set `false' on input line 3872.
+Package hyperref Info: Option `pdfpagelabels' set `true' on input line 3872.
+Package hyperref Info: Option `bookmarksnumbered' set `true' on input line 3872
+.
+Package hyperref Info: Option `colorlinks' set `true' on input line 3872.
+
+
+Package hyperref Warning: Option `pagecolor' is not available anymore.
+
+Package hyperref Info: Option `unicode' set `true' on input line 3872.
+("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\puenc.def"
+File: puenc.def 2010/10/30 v6.81t Hyperref: PDF Unicode definition (HO)
 )
 Package hyperref Info: Hyper figures OFF on input line 3976.
 Package hyperref Info: Link nesting OFF on input line 3981.
@@ -666,7 +713,7 @@ Package hyperref Info: Plain pages OFF on input line 3991.
 Package hyperref Info: Backreferencing OFF on input line 3996.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4211.
-\c@Hy@tempcnt=\count166
+\c@Hy@tempcnt=\count168
 LaTeX Info: Redefining \url on input line 4566.
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\bitset.sty"
@@ -675,14 +722,14 @@ Package: bitset 2007/09/28 v1.0 Data type bit set (HO)
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\bigintcalc.sty"
 Package: bigintcalc 2007/11/11 v1.1 Expandable big integer calculations (HO)
 ))
-\Fld@menulength=\count167
-\Field@Width=\dimen166
-\Fld@charsize=\dimen167
+\Fld@menulength=\count169
+\Field@Width=\dimen172
+\Fld@charsize=\dimen173
 Package hyperref Info: Hyper figures OFF on input line 5626.
 Package hyperref Info: Link nesting OFF on input line 5631.
 Package hyperref Info: Hyper index ON on input line 5634.
 Package hyperref Info: backreferencing OFF on input line 5641.
-Package hyperref Info: Link coloring OFF on input line 5646.
+Package hyperref Info: Link coloring ON on input line 5644.
 Package hyperref Info: Link coloring with OCG OFF on input line 5651.
 Package hyperref Info: PDF/A mode OFF on input line 5656.
 LaTeX Info: Redefining \ref on input line 5696.
@@ -691,36 +738,30 @@ LaTeX Info: Redefining \pageref on input line 5700.
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\atbegshi.sty"
 Package: atbegshi 2010/03/25 v1.12 At begin shipout hook (HO)
 )
-\Hy@abspage=\count168
-\c@Item=\count169
+\Hy@abspage=\count170
+\c@Item=\count171
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\memoir\memhfixc.sty"
 Package: memhfixc 2010/08/17 v1.15 nameref/hyperref package fixes for memoir cl
 ass
-\c@memhycontfloat=\count170
+\c@memhycontfloat=\count172
 )
 
-Package hyperref Message: Driver (default): hdvips.
+Package hyperref Message: Driver: hpdftex.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hdvips.def"
-File: hdvips.def 2010/10/30 v6.81t Hyperref driver for dvips
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\pdfmark.def"
-File: pdfmark.def 2010/10/30 v6.81t Hyperref definitions for pdfmark specials
-\pdf@docset=\toks39
-\pdf@box=\box37
-\pdf@toks=\toks40
-\pdf@defaulttoks=\toks41
-\Fld@listcount=\count171
-\c@bookmark@seq@number=\count172
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\rerunfilecheck.sty"
-Package: rerunfilecheck 2010/03/16 v1.6 Rerun checks for auxiliary files (HO)
+("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hpdftex.def"
+File: hpdftex.def 2010/10/30 v6.81t Hyperref driver for pdfTeX
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\atveryend.sty"
 Package: atveryend 2010/03/24 v1.5 Hooks at very end of document (HO)
 Package atveryend Info: \enddocument detected (standard).
 )
+\Fld@listcount=\count173
+\c@bookmark@seq@number=\count174
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\rerunfilecheck.sty"
+Package: rerunfilecheck 2010/03/16 v1.6 Rerun checks for auxiliary files (HO)
+
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\uniquecounter.sty"
 Package: uniquecounter 2009/12/18 v1.1 Provides unlimited unique counter (HO)
 )
@@ -728,7 +769,61 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 71.
 )
 \Hy@SectionHShift=\skip194
-))
+)
+("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-mis.tex"
+("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-mis.mkii"
+loading : ConTeXt Support Macros / Miscellaneous (2004.10.26)
+\protectiondepth=\count175
+\scratchcounter=\count176
+\scratchtoks=\toks39
+\scratchdimen=\dimen174
+\scratchskip=\skip195
+\scratchmuskip=\muskip12
+\scratchmuskip=\muskip13
+\scratchmuskip=\muskip14
+\scratchmuskip=\muskip15
+\scratchmuskip=\muskip16
+\scratchmuskip=\muskip17
+\scratchmuskip=\muskip18
+\scratchmuskip=\muskip19
+\scratchmuskip=\muskip20
+\scratchmuskip=\muskip21
+\scratchbox=\box37
+\scratchread=\read2
+\scratchwrite=\write5
+\zeropoint=\dimen175
+\onepoint=\dimen176
+\onebasepoint=\dimen177
+\minusone=\count177
+\thousandpoint=\dimen178
+\onerealpoint=\dimen179
+\emptytoks=\toks40
+\nextbox=\box38
+\nextdepth=\dimen180
+\everyline=\toks41
+\!!counta=\count178
+\!!countb=\count179
+\recursecounter=\count180
+)) ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.tex"
+("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+loading : ConTeXt Support Macros / PDF
+\scratchcounter=\count181
+\scratchdimen=\dimen181
+\scratchbox=\box39
+\nofMPsegments=\count182
+\nofMParguments=\count183
+\everyMPshowfont=\toks42
+\MPscratchCnt=\count184
+\MPscratchDim=\dimen182
+\MPnumerator=\count185
+\everyMPtoPDFconversion=\toks43
+)) ("C:\Program Files\MiKTeX 2.9\tex\latex\thumbpdf\thumbpdf.sty"
+Package: thumbpdf 2010/07/07 v3.11 Inclusion of thumbnails (HO)
+
+
+Package thumbpdf Warning: Thumbnail data file `MS.tpt' not found.
+
+)
 
 ******************************************************
 Stock height and width: 845.04684pt by 597.50787pt
@@ -771,10 +866,38 @@ LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 6.
 LaTeX Font Info:    ... okay on input line 6.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 6.
 LaTeX Font Info:    ... okay on input line 6.
-\c@lstlisting=\count173
-\AtBeginShipoutBox=\box38
-Package hyperref Info: Link coloring OFF on input line 6.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
 
+("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+loading : ConTeXt Support Macros / PDF
+\scratchcounter=\count186
+\scratchdimen=\dimen183
+\scratchbox=\box40
+\nofMPsegments=\count187
+\nofMParguments=\count188
+\everyMPshowfont=\toks44
+\MPscratchCnt=\count189
+\MPscratchDim=\dimen184
+\MPnumerator=\count190
+\everyMPtoPDFconversion=\toks45
+)
+\c@lstlisting=\count191
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: Incompatible package detected (regarding \caption).
+(caption)             \caption = \long macro:->\donemaincaptiontrue \m@moldhypc
+aption .
+
+
+Package caption Warning: \caption will not be redefined since it's already
+(caption)                redefined by a document class or package which is
+(caption)                unknown to the caption package.
+See the caption package documentation for explanation.
+
+Package caption Info: hyperref package is loaded.
+Package caption Info: End \AtBeginDocument code.
+\AtBeginShipoutBox=\box41
+Package hyperref Info: Link coloring ON on input line 6.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
 
@@ -784,7 +907,7 @@ Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\gettitlestring.sty"
 Package: gettitlestring 2009/12/18 v1.3 Cleanup title references (HO)
 )
-\c@section@level=\count174
+\c@section@level=\count192
 )
 Redoing nameref's sectioning
 Redoing nameref's label
@@ -793,10 +916,7 @@ LaTeX Info: Redefining \ref on input line 6.
 LaTeX Info: Redefining \pageref on input line 6.
 LaTeX Info: Redefining \nameref on input line 6.
 (C:\Dev\asprofiled\Docs\MS\MS.out) (C:\Dev\asprofiled\Docs\MS\MS.out)
-\@outlinefile=\write5
-
-
-Package hyperref Warning: Rerun to get /PageLabels entry.
+\@outlinefile=\write6
 
 (C:\Dev\asprofiled\Docs\MS\front.tex
 LaTeX Font Info:    Try loading font information for OT4+cmss on input line 10.
@@ -807,10 +927,11 @@ File: ot4cmss.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 ) [1
 
 
-] [2
+{C:/Documents and Settings/All Users/Application Data/MiKTeX/2.9/pdftex/config/
+pdftex.map}]
+[2
 
-]
-(C:\Dev\asprofiled\Docs\MS\MS.toc
+] (C:\Dev\asprofiled\Docs\MS\MS.toc
 LaTeX Font Info:    Try loading font information for OML+plm on input line 3.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\polski\omlplm.fd"
@@ -844,8 +965,19 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
 LaTeX Font Info:    Try loading font information for U+stmry on input line 3.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\stmaryrd\ustmry.fd") [1])) [2]
-(C:\Dev\asprofiled\Docs\MS\chap1//chap1.tex
+("C:\Program Files\MiKTeX 2.9\tex\latex\stmaryrd\ustmry.fd")pdfTeX warning (ext
+4): destination with the same identifier (name{page.i}) has been already used, 
+duplicate ignored
+<to be read again> 
+                   \relax 
+l.29 ...2}Gramatyka kontrakt\'ow}{20}{section.5.2}
+                                                   [1]))pdfTeX warning (ext4): 
+destination with the same identifier (name{page.ii}) has been already used, dup
+licate ignored
+<to be read again> 
+                   \relax 
+l.13 \input
+           {chap1//chap1.tex} [2] (C:\Dev\asprofiled\Docs\MS\chap1//chap1.tex
 Underfull \hbox (badness 10000) in paragraph at lines 4--7
 
  []
@@ -878,7 +1010,21 @@ Underfull \hbox (badness 10000) in paragraph at lines 42--44
 
  []
 
-[4]) (C:\Dev\asprofiled\Docs\MS\chap3//chap3.tex [5] [6
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 45--45
+[][][][][][][] 
+ []
+
+LaTeX Font Info:    Try loading font information for OT4+cmtt on input line 45.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\polski\ot4cmtt.fd"
+File: ot4cmtt.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
+) [4]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 58--58
+[][][][][][][] 
+ []
+
+) (C:\Dev\asprofiled\Docs\MS\chap3//chap3.tex [5] [6
 
 ] [7])
 (C:\Dev\asprofiled\Docs\MS\chap4//chap4.tex [8]
@@ -886,12 +1032,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 7--9
 
  []
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang1.sty"
-File: lstlang1.sty 2004/09/05 1.3 listings language file
-)
-("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang2.sty"
-File: lstlang2.sty 2004/09/05 1.3 listings language file
-)
+
 Underfull \hbox (badness 10000) in paragraph at lines 20--22
 
  []
@@ -903,107 +1044,118 @@ Underfull \hbox (badness 10000) in paragraph at lines 26--27
 
  []
 
-[10] [11] [12] [13]
-Underfull \hbox (badness 10000) in paragraph at lines 244--246
+[10]
+Underfull \hbox (badness 10000) in paragraph at lines 93--93
+[]|\OT4/cmss/m/n/10.95 Type dec-la-ra-tion: Dec-la-ra-tion of
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 151
+ []
+
+[11] [12]
+Underfull \vbox (badness 2080) has occurred while \output is active []
+
+ [13]
+Underfull \hbox (badness 10000) in paragraph at lines 161--163
 
  []
 
-[14]
-File: ./images/MethodDefSig.ps Graphic file (type eps)
- <./images/MethodDefSig.ps>
-Underfull \hbox (badness 10000) in paragraph at lines 330--335
+[14] <./images/MethodDefSig.png, id=313, 62.75446pt x 40.35075pt>
+File: ./images/MethodDefSig.png Graphic file (type png)
+
+<use ./images/MethodDefSig.png> [15 <C:/Dev/asprofiled/Docs/MS/images/MethodDef
+Sig.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 247--252
 
  []
 
-[15]) (C:\Dev\asprofiled\Docs\MS\chap5//chap5.tex [16] [17] [18
+[16]) (C:\Dev\asprofiled\Docs\MS\chap5//chap5.tex [17] [18
 
 ]
-("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang1.sty"
-File: lstlang1.sty 2004/09/05 1.3 listings language file
-)
-Overfull \hbox (36.48438pt too wide) in paragraph at lines 9--10
-[][][][][][][][][][][][][][][][][][][] 
+Underfull \vbox (badness 1430) has occurred while \output is active []
+
+ [19]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 29--29
+[][][][][][][] 
+ []
+
+[20]
+Underfull \hbox (badness 10000) in paragraph at lines 99--103
+
  []
 
 
-Overfull \hbox (82.47485pt too wide) in paragraph at lines 12--13
-[][][][][][][][][][][][][][][][][][][] 
- []
-
-[19]
-LaTeX Font Info:    Try loading font information for OML+cmss on input line 34.
-
-LaTeX Font Info:    No file OMLcmss.fd. on input line 34.
-
-
-LaTeX Font Warning: Font shape `OML/cmss/m/n' undefined
-(Font)              using `OML/cmm/m/it' instead
-(Font)              for symbol `textless' on input line 34.
-
-
-Overfull \hbox (16.77417pt too wide) in paragraph at lines 46--47
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (10.2041pt too wide) in paragraph at lines 50--52
-[][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (49.62451pt too wide) in paragraph at lines 55--56
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Underfull \vbox (badness 2617) has occurred while \output is active []
-
- [20]
-Overfull \hbox (3.63403pt too wide) in paragraph at lines 70--71
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (29.9143pt too wide) in paragraph at lines 75--76
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (16.77417pt too wide) in paragraph at lines 79--80
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 102--106
+Underfull \hbox (badness 10000) in paragraph at lines 109--110
 
  []
 
 [21]
-Underfull \hbox (badness 10000) in paragraph at lines 113--114
-
+Overfull \hbox (6.0pt too wide) in paragraph at lines 119--119
+[][][][][][][] 
  []
 
 [22]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 182--182
+[][][][][][][] 
+ []
+
+
 Overfull \vbox (13.47998pt too high) has occurred while \output is active []
 
 
-[23]) (C:\Dev\asprofiled\Docs\MS\chap6//chap6.tex [24])
-(C:\Dev\asprofiled\Docs\MS\chap7//chap7.tex [25
+[23]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 195--195
+[][][][][][][] 
+ []
 
-] [26
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 200--200
+[][][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 205--209
+
+ []
+
+[24]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 216--216
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 227--227
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 244--244
+[][][][][][][] 
+ []
+
+[25]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 267--267
+[][][][][][][] 
+ []
+
+[26]) (C:\Dev\asprofiled\Docs\MS\chap6//chap6.tex [27] [28
 
 ])
-(C:\Dev\asprofiled\Docs\MS\MS.bbl [27] [28
+(C:\Dev\asprofiled\Docs\MS\chap7//chap7.tex [29] [30
+
+])
+(C:\Dev\asprofiled\Docs\MS\MS.bbl [31] [32
 
 ]
 bibitemlist
 
 LaTeX Warning: Empty `thebibliography' environment on input line 5.
 
-) [29] [30
+) [33] [34
 
 ]
-\tf@toc=\write6
+\tf@toc=\write7
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 33.
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 33.
  (C:\Dev\asprofiled\Docs\MS\MS.aux)
@@ -1015,8 +1167,8 @@ Package rerunfilecheck Warning: File `MS.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `MS.out':
-(rerunfilecheck)             Before: D06587FB64D467B7E4E76674AF68C0B8;7824
-(rerunfilecheck)             After:  88352AE4471DED305BD7EECF4FC6F62E;2876.
+(rerunfilecheck)             Before: D356AD3087FEA3BE22E2B1EFA2A2E43A;2876
+(rerunfilecheck)             After:  C0782AA918F0CB38F89A31C40F0F606B;7824.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -1025,12 +1177,24 @@ LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
- 11696 strings out of 494020
- 163549 string characters out of 3146449
- 325947 words of memory out of 3000000
- 14750 multiletter control sequences out of 15000+200000
- 18739 words of font info for 54 fonts, out of 3000000 for 9000
+ 14512 strings out of 494019
+ 200675 string characters out of 3146427
+ 496138 words of memory out of 3000000
+ 17243 multiletter control sequences out of 15000+200000
+ 19660 words of font info for 56 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 40i,13n,40p,801b,1792s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 41i,13n,38p,801b,1831s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/pl/pltt.enc}{C:/Program Files/Mi
+KTeX 2.9/fonts/enc/dvips/pl/plrm.enc}<C:/Program Files/MiKTeX 2.9/fonts/type1/p
+ublic/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/pl
+/plr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/pl/plsl10.pfb><C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/pl/plss10.pfb><C:/Program Files/MiKTe
+X 2.9/fonts/type1/public/pl/plss12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
+/public/pl/plssbx10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/pl/pltt
+9.pfb>
+Output written on MS.pdf (38 pages, 222081 bytes).
+PDF statistics:
+ 686 PDF objects out of 1000 (max. 8388607)
+ 296 named destinations out of 1000 (max. 500000)
+ 342 words of extra memory for PDF output out of 10000 (max. 10000000)
 
-Output written on MS.dvi (34 pages, 148120 bytes).

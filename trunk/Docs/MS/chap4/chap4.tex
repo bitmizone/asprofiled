@@ -11,7 +11,7 @@ Rozpoczêcie procesu profilowania/weryfikacji aplikacji odbywa siê poprzez urucho
 Etap ten polega na ustawieniu zmiennych œrodowiskowych, instruuj¹cych maszynê wirtualn¹ CLR, aby ta wysy³a³a powiadomienia na temat zdarzeñ zachodz¹cych wewn¹trz uruchamianej aplikacji. 
 Proces ten wygl¹da w sposób nastêpuj¹cy: 
 
-\lstset{language=VBScript}
+
 \begin{lstlisting}
 SET COR_ENABLE_PROFILING=1
 SET COR_PROFILER={GUID}
@@ -49,197 +49,112 @@ Dane te, emitowane przez kompilator, przechowywane s¹ wewn¹trz ka¿dego wykonywal
 W ramach systemu Windows zdefiniowany jest format plików wykonywalnych - PE (eng. Portable Executables), okreœlaj¹cy strukturê jak¹ musi posiadaæ ka¿dy program, aby móg³ byæ uruchomiony w systemie.
 %%% RYSUNEK 
 Aplikacje przeznaczone na platformê .NET naturalnie równie¿ musz¹ byæ zorganizowane w sposób zgodny z tym standardem.
-
+Jednym z pól w ramach nag³ówka CLI jest offset (RVA) okreœlaj¹cy po³o¿enie zbioru metadanych w ramach pliku wykonywalnego czy biblioteki. 
  
-One field in the CLI header is the RVA for the metadata directory, which gives access to all the metadata used by the assembly
+%One field in the CLI header is the RVA for the metadata directory, which gives %access to all the metadata used by the assembly
 
 
+Metadane przechowuj¹ informacje na temat typów definiowanych w ramach programu (klasy, struktury, interfejsy), globalnych funkcji i zmienny. Ka¿da z tych abstrakcyjnych encji niesie ze sob¹ wartoœæ wartoœci typu mdToken (metadata token). Jest ona u¿ywana przez mechanizmy odczytuj¹ce metadane do identyfikacji informacji na temat encji w ramach okreœlonego zasiêgu. 
+%Metadata stores declarative information about runtime types (classes, value %types,
+%and interfaces), global-functions and global-variable. Each such abstraction in %a
+%given metadata scope carries an identity as an mdToken (metadata token), where
+%an mdToken is used by the metadata engine to index into a specific metadata %data
+%table in that scope. The metadata APIs return a token from each Define method %and
+%it is this token that, when passed into the appropriate Get method, is used to %obtain
+%its associated attributes.
 
-Metadata stores declarative information about runtime types (classes, value types,
-and interfaces), global-functions and global-variable. Each such abstraction in a
-given metadata scope carries an identity as an mdToken (metadata token), where
-an mdToken is used by the metadata engine to index into a specific metadata data
-table in that scope. The metadata APIs return a token from each Define method and
-it is this token that, when passed into the appropriate Get method, is used to obtain
-its associated attributes.
+Token metadanych ma postaæ czterobajtowej wartoœci. Najbardziej znacz¹cy bajt   okreœla typ tokenu, pozosta³e okreœlaj¹ po³o¿enie pozosta³ych informacji w tablicy metadanych.
+Dla przyk³adu, wartoœæ 1 przechowywana w MSB (most significant byte) oznacza, i¿ token jest typu mdTypeRef, który oznacza referencjê do typu, a informacje na jego temat s¹ przechowywane w tablicy TypeRef.
 
-A metadata token is a 4-byte value. The most significant byte (MSB) specifies the token type and consequently identifies the abstraction and its associated metadata table. For example, a value of 1 in the MSB means that the token is an mdTypeRef token, which represents a type reference, and that its metadata is stored in the TypeRef metadata table; a value of 4 in the MSB corresponds to an mdFieldDef token. The CorTokenType enumeration is used to specify the token types.
+%A metadata token is a 4-byte value. The most significant byte (MSB) specifies %the token type and consequently identifies the abstraction and its associated %metadata table. For example, a value of 1 in the MSB means that the token is an %mdTypeRef token, which represents a type reference, and that its metadata is %stored in the TypeRef metadata table; a value of 4 in the MSB corresponds to an %mdFieldDef token. The CorTokenType enumeration is used to specify the token %types.
 
-The lower three bytes, referred to as the record identifier (RID), contain the index of the row within the metadata table to which the token's MSB refers. For example, the metadata token with value 0x02000007 refers to row 7 in the TypeDef table in the current scope. Similarly, token 0x0400001A refers to row 26 (decimal) in the FieldDef table in the current scope. Row zero of a metadata table never contains data, so a metadata token whose RID is zero is referred to as a nil token. The metadata API defines a host of such nil tokens, one for each token type, such as mdTypeRefNil, with the value 0x01000000.
+Pozosta³e, mniej znacz¹ce bajty, oznaczaj¹ identyfikator rekordu (record identifier - RID) i zawieraj¹ w sobie indeks do wiersza w/w tablicy, która okreœlona jest przez wartoœæ najbardziej znacz¹cego bajtu.
+Przyk³adowo, token o wartoœci 0x02000007 odnosi siê do siódmego wiersza tablicy TypeRef. Podobnie, wartoœæ 0x0400001A oznacza odwo³anie do wiersza dwudziestego szóstego tabliy FieldDef.
+Wiersz zerowy ka¿dej z powy¿szych tablic nigdy nie zawiera w sobie danych, wiêc jeœli identyfikator RID jest równy zeru, to znaczy to, ¿e token jest pusty, ma wartoœæ nil. Taki token zdefiniowany jest dla ka¿dego typu encji, np. wartoœæ 0x10000000 okreœla pusty token mdTypeRefNil.
 
+%The lower three bytes, referred to as the record identifier (RID), contain the %index of the row within the metadata table to which the token's MSB refers. For %example, the metadata token with value 0x02000007 refers to row 7 in the %TypeDef table in the current scope. Similarly, token 0x0400001A refers to row %26 (decimal) in the FieldDef table in the current scope. Row zero of a metadata %table never contains data, so a metadata token whose RID is zero is referred to %as a nil token. The metadata API defines a host of such nil tokens, one for %each token type, such as mdTypeRefNil, with the value 0x01000000.
 
+W poni¿szej tabeli znajduj¹ siê wszystkie typy tokenów, typy które opisuj¹ oraz nazwy tablic metadanych. Wszystkie tokeny s¹ pochodnymi typu bazowego - mdToken.
 
+\begin{center}
+    \begin{longtable}{ |c | c | p{6cm} |}
+    \hline
+Token Type & Metadata Table & Abstraction \\ \hline
+mdModule &
+Module &
+Module: A compilation unit, an executable, or some other development unit, deployment unit, or run-time unit. It is possible (though not required) to declare attributes on the module as a whole, including a name, a GUID, custom attributes, and so forth. \\ \hline
 
+mdModuleRef &
+ModuleRef &
+Module reference: A compile-time reference to a module, which records the source for type and member imports. \\ \hline
 
-To be more concrete: a metadata token is a 4-byte value. The most-significant byte
-specifies what type of token this is. For example, a value of 1 means it’s a TypeDef
-token, whilst a value of 4 means it’s a FieldDef token. (For the full list, with their
-values, see the CorTokenType enumeration in CorHdr.h) The lower 3 bytes give the
-index of the row, within a MetaData table, that the token refers to. We call those
-lower 3 bytes the RID, or Record IDentifier. So, for example, the metadata token
-with value 0x01000007 is a ‘shorthand’ way to refer to row number 7 in the TypeDef
-table, in the current scope. Similarly, token 0x0400001A refers to row number 26
-(decimal) in the FieldDef table in the current scope. We never store anything in row
-zero of a metadata table. So a metadata token, whose RID is zero, we call a “nil”
-token. The metadata API defines a host of such nil tokens – one for each token type
-(for example, mdTypeDefNil, with value 0x01000000).
+mdTypeDef &
+TypeDef &
+Type declaration: Declaration of either a runtime reference type (class or interface) or a value type. \\ \hline
 
-The following table lists the metadata token types, the abstraction that each token type represents, and the name of the metadata table that contains the abstraction's metadata. All token types are variations of mdToken, which is the basic token type.
+mdTypeRef &
+TypeRef &
+Type reference: Reference to either a runtime reference type or a value type. In a sense, the collection of type references in a module is the collection of compile-time import dependencies. \\ \hline
 
-Token Type
-	
+mdMethodDef &
+MethodDef &
+Method definition: Definition of a method as a member of a class or interface, or as a global module-level method. \\ \hline
 
-Metadata Table
-	
+mdParamDef &
+ParamDef &
+Parameter declaration: Definition of an optional data structure that stores additional metadata for the parameter. It is not necessary to emit a data structure for each parameter in a method. However, when there is additional metadata to persist for the parameter, such as marshaling or type-mapping information, an optional parameter data structure can be created. \\ \hline
 
-Abstraction
+mdFieldDef &
+FieldDef &
+Field declaration: Declaration of a variable as a data member of a class or interface, or declaration of a global, module-level variable. \\ \hline
 
-mdModule
-	
+mdProperty &
+Property &
+Property declaration: Declaration of a property as a member of a class or interface. \\ \hline
 
-Module
-	
+mdEvent &
+Event &
+Event declaration: Declaration of a named event as a member of a class or interface. \\ \hline
 
-Module: A compilation unit, an executable, or some other development unit, deployment unit, or run-time unit. It is possible (though not required) to declare attributes on the module as a whole, including a name, a GUID, custom attributes, and so forth.
+mdMemberRef &
+MemberRef &
+Member reference: Reference to a method or field. A member reference is generated in metadata for every method invocation or field access that is made by any implementation in the current module, and a token is persisted in the Microsoft intermediate language (MSIL) stream. There is no runtime support for property or event references. \\ \hline
 
-mdModuleRef
-	
+mdIfaceImpl &
+IfaceImpl &
+Interface implementation: A specific class’s implementation of a specific interface. This metadata abstraction enables the storing of information that is the intersection of that which is specific to neither the class nor the interface. \\ \hline
 
-ModuleRef
-	
+mdMethodImpl &
+MethodImpl &
+Method implementation: A specific class’s implementation of a method that is inherited using interface inheritance. This metadata abstraction enables information to be persisted that is specific to the implementation rather than to the contract. Method declaration information cannot be modified by the implementing class. \\ \hline
 
-Module reference: A compile-time reference to a module, which records the source for type and member imports.
+mdCustomAttribute &
+CustomAttribute &
+Custom attribute: An arbitrary data structure associated with any metadata object that can be referenced with an mdToken. (An exception is that custom attributes themselves cannot have custom attributes.) \\ \hline
 
-mdTypeDef
-	
+mdPermission &
+Permission &
+Permission set: A declarative security permission set associated with mdTypeDef, mdMethodDef, and mdAssembly. For more information, see Adding Declarative Security Support. \\ \hline
 
-TypeDef
-	
+mdTypeSpec &
+TypeSpec &
+Type constructor: A method that obtains a token for a type (such as a boxed value type) that can be used as input to any MSIL instruction that takes a type. \\ \hline 
 
-Type declaration: Declaration of either a runtime reference type (class or interface) or a value type.
+mdSignature &
+Signature &
+Stand-alone signature: A local variable signature in the portable executable (PE) file or a method signature that is passed to an MSIL instruction. \\ \hline
 
-mdTypeRef
-	
+mdString & 
+String &
+User string: A string that is passed to an MSIL instruction. \\ \hline
 
-TypeRef
-	
-
-Type reference: Reference to either a runtime reference type or a value type. In a sense, the collection of type references in a module is the collection of compile-time import dependencies.
-
-mdMethodDef
-	
-
-MethodDef
-	
-
-Method definition: Definition of a method as a member of a class or interface, or as a global module-level method.
-
-mdParamDef
-	
-
-ParamDef
-	
-
-Parameter declaration: Definition of an optional data structure that stores additional metadata for the parameter. It is not necessary to emit a data structure for each parameter in a method. However, when there is additional metadata to persist for the parameter, such as marshaling or type-mapping information, an optional parameter data structure can be created.
-
-mdFieldDef
-	
-
-FieldDef
-	
-
-Field declaration: Declaration of a variable as a data member of a class or interface, or declaration of a global, module-level variable.
-
-mdProperty
-	
-
-Property
-	
-
-Property declaration: Declaration of a property as a member of a class or interface.
-
-mdEvent
-	
-
-Event
-	
-
-Event declaration: Declaration of a named event as a member of a class or interface.
-
-mdMemberRef
-	
-
-MemberRef
-	
-
-Member reference: Reference to a method or field. A member reference is generated in metadata for every method invocation or field access that is made by any implementation in the current module, and a token is persisted in the Microsoft intermediate language (MSIL) stream. There is no runtime support for property or event references.
-
-mdIfaceImpl
-	
-
-IfaceImpl
-	
-
-Interface implementation: A specific class’s implementation of a specific interface. This metadata abstraction enables the storing of information that is the intersection of that which is specific to neither the class nor the interface.
-
-mdMethodImpl
-	
-
-MethodImpl
-	
-
-Method implementation: A specific class’s implementation of a method that is inherited using interface inheritance. This metadata abstraction enables information to be persisted that is specific to the implementation rather than to the contract. Method declaration information cannot be modified by the implementing class.
-
-mdCustomAttribute
-	
-
-CustomAttribute
-	
-
-Custom attribute: An arbitrary data structure associated with any metadata object that can be referenced with an mdToken. (An exception is that custom attributes themselves cannot have custom attributes.)
-
-mdPermission
-	
-
-Permission
-	
-
-Permission set: A declarative security permission set associated with mdTypeDef, mdMethodDef, and mdAssembly. For more information, see Adding Declarative Security Support.
-
-mdTypeSpec
-	
-
-TypeSpec
-	
-
-Type constructor: A method that obtains a token for a type (such as a boxed value type) that can be used as input to any MSIL instruction that takes a type.
-
-mdSignature
-	
-
-Signature
-	
-
-Stand-alone signature: A local variable signature in the portable executable (PE) file or a method signature that is passed to an MSIL instruction.
-
-mdString
-	
-
-String
-	
-
-User string: A string that is passed to an MSIL instruction.
-
-
-
-
+	\end{longtable}
+\end{center}
 
 \subsection{Interpretacja metadanych}
 
-Do zaimplementowania procesu weryfikacji aplikacji przy obranym tutaj podejœciu zachodzi naturalna potrzeba interpretacji metadanych. W tym celu musimy wiedzieæ jak¹ postaæ maj¹ poszczególne typy metadanych i w jaki sposób nale¿y je interpretowaæ. 
-Proces ten rozpoczyna siê od pobrania wartoœci tokenu odpowiedniego typu. 
-W ogólnym przypadku nale¿a³oby rozwa¿yæ wszystkie ich rodzaje, w tej sytuacji mo¿emy siê jednak ograniczyæ do tych, które zosta³y wykorzystane w bibliotece :
-
+Do zaimplementowania procesu weryfikacji aplikacji przy obranym tutaj podejœciu zachodzi potrzeba interpretacji metadanych. W tym celu potrzebna jest wiedza na temat postaci poszczególnych typów metadanych i w jaki sposób nale¿y je interpretowaæ. 
+Proces ten rozpoczyna siê od pobrania wartoœci tokenu, opisanych w poprzedniej sekcji, odpowiedniego typu. 
 
 Tokeny odpowiedniego rodzaju uzyskiwane s¹ poprzez wywo³ania odpowiednich metod na obiektach implementuj¹cych okreœlone interfejsów.
 Dziêki informacj¹ zawartych w metadanych mo¿liwy jest odczyt niezbêdnych informacji. W opisywanej bibliotece zaimplementowano uzyskiwanie nastêpuj¹cych danych: \\
@@ -261,7 +176,7 @@ GetName
 Atrybuty:
 ParseAttributeMetaData
 
-\section{Odczytywanie wartoœci obiektów}
+
 Metadane odgrywaj¹ kluczow¹ rolê w procesie odczytywania wartoœci argumentów funkcji w czasie jej wykonywania. Dziêki tym informacjom mo¿na wyznaczyæ typ dowolnego obiektu, w szczególnoœci argumentów funkcji.
 Dziêki temu mo¿liwe jest odczytanie aktualnej wartoœci argumentu w kontekœcie dzia³aj¹cego programu. Typ definiuje sposób u³o¿enia obiektu w pamiêci oraz okreœla jego strukturê wewnêtrzn¹.
 Aktualny stan obiektu jest uzyskiwany poprzez inspekcje danych binarnych, do których odniesienie znajduje siê wewn¹trz metadanych obiektu.
@@ -322,6 +237,8 @@ the 'blob' (ParamCount counts just the method parameters – it does not include t
 The RetType item describes the type of the method’s return value (§23.2.11)
 The Param item describes the type of each of the method’s parameters. There shall be ParamCount instances
 of the Param item (§23.2.10)
+
+\section{Odczytywanie wartoœci obiektów}
 
 \section{Wartoœci pocz¹tkowe}
 
