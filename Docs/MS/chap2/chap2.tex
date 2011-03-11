@@ -42,7 +42,7 @@ Z kolei dla metod kontrakt definiowany przy pomocy warunków pocz¹tkowego i koñco
 Rozwi¹zanie, które jest tu opisywane skupia siê na drugim rodzaju kontraktów.
 W jêzyku programowania Eiffel, sk¹d wywodzi siê ca³a idea, kontrakty opisywane s¹ w sposób nastêpuj¹cy: \\
 
-\begin{lstlisting}
+\begin{lstlisting}[label=DesignByContract, caption=Programowanie kontraktowe]
 NazwaMetody (deklaracja argumentów) is
 require
  -- warunek pocz¹tkowy
@@ -55,10 +55,9 @@ end
 
 Przy budowie prezentowanej aplikacji wykorzystano cechê szczególn¹ platformy .NET, a w szczególnoœci jêzyka C\#, jak¹ jest mo¿liwoœæ dekorowania metod atrybutami. Ten element jêzyka bêdzie dok³adniej opisany w dalszej czêœci pracy, przy okazji przedstawiania szczegó³ów implementacyjnych. W tym momencie wystarczy przyj¹æ, i¿ atrybuty te staj¹ siê czêœci¹ meta informacji o danej metodzie, co z kolei mo¿e byæ wykorzystywane przy jej inspekcji. W³aœnie ta cecha zosta³a wykorzystana w rozwa¿anej aplikacji. Dla ilustracji, poni¿ej zosta³a zademonstrowana ogólna postaæ zapisu kontraktów w jêzyku C\#:
 
-\begin{lstlisting}
+\begin{lstlisting}[label=ContractDefinition, caption=Definicja kontraktu]
 
-[NazwaAtrybutuDefiniuj¹cegoKontrakt( warunek pocz¹tkowy, 
-					warunek koñcowy )]
+[NazwaAtrybutuDefiniuj¹cegoKontrakt( warunek pocz¹tkowy, warunek koñcowy )]
 NazwaMetody( deklaracja argumentów )
 {
   -- definicja metody

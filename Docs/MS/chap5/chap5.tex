@@ -4,7 +4,6 @@ W tym rozdziale opisano szczegó³y dotycz¹ce implementacyjne biblioteki.
 \section{Atrybuty jako kontrakty}
 Kontrakty definiowane s¹ jako atrybuty, którymi dekorowane s¹ metody.
 Definicja atrybutów ogranicza siê do elementarnej klasy, której ca³a definicja zawarta jest w nastêpuj¹cym bloku kodu:
-\lstset{language=Java}
 \begin{lstlisting}
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 public class AsContractAttribute : Attribute
@@ -27,9 +26,7 @@ Wyra¿enia opisuj¹ce kontrakty muszê byæ obliczalne do jednej z dwóch wartoœci: p
 Mo¿liwy zbiór wyra¿eñ wyra¿alnych poprzez kontrakty definiowany jest poprzez gramatykê bezkontekstow¹.
 Gramatyka ta zosta³a wykorzystana w aplikacji GOLD Parsing System, która na tej podstawie generuje tablicê stanów dla deterministycznego automatu skoñczonego. Poni¿ej znajduje siê jej definicja :
 
-\lstset{showspaces=false, showstringspaces=false,
-showtabs=false}
-\begin{lstlisting}
+\begin{lstlisting}[label=Grammar, caption=Gramatyka kontraktów]
 
 "Start Symbol" = <Program>
 
@@ -104,7 +101,6 @@ W tym przypadku konieczne jest uzyskanie uchwytu do obiektu implementuj¹cego int
 Pe³na jego definicja znajduje siê w za³¹czniku (A).
 Na potrzeby tej pracy wystarczaj¹ce jest omówienie dwóch z nich, mianowicie :\\
 
-\lstset{showspaces=false, showstringspaces=false,showtabs=false, breaklines=true}
 \begin{lstlisting}
 STDMETHOD(Initialize)(IUnknown *pICorProfilerInfoUnk);
 STDMETHOD(Shutdown)();
@@ -120,8 +116,7 @@ W tym miejscu nastêpuje uzyskanie uchwytu do obiektu typu ICorProfilerInfo2, któ
 
 Kolejnym krokiem jest zarejestrowanie tego obiektu jako odbiorcy okreœlonych zdarzeñ okreœlonych poni¿ej:
  
-\lstset{showspaces=false, showstringspaces=false, showtabs=false}
-\begin{lstlisting}
+\begin{lstlisting}[label=Events, caption=Zdarzenia]
 COR_PRF_MONITOR_NONE	= 0,
 COR_PRF_MONITOR_FUNCTION_UNLOADS	= 0x1,
 COR_PRF_MONITOR_CLASS_LOADS	= 0x2,
@@ -167,12 +162,24 @@ COR_PRF_ENABLE_FRAME_INFO
 Pozwala to na otrzymywanie komunikatów na temat wejœcia/wyjœcia do/z metody wraz z danymi na temat jej argumentów i wartoœci zwracanej.
 
 
-ICorProfiler
-IMetaData
+ICorProfiler\\
+IMetaDataImport
+Interfejs spe³nia kluczow¹ rolê w procesie uzyskiwania informacji na temat dowolnych encji zdefiniowanych w ramach aplikacji przeznaczonych na platformê .NET. IMetaDataImport zawiera ca³y szereg metod, dziêki którym mo¿liwe jest odszukanie i odczytanie wartoœci metadanych. 
+Metoda dziel¹ siê na cztery g³ówne kategorie :
+\begin{itemize}
+\item Enumerating collections of items in the metadata scope.
+\item Finding an item that has a specific set of characteristics.
+\item Getting properties of a specified item.
+\item The Get methods are specifically designed to return single-valued properties of a metadata item. When the property is a reference to another item, a token for that item is returned. Any pointer input type can be NULL to indicate that the particular value is not being requested. To obtain properties that are essentially collection objects (for example, the collection of interfaces that a class implements), use the enumeration methods.
+\end{itemize}
+
+W bibliotece AsProfiled interfejs IMetaDataImport wykorzystywany jest do odczytu metadanych na temat kontraktów oraz metod nimi udekorowanymi.
+Informacje na temat metod uzyskiwane s¹ przy pomocy wywo³ania funkcji 
+
 \section{Odbieranie notyfikacji o zdarzeniach zachodz¹cych w programie}
 W zadaniu ewaluacji kontraktów nak³adanych na metody, kluczowe jest, aby biblioteka mog³a odbieraæ zdarzenia na temat wywo³ania metody oraz wyjœcia z niej. W tym celu niezbêdne jest przekazanie informacji do maszyny CLR, na temat funkcji, które te zdarzenia bêd¹ obs³ugiwa³y. Cel ten realizowany jest poprzez wywo³anie metody o sygnaturze
 
-\begin{lstlisting}
+\begin{lstlisting}[label=SetEnterLeaveFunctionHooks2, caption=SetEnterLeaveFunctionHooks2]
 HRESULT SetEnterLeaveFunctionHooks2(
     [in] FunctionEnter2    *pFuncEnter,
     [in] FunctionLeave2    *pFuncLeave,
@@ -185,35 +192,125 @@ Zgodnie z dokumentacj¹ MSDN, metody te musz¹ zostaæ udekorowane atrybutem \_\_de
 Po wykonaniu tych czynnoœci mo¿liwe jest przekazanie sterowania do innych funkcji, gdzie przetwarzanie zdarzenia jest kontynuowane.
 W ramach AsProfiled funkcje te s¹ zadeklarowane w sposób nastêpuj¹cy:
 
-\begin{lstlisting}
+\begin{lstlisting}[label=FunctionEnter, caption=FunctionEnter]
 // deklaracja funkcji wywo³ywanej w momencie wejœcia do metody
 FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_INFO *argumentInfo);
 \end{lstlisting}
 oraz
-\begin{lstlisting}
+\begin{lstlisting}[label=FunctionLeave, caption=FunctionLeave]
 // deklaracja funkcji wywo³ywanej w momencie wyjœcia z metody
 FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange);
 \end{lstlisting}
 
 ,gdzie
 functionID - identyfikator funkcji, który mo¿e byæ u¿yty do uzyskania dostêpu do jej metadanych \\
-argumentInfo - wska¿nik do struktury COR_PRF_FUNCTION_ARGUMENT_INFO, która okreœla po³o¿enie argumentów funkcji w pamiêci \\
-retvalRange - wskaŸnik do struktury  COR_PRF_FUNCTION_ARGUMENT_RANGE, która okreœla po³o¿enie wyniku funkcji w pamiêci \\
+argumentInfo - wska¿nik do struktury COR\_PRF\_FUNCTION\_ARGUMENT\_INFO, która okreœla po³o¿enie argumentów funkcji w pamiêci \\
+retvalRange - wskaŸnik do struktury  COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE, która okreœla po³o¿enie wyniku funkcji w pamiêci \\
 
 Te funkcje maj¹ jasne prze³o¿enie na zadanie ewaluacji kontraktów. W ramach funkcji FunctionEnter odbywa siê sprawdzenie warunków pocz¹tkowych, a implementacja FunctionLeave zawiera w sobie sprawdzenie warunków koñcowych.
 
 \section{Odczyt metadanych}
 W tym podrozdziale opisano kolejny krok procesu ewaluacji kontraktu, jakim jest interpretacja metadanych w celu uzyskania informacji o wywo³ywanych metodach i jej argumentach.
 Wywo³anie ka¿dej z metod kontrolowanego programu powoduje wywo³anie metody FunctionEnter. W ramach tej funkcji odczytywane s¹ informacje na temat metody, co do której otrzymano powiadomienie. Jest to mo¿liwe dziêki otrzymywaniu jej identyfikatora w postaci argumentu functionID funkcji FunctionEnter, a nastêpnie wykorzystaniu go do uzyskania dostêpu do metadanych.
+Krok ten realizowany jest poprzez wywo³anie metody o sygnaturze
+\begin{lstlisting}[label=GetTokenAndMetaDataFromFunction, caption=GetTokenAndMetaDataFromFunction]
+HRESULT GetTokenAndMetaDataFromFunction(
+    [in]  FunctionID functionId,
+    [in]  REFIID     riid,
+    [out] IUnknown   **ppImport,
+    [out] mdToken    *pToken);
+\end{lstlisting}
+na rzecz obiektu implementuj¹cego interfejs ICorProfilerInfo2.
+Poprzez t¹ metodê uzyskujemy wartoœæ typu mdToken, który jednoznacznie identyfikuje po³o¿enie informacji dotycz¹cych funkcji.
+Niezbêdne funkcje pozwalaj¹ce na dostêp i interpretacjê metadanych metody zosta³y zgrupowane w obrêbie klasy CMethodInfo, które udostêpnia publiczny interfejs pozwalaj¹cy na nastêpuj¹ce operacje : 
+
+\begin{lstlisting}[label=MethodInfo.h,caption=MethodInfo.h]
+WCHAR* GetMethodName();
+CorCallingConvention GetCallingConvention();
+ULONG GetArgumentsCount();
+mdTypeDef GetTypeToken();
+PCCOR_SIGNATURE GetMethodSignatureBlob();
+mdMethodDef GetMethodToken();
+CParam* GetReturnValue();
+std::vector<CParam*>* GetArguments();
+\end{lstlisting}
+
+
+\section{Parsowanie wyra¿eñ zawartych w kontraktach}
+Wyra¿enia okreœlaj¹ce kontrakt musz¹ byæ zbudowane zgodnie z regu³ami gramatyki podanej w sekcji 5.2. Pierwszym krokiem na drodze do ich ewaluacji jest proces parsowania. W tym celu wykorzystano silnik Astudillo Visual C++ (odniesienie).
+Biblioteka maj¹c zadane wyra¿enie rozk³ada ja na tokeny zdefiniowane w ramach gramatyki, a nastêpnie tworzy drzewo rozbioru wyra¿enia.
+Poni¿ej prezentowane jest efekt rozbioru kilku przyk³adowych wyra¿eñ:
+
+\begin{lstlisting}[label=ParseTree1, caption=Przyk³ad1]
+"c.test.member == 31 && divided > 1"
+Program
+ Boolean Exp
+  Cmp Exp
+   Value
+    Identifier:c.test.member
+   Cmp Operator
+    ==:==
+   Value
+    DecimalNumber:31
+  Boolean Operator
+   &&:&&
+  Cmp Exp
+   Value
+    Identifier:divided
+   Cmp Operator
+    >:>
+   Value
+    DecimalNumber:1
+
+\end{lstlisting}
+
+\begin{lstlisting}[label=parseTree2, caption=Przyk³ad2]
+"divided / divisor > 0 && @returnValue == 0 || val == \"test\""
+Program
+ Boolean Exp
+  Boolean Exp
+   Cmp Exp
+    Mult Exp
+     Value
+      Identifier:divided
+     Mult Operator
+      /:/
+     Value
+      Identifier:divisor
+    Cmp Operator
+     >:>
+    Value
+     DecimalNumber:0
+   Boolean Operator
+    &&:&&
+   Cmp Exp
+    Value
+     ReturnValue:@returnValue
+    Cmp Operator
+     ==:==
+    Value
+     DecimalNumber:0
+  Boolean Operator
+   ||:||
+  Cmp Exp
+   Value
+    Identifier:val
+   Cmp Operator
+    ==:==
+   Value
+    StringLiteral:"test"
+\end{lstlisting}
+
 
 
 \section{Inspekcja wartoœci zmiennych}
+Jednym z etapów koniecznych w procesie wyliczania wartoœci wyra¿eñ zawartych w kontraktach jest wykonywanie podstawieñ wartoœci argumentów pod ich wyst¹pienia.
+
 \subsection{Typy proste}
 Bloby, odczytywanie wartosci
 \subsection{Typy z³o¿one}
 rekrusywne przeszukiwanie typow
-\section{Parsowanie wyra¿eñ zawartych w kontraktach}
-AStudillo
+
 \section{Ewaluacja kontraktów}
 Drzewo rozbioru
 \subsection{Ramki funkcji}
