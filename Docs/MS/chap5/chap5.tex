@@ -4,7 +4,7 @@ W tym rozdziale opisano szczegó³y dotycz¹ce implementacyjne biblioteki.
 \section{Atrybuty jako kontrakty}
 Kontrakty definiowane s¹ jako atrybuty, którymi dekorowane s¹ metody.
 Definicja atrybutów ogranicza siê do elementarnej klasy, której ca³a definicja zawarta jest w nastêpuj¹cym bloku kodu:
-\begin{lstlisting}
+\begin{lstlisting}[label=AsContractAttribute, caption=Definicja atrybutu jako noœnika danych o kontrakcie]
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 public class AsContractAttribute : Attribute
 {
@@ -96,12 +96,22 @@ Poni¿ej przedstawiono kilka przyk³adów wyra¿eñ, które mog¹ byæ zbudowane przy u¿
 
 
 \section{Omówienie i implementacja interfejsów}
-AsProfiled jak ka¿da bibliotek typu COM udostêpnia swoj¹ funkcjonalnoœæ poprzez interfejsy. Niezale¿nie od przeznaczenia biblioteki musi ona przynajmniej implementowaæ interfejs IUnknown, dziêki któremu mo¿liwe jest uzyskanie uchwytu do pozosta³ych interfejsów definiuj¹cych okreœlone funkcjonalnoœci.
+Wszystkie interfejsy przedstawione w tym i kolejnych rozdzia³ach zdefiniowane s¹ w bibliotekach, bêd¹cych czêœci¹ frameworku SDK. 
+W tabeli zaprezentowano wykorzystywane nag³ówki wraz z opisem ich zawartoœci :
+\begin{center}
+\begin{longtable}{ |c | p{6cm} |} \hline
+cor.h & G³ówny plik nag³ówkowy zawieraj¹cy API do operowania na metadanych  \\ \hline
+corhdr.h & Definicja struktur przechowuj¹cych metadane \\ \hline
+corprof.h & Interfejsy profiluj¹ce \\ \hline
+\end{longtable}
+\end{center}
+
+AsProfiled jak ka¿da bibliotek typu COM udostêpnia swoj¹ funkcjonalnoœæ poprzez interfejsy. Niezale¿nie od przeznaczenia biblioteki musi ona przynajmniej implementowaæ interfejs IUnknown, dziêki któremu mo¿liwe jest uzyskanie uchwytu do pozosta³ych interfejsów definiuj¹cych okreœlone funkcjonalnoœci. 
 W tym przypadku konieczne jest uzyskanie uchwytu do obiektu implementuj¹cego interfejs ICorProfilerCallback2. To poprzez niego odbywa ca³a komunikacja pomiêdzy maszyn¹ CLR a bibliotek¹ AsProfiled. Interfejs ten zawiera kilkadziesi¹t metod, poprzez które maszyna wirtualna mo¿e powiadomiæ odbiorcê o zdarzeniach zachodz¹cych w obrêbie profilowanego programu.
 Pe³na jego definicja znajduje siê w za³¹czniku (A).
 Na potrzeby tej pracy wystarczaj¹ce jest omówienie dwóch z nich, mianowicie :\\
 
-\begin{lstlisting}
+\begin{lstlisting}[label=MainEvent, caption=ICorProfilerCallback2]
 STDMETHOD(Initialize)(IUnknown *pICorProfilerInfoUnk);
 STDMETHOD(Shutdown)();
 \end{lstlisting}
@@ -306,10 +316,103 @@ Program
 \section{Inspekcja wartoœci zmiennych}
 Jednym z etapów koniecznych w procesie wyliczania wartoœci wyra¿eñ zawartych w kontraktach jest wykonywanie podstawieñ wartoœci argumentów pod ich wyst¹pienia.
 
-\subsection{Typy proste}
-Bloby, odczytywanie wartosci
-\subsection{Typy z³o¿one}
-rekrusywne przeszukiwanie typow
+Niech dane s¹ nastêpuj¹ce definicje klas:
+\begin{lstlisting}[label=ClassDef, caption=Przyk³adowe klasy]
+class Test {
+ public int member = 0;
+}
+
+class OtherClass {
+ public Test test = new Test();
+}
+\end{lstlisting}
+oraz metoda TestMe, na któr¹ na³o¿ono pewien kontrakt:
+\begin{lstlisting}[label=MethodDef, caption=Kontrakt odwo³uj¹cy siê do parametrów metody]
+[AsContract("value > 1 && other.test.member == 31", null)]
+public int TestMe(int value, OtherClass other)
+{ }
+\end{lstlisting}
+Tak okreœlony kontrakt definiuje warunek pocz¹tkowy, po spe³nieniu którego metoda TestMe mo¿e zostaæ wykonana.
+Wyra¿anie zbudowane jest z dwóch warunków logicznych po³¹czonych spójnikiem i (\&\&). Pierwszy warunek\\
+\begin{center}
+value > 1\\
+\end{center}
+odnosi siê do pierwszego argumentu funkcji, analogicznie, warunek 
+\begin{center}
+other.test.member == 31\\
+\end{center}
+odnosi siê do drugiego parametru metody TestMe(...).
+Elementem odró¿niaj¹cym te dwa przypadki jest typ argumentu, do którego wystêpuje odwo³anie.Parametr \emph{value} zalicza siê do kategorii typów wartoœciowych wchodz¹cych w sk³ad jêzyka, a parametr \emph{other} jest typem referencyjnym, zdefiniowanym przez u¿ytkownika.
+Wszystkie typy s¹ odwzorowanie na jedn¹ z wartoœci wyliczeniowej \emph{CorElementType} zdefiniowanej wewn¹trz nag³ówka \emph{corHdr.h}.
+Poni¿sza tabela przedstawia czêœciow¹ definicjê typu wyliczeniowego, zawê¿on¹ do typów obs³ugiwanych przez bibliotekê AsProfiled.
+\begin{center}
+
+\begin{longtable}{ | c | c | c |} \hline
+Nazwa & Wartoœæ & Opisywany typ \\ \hline
+ELEMENT\_TYPE\_END & 0x0 & Niezdefiniowane \\ \hline
+ELEMENT\_TYPE\_VOID & 0x1 & Typ zwracany void \\ \hline
+ELEMENT\_TYPE\_BOOLEAN & 0x2 & Typ bool \\ \hline
+ELEMENT\_TYPE\_CHAR & 0x3 & Wartoœæ znakowy  \\ \hline
+ELEMENT\_TYPE\_I1 & 0x4 & Typ short \\ \hline
+ELEMENT\_TYPE\_U1 & 0x5 & Typ short bez znaku \\ \hline
+ELEMENT\_TYPE\_I2 & 0x6 & Int \\ \hline
+ELEMENT\_TYPE\_U2 & 0x7 & Int bez znaku \\ \hline
+ELEMENT\_TYPE\_I4 & 0x8 & Long \\ \hline
+ELEMENT\_TYPE\_U4 & 0x9 & Long bez znaku \\ \hline
+ELEMENT\_TYPE\_I8 & 0xA & Int64 \\ \hline
+ELEMENT\_TYPE\_U8 & 0xB & Int64 bez znaku \\ \hline
+ELEMENT\_TYPE\_R4 & 0xC & Float \\ \hline
+ELEMENT\_TYPE\_R8 & 0xD & Double \\ \hline
+ELEMENT\_TYPE\_STRING & 0xE & String \\ \hline
+%ELEMENT\_TYPE\_PTR & 0xF & Unmanaged pointer \\ \hline
+%ELEMENT\_TYPE\_BYREF & 0x10 & Managed pointer \\ \hline 
+ELEMENT\_TYPE\_VALUETYPE & 0x11 & Typ wartoœciowy \\ \hline
+ELEMENT\_TYPE\_CLASS & 0x12 & Typ referencyjny \\ \hline
+\caption{Typ wyliczeniowy}
+\label{tab:CorElementType}
+\end{longtable}
+\end{center}
+
+W kolejnych podrozdzia³ach opisano, w jaki sposób typ parametru wp³ywa na podejœcie odczytywania ich wartoœci.
+
+
+\subsection{Typy wbudowane}
+W ramach platformy .NET definiowany pewien zbiór wbudowanych typów, które stanowi¹ podstawê do definiowania wszystkich pozosta³ych. 
+W kontekœcie tabeli \ref{tab:CorElementType} s¹ to typy o wartoœciach mniejszych od 0x11. Poza typem \emph{String}, który reprezentowany jest jako \emph{ELEMENT\_TYPE\_STRING} wszystkie s¹ typami wartoœciowymi. Ma to kluczowe znaczenie w momencie odczytu wartoœci obiektów o takim typie.\\
+Dla przypomnienia, w momencie wywo³ania metody po stronie weryfikowanego programu biblioteka AsProfiled otrzymuje powiadomienie o tym zdarzeniu. Wraz z nim przekazywana jest struktura \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE} (zob. \ref{lst:CorPrfFunctionArgumentRange}), która zawiera adres do aktualnej wartoœci parametru. Dla typów wartoœciowych proces odczytania tej wartoœci polega na bezpoœredniej interpretacji bajtów, których liczba okreœlona jest przez polae \emph{lenght} struktury \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE} znajduj¹cych siê pod adresem wskazywanym przez \emph{startAddress}.
+W bibliotece AsProfiled zdefiniowana zosta³a klasa \emph{CValueReader}, której odpowiedzialnoœci¹ jest interpretowanie tych danych.
+Wszystkie metody, których zadaniem jest odczytanie wartoœci parametrów o typach prostych maj¹ podobn¹ konstrukcjê. 
+Przyk³ad:
+\begin{lstlisting}[label=TraceInt, caption=Odczytywanie wartoœci typu int]
+std::wstring CValueReader::TraceInt(UINT_PTR startAddress)
+{
+ std::wostringstream stream;
+ stream << *(int *)startAddress;
+ return stream.str();
+}
+\end{lstlisting}
+Przy odczytywaniu wartoœci innych typów, zmianie ulega tylko linijka, w której odbywa siê rzutowanie. \\
+
+Osobnego rozwa¿enia wymaga odczytywanie parametrów typu \emph{string}. W przeciwieñstwie do wy¿ej opisanych wartoœæ tego typy nie ma z góry okreœlonej d³ugoœci, nie choæby z tego powodu nie jest mo¿liwe jego odczytanie.
+
+Interfejs \emph{ICorProfilerInfo2} udostêpnia w tym celu nastêpuj¹c¹ metodê:
+\begin{lstlisting}[label=lst:GetStringLayoutLst, caption=Odczytywanie wewnêtrznej struktury napisów]
+HRESULT GetStringLayout (
+[out] ULONG *pBufferLengthOffset,
+[out] ULONG *pStringLengthOffset,
+[out] ULONG *pBufferOffset)
+\end{lstlisting}
+W wyniku wywo³ania tej metody, pod przekazane wskaŸniki, przypisywane s¹ nastêpuj¹ce wartoœci: \\
+\begin{itemize}
+\item pBufferLengthOffset - okreœla wzglêdne przesuniêcie do adresu w pamiêci, pod którym znajduje siê wartoœæ oznaczaj¹ca liczbê zarezerwowanych bajtów dla danego napisu
+\item pStringLengthOffset - wzglêdne przesuniêcie do adresu, w którym okreœlona jest rzeczywista d³ugoœæ napisu
+\item pBufferOffser - wzglêdne przesuniêcie adresu, gdzie znajduje siê pierwszy znak napisu
+\end{itemize}
+Wszystkie przesuniêcia okreœlaj¹ przesuniêcie adresu pamiêci w obrêbie obiektu. 
+Ta wartoœæ pobiera jest z pola \emph{startAddress} struktury \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}.
+Maj¹c te dane do dyspozycji, biblioteka AsProfiled jest w stanie odczytaæ parametrów typu \emph{string}.
+\subsection{Typy definiowane przez u¿ytkownika}
+
 
 \section{Ewaluacja kontraktów}
 Drzewo rozbioru
