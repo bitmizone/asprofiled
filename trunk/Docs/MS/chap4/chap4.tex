@@ -186,7 +186,7 @@ Poni¿ej przedstawiono strukturê tej sygnatury:
 \centering
 \includegraphics[width=5in]{MethodDefSig}
 \caption{Struktura sygnatury metadanych opisuj¹cych metodê}
-\label{fig:}
+\label{fig:MethodDefSigDiagram}
 \end{figure}
 
 Legenda:
@@ -205,14 +205,14 @@ Poni¿ej zamieszczono schematy ilustruj¹ce strukturê parametrów metody oraz jej w
 \centering
 \includegraphics[width=5in]{paramdiagram}
 \caption{Struktura sygnatury parametru metody}
-\label{fig:}
+\label{fig:ParamDiag}
 \end{figure}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=5in]{rettypediagram}
 \caption{Struktura sygnatury okreœlaj¹cej wartoœæ zwracan¹}
-\label{fig:}
+\label{fig:RetTypeDiag}
 \end{figure}
 
 Powy¿sze ilustracje ró¿ni¹ siê tylko dodatkowym rozga³êzieniem z elementem VOID, który oznacza, i¿ metoda nie zwraca ¿adnej wartoœci.
@@ -239,7 +239,7 @@ Innym wa¿nym elementem dla biblioteki AsProfiled jest struktura sygnatury atrybu
 \centering
 \includegraphics[width=5in]{customattrib}
 \caption{}
-\label{fig:}
+\label{fig:CustomAttribDiag}
 \end{figure}
 
 Interpretacja tych sygnatur jest podstawowym elementem, który nale¿y wzi¹æ pod uwagê w zadaniu ewaluacji kontraktów.
@@ -321,7 +321,7 @@ ParseAttributeMetaData
 Dziêki informacjom zawartym w metadanych, mo¿liwe jest okreœlenie liczby i typów parametrów przekazywanych do metod. S¹ to dane statyczne, w tym sensie, ¿e s¹ one sta³e w ramach raz zdefiniowanego programu. Z drugiej wartoœci parametrów mog¹ byæ inne dla ka¿dego wywo³ania metody, tak wiêc nie mog¹ w ¿aden sposób stanowiæ czêœci metadanych. Musi wiêc zatem istnieæ osobny mechanizm pozwalaj¹cy na realizacjê tego zadania. \\
 W momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê COR\_PRF\_FUNCTION\_ARGUMENT\_INFO, która jest przekazywana do odbiorcy. 
 Zdefiniowana jest w nastêpuj¹cy sposób:
-\begin{lstlisting}
+\begin{lstlisting}[label=CorPrfFunctionArgumentInfo]
 typedef struct _COR_PRF_FUNCTION_ARGUMENT_INFO {
     ULONG numRanges;
     ULONG totalArgumentSize;
@@ -336,7 +336,7 @@ Objaœenia:
 \end{itemize}
 Struktura ta reprezentuje argumenty metody, zgodnie z porz¹dkiem od lewej do prawej.
 Typ COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE u¿yty w ramach tej struktury okreœlony jest jak nastêpuje:
-\begin{lstlisting}
+\begin{lstlisting}[label=lst:CorPrfFunctionArgumentRange]
 typedef struct _COR_PRF_FUNCTION_ARGUMENT_RANGE {
     UINT_PTR startAddress;
     ULONG length;

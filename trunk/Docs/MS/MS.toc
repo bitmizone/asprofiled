@@ -28,17 +28,17 @@
 \contentsline {section}{\numberline {5.1}Atrybuty jako kontrakty}{21}{section.5.1}
 \contentsline {section}{\numberline {5.2}Gramatyka kontrakt\'ow}{22}{section.5.2}
 \contentsline {section}{\numberline {5.3}Om\'owienie i implementacja interfejs\'ow}{23}{section.5.3}
-\contentsline {section}{\numberline {5.4}Odbieranie notyfikacji o zdarzeniach zachodz\k acych w programie}{25}{section.5.4}
-\contentsline {section}{\numberline {5.5}Odczyt metadanych}{26}{section.5.5}
-\contentsline {section}{\numberline {5.6}Parsowanie wyra\.ze\'n zawartych w kontraktach}{27}{section.5.6}
+\contentsline {section}{\numberline {5.4}Odbieranie notyfikacji o zdarzeniach zachodz\k acych w programie}{26}{section.5.4}
+\contentsline {section}{\numberline {5.5}Odczyt metadanych}{27}{section.5.5}
+\contentsline {section}{\numberline {5.6}Parsowanie wyra\.ze\'n zawartych w kontraktach}{28}{section.5.6}
 \contentsline {section}{\numberline {5.7}Inspekcja warto\'sci zmiennych}{29}{section.5.7}
-\contentsline {subsection}{\numberline {5.7.1}Typy proste}{29}{subsection.5.7.1}
-\contentsline {subsection}{\numberline {5.7.2}Typy z\IeC {\l }o\.zone}{29}{subsection.5.7.2}
-\contentsline {section}{\numberline {5.8}Ewaluacja kontrakt\'ow}{29}{section.5.8}
-\contentsline {subsection}{\numberline {5.8.1}Ramki funkcji}{29}{subsection.5.8.1}
-\contentsline {subsection}{\numberline {5.8.2}Zachowywanie warto\'sci pocz\k atkowych}{29}{subsection.5.8.2}
-\contentsline {chapter}{\chapternumberline {6}Por\'ownanie z innymi bibliotekami}{31}{chapter.6}
-\contentsline {section}{\numberline {6.1}CodeContracts}{31}{section.6.1}
-\contentsline {section}{\numberline {6.2}LinFu.Contracts}{31}{section.6.2}
-\contentsline {chapter}{\chapternumberline {7}Podsumowanie}{33}{chapter.7}
-\contentsline {chapter}{Bibliografia}{35}{section*.3}
+\contentsline {subsection}{\numberline {5.7.1}Typy wbudowane}{31}{subsection.5.7.1}
+\contentsline {subsection}{\numberline {5.7.2}Typy definiowane przez u\.zytkownika}{32}{subsection.5.7.2}
+\contentsline {section}{\numberline {5.8}Ewaluacja kontrakt\'ow}{32}{section.5.8}
+\contentsline {subsection}{\numberline {5.8.1}Ramki funkcji}{32}{subsection.5.8.1}
+\contentsline {subsection}{\numberline {5.8.2}Zachowywanie warto\'sci pocz\k atkowych}{32}{subsection.5.8.2}
+\contentsline {chapter}{\chapternumberline {6}Por\'ownanie z innymi bibliotekami}{33}{chapter.6}
+\contentsline {section}{\numberline {6.1}CodeContracts}{33}{section.6.1}
+\contentsline {section}{\numberline {6.2}LinFu.Contracts}{33}{section.6.2}
+\contentsline {chapter}{\chapternumberline {7}Podsumowanie}{35}{chapter.7}
+\contentsline {chapter}{Bibliografia}{37}{section*.3}
