@@ -327,7 +327,7 @@ class OtherClass {
 }
 \end{lstlisting}
 oraz metoda TestMe, na któr¹ na³o¿ono pewien kontrakt:
-\begin{lstlisting}[label=MethodDef, caption=Kontrakt odwo³uj¹cy siê do parametrów metody]
+\begin{lstlisting}[label=lst:MethodDef, caption=Kontrakt odwo³uj¹cy siê do parametrów metody]
 [AsContract("value > 1 && other.test.member == 31", null)]
 public int TestMe(int value, OtherClass other)
 { }
@@ -409,12 +409,47 @@ W wyniku wywo³ania tej metody, pod przekazane wskaŸniki, przypisywane s¹ nastêpu
 \item pBufferOffser - wzglêdne przesuniêcie adresu, gdzie znajduje siê pierwszy znak napisu
 \end{itemize}
 Wszystkie przesuniêcia okreœlaj¹ przesuniêcie adresu pamiêci w obrêbie obiektu. 
-Ta wartoœæ pobiera jest z pola \emph{startAddress} struktury \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}.
+Adres do miejsca w pamiêci obiektu okreœlony jest przez wartoœæ elementu \emph{startAddress} struktury \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}.
 Maj¹c te dane do dyspozycji, biblioteka AsProfiled jest w stanie odczytaæ parametrów typu \emph{string}.
-\subsection{Typy definiowane przez u¿ytkownika}
+\subsection{Odwo³ania do wartoœci sk³adowych obiektów z³o¿onych}
+Biblioteka AsProfiled pozwala definiowaæ kontrakty, wewn¹trz których znajduj¹ siê odwo³ania do pól z³o¿onych struktur czy klas.
+Kontrakt zdefiniowany we fragmencie kodu \ref{lst:MethodDef} przedstawia przyk³adowe wyra¿enie, w którym warunek odnosi siê do pola \emph{member}, które jest sk³adow¹ klasy \emph{Test}, a z kolei obiekt tego typu jest czêœci¹ klasy \emph{other}. Ostatecznie, \emph{member} jest typu prostego \emph{int}, którego wartoœæ odczytywana jest zgodnie z tym co zosta³o przedstawione w poprzednim punkcie. Pozostaje kwestia okreœlenia miejsca w pamiêci, w którym przechowywana jest ta wartoœæ. W tym celu, biblioteka AsProfiled implementuje funkcjonalnoœæ inspekcji obiektów dowolnego typu, pod k¹tem zawierania sk³adowych.
+Proces sk³ada siê z nastêpuj¹cych kroków:
+\begin{enumerate} 
+\item Niech wyra¿enie jest postaci jak poprzednio \emph{other\.test\.member > 31}
+\item Przeszukanie listy parametrów metody w celu odnalezienie tego, do którego odwo³anie znajduje siê w kontrakcie. W tym przyk³adzie szukanym parametrem jest \emph{other}.
 
+\item Pobranie struktury opisuj¹cej u³o¿enie klasy, okreœlaj¹cej parametr \emph{other}
+\item Przesuniêcie wskaŸnika na pocz¹tek obiektu, zgodnie z informacjami zawartymi w strukturze pobranej w poprzednim kroku
+\end{enumerate}
+
+Ca³y powy¿szy cykl powtarzany jest do momentu, a¿ odnalezione zostanie pole \emph{member}, którego odczyt odbywa siê ju¿ zgodnie z procedur¹ okreœlon¹ w poprzedniej sekcji.
 
 \section{Ewaluacja kontraktów}
-Drzewo rozbioru
-\subsection{Ramki funkcji}
+Maj¹c do dyspozycji opisane do tej pory funkcjonalnoœci, biblioteka jest ju¿ w stanie wykonaæ zadanie ewaluacji kontraktu.
+
+W tym celu utworzona zosta³a klasa \emph{ClousureEvaluator}. Zawiera ona w sobie dwie metody publiczne, w ramach których ewaluowany jest kontrakt.
+\begin{lstlisting}[label=lst:evalMethods, caption=Interfejs klasy ClousureEvaluator]
+bool CClousureEvaluator::EvalPreCondition()
+bool CClousureEvaluator::EvalPostCondition( COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange)
+\end{lstlisting}
+Pierwsza z metod ewaluuje warunek pocz¹tkowy, druga warunek koñcowy. Do sprawdzenie warunku koñcowego potrzebna jest wartoœæ zwracana z metody, któr¹ to mo¿na odczytaæ wykorzystuj¹c argument \emph{retvalRange}. Uwzglêdnienie wartoœci zwracanej jest jedynym elementem ró¿ni¹cym te metody. Poza tym ci¹g wykonywanych czynnoœci jest taki sam i przebieg zgodnie ze schematem:
+
+\begin{packed_enum}
+\item Pobranie obiektu reprezentuj¹cego kontrakt
+\item Utworzenie drzewa rozbioru wyra¿enia opisuj¹cego kontrakt
+\item Podmiana wêz³ów reprezentuj¹cych parametry na ich wartoœci
+\item Ewaluacja drzewa
+\end{packed_enum}
+
 \subsection{Zachowywanie wartoœci pocz¹tkowych}
+W ramach wyra¿eñ opisuj¹cych kontrakty mo¿liwe s¹ odwo³ania do wartoœci parametrów pocz¹tkowych, które zosta³y przekazane do metody w momencie jej wywo³ania. Wartoœci parametrów mog¹ ulec zmianie w czasie wykonywania metody, dlatego potrzebne jest traktowanie takich odwo³añ w specjalny sposób. Nale¿y zauwa¿yæ, ¿e takie odwo³ania maj¹ tylko sens w przypadku wyra¿eñ okreœlaj¹cych warunek koñcowy. Zgodnie z tym co zosta³o powiedziane wczeœniej warunek ten ewaluowany jest po otrzymaniu powiadomienia o opuszczeniu metody, jednak wtedy nie jest ju¿ mo¿liwe uzyskanie wartoœci pocz¹tkowych parametrów, gdy¿ mog³y one zostaæ zmienione w wyniku dzia³añ wewn¹trz metody. Z tego wzglêdu konieczne jest ich skopiowanie w inny obszar pamiêci, sk¹d bêdzie mo¿liwe ich pobranie w dowolnym póŸniejszym momencie. 
+Odpowiednim momentem na przeprowadzenie tej operacji jest chwila, w której przychodzi powiadomienie o rozpoczêciu wykonywania kontrolowanej metody.
+T¹ odpowiedzialnoœæ przejmuje obiekt typu \emph{ClousureEvaluator}, dziêki informacj¹ przekazywanym do konstruktora klasy.
+\begin{lstlisting}[label=lst:ClouserEvaluator, caption=Konstruktor klasy ClousureEvaluator]
+CClousureEvaluator::CClousureEvaluator(
+ CMethodInfo*, CAttributeInfo*, 
+ ICorProfilerInfo2*, COR_PRF_FUNCTION_ARGUMENT_INFO*)
+\end{lstlisting}
+
+W ramach bloku inicjalizacyjnego dokonywana jest czêœciowa analiza warunku koñcowego. Wyra¿enie jest badane pod k¹tem wystêpowania identyfikatorów oznaczaj¹cych odwo³anie do wartoœci pocz¹tkowych. Po tym jak takowe zostan¹ odnalezione, nastêpuje przeszukanie listy parametrów metody oraz odczytanie ich aktualnej wartoœci.

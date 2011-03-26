@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (MiKTeX 2.9) (preloaded format=pdflatex 2011.3.9)  14 MAR 2011 02:19
+This is pdfTeX, Version 3.1415926-1.40.11 (MiKTeX 2.9) (preloaded format=pdflatex 2011.3.9)  26 MAR 2011 01:38
 entering extended mode
 **ms.tex
 (C:\Dev\asprofiled\Docs\MS\ms.tex
@@ -835,12 +835,12 @@ Upper and lower margins: 97.27478pt and 124.77179pt
 Headheight and headsep: 13.6pt and 27.20001pt
 Footskip: 27.20001pt
 Columnsep and columnseprule: 10pt and 0pt
-Marginparsep and marginparwidth: 7pt and 101pt
-Sidecapsep and sidecapwidth: 7pt and 101pt
-Sidebarhsep and sidebarwidth: 7pt and 101pt
+Marginparsep and marginparwidth: 7pt and 49pt
+Sidecapsep and sidecapwidth: 7pt and 49pt
+Sidebarhsep and sidebarwidth: 7pt and 49pt
 Sidebarvsep and sidebartopsep: 13.6pt and 0pt
 Sidebarheight: 594.32022pt
-Sidefoothsep and sidefootwidth: 7pt and 101pt
+Sidefoothsep and sidefootwidth: 7pt and 49pt
 Sidefootvsep and sidefootheight: 13.6pt and 594.32022pt
 ******************************************************
 
@@ -924,9 +924,7 @@ File: ot4cmss.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 
 {C:/Documents and Settings/All Users/Application Data/MiKTeX/2.9/pdftex/config/
 pdftex.map}]
-[2
-
-] (C:\Dev\asprofiled\Docs\MS\ms.toc
+(C:\Dev\asprofiled\Docs\MS\ms.toc
 LaTeX Font Info:    Try loading font information for OML+plm on input line 3.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\polski\omlplm.fd"
@@ -965,20 +963,17 @@ LaTeX Font Info:    Try loading font information for U+stmry on input line 3.
 duplicate ignored
 <to be read again> 
                    \relax 
-l.29 ...2}Gramatyka kontrakt\'ow}{22}{section.5.2}
-                                                   [1]))pdfTeX warning (ext4): 
-destination with the same identifier (name{page.ii}) has been already used, dup
-licate ignored
-<to be read again> 
-                   \relax 
-l.13 \input
-           {chap1//chap1.tex} [2] (C:\Dev\asprofiled\Docs\MS\chap1//chap1.tex
+l.30 ...8}Ewaluacja kontrakt\'ow}{29}{section.4.8}
+                                                   [1
+
+])) [2]
+(C:\Dev\asprofiled\Docs\MS\chap1//chap1.tex
 Underfull \hbox (badness 10000) in paragraph at lines 4--7
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 23--26
+Underfull \hbox (badness 10000) in paragraph at lines 23--25
 
  []
 
@@ -1021,10 +1016,7 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 58--58
 [][][][][][][] 
  []
 
-) (C:\Dev\asprofiled\Docs\MS\chap3//chap3.tex [5] [6
-
-] [7])
-(C:\Dev\asprofiled\Docs\MS\chap4//chap4.tex [8]
+) (C:\Dev\asprofiled\Docs\MS\chap4//chap4.tex [5]
 Underfull \hbox (badness 10000) in paragraph at lines 7--9
 
  []
@@ -1034,7 +1026,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 20--22
 
  []
 
-[9
+[6
 
 ]
 Underfull \hbox (badness 10000) in paragraph at lines 26--27
@@ -1051,7 +1043,7 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 35--35
 [][][][][][][] 
  []
 
-[10] [11]
+[7] [8]
 Underfull \hbox (badness 10000) in paragraph at lines 103--103
 []|\OT4/cmss/m/n/10.95 Type dec-la-ra-tion: Dec-la-ra-tion of
  []
@@ -1060,60 +1052,68 @@ Underfull \hbox (badness 10000) in paragraph at lines 103--103
 Underfull \vbox (badness 10000) detected at line 161
  []
 
-[12] [13] [14] <./images/MethodDefSig.png, id=320, 62.75446pt x 40.35075pt>
+[9] <./images/MethodDefSig.png, id=256, 62.75446pt x 40.35075pt>
 File: ./images/MethodDefSig.png Graphic file (type png)
 
-<use ./images/MethodDefSig.png> [15 <C:/Dev/asprofiled/Docs/MS/images/MethodDef
-Sig.png (PNG copy)>]
-<./images/paramdiagram.png, id=327, 60.82726pt x 19.0311pt>
+<use ./images/MethodDefSig.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[10] <./images/paramdiagram.png, id=262, 60.82726pt x 19.0311pt>
 File: ./images/paramdiagram.png Graphic file (type png)
 
 <use ./images/paramdiagram.png>
-<./images/rettypediagram.png, id=328, 60.82726pt x 26.2581pt>
+<./images/rettypediagram.png, id=263, 60.82726pt x 26.2581pt>
 File: ./images/rettypediagram.png Graphic file (type png)
 
 <use ./images/rettypediagram.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[11 <C:/Dev/asprofiled/Docs/MS/images/MethodDefSig.png (PNG copy)> <C:/Dev/aspr
+ofiled/Docs/MS/images/paramdiagram.png (PNG copy)>]
 Underfull \hbox (badness 10000) in paragraph at lines 220--221
 
  []
 
-[16 <C:/Dev/asprofiled/Docs/MS/images/paramdiagram.png (PNG copy)> <C:/Dev/aspr
-ofiled/Docs/MS/images/rettypediagram.png (PNG copy)>]
+
 Overfull \hbox (6.0pt too wide) in paragraph at lines 221--221
 [][][][][][][] 
  []
 
-<./images/customattrib.png, id=335, 63.71805pt x 11.5632pt>
+<./images/customattrib.png, id=270, 63.71805pt x 11.5632pt>
 File: ./images/customattrib.png Graphic file (type png)
 
-<use ./images/customattrib.png>
+<use ./images/customattrib.png> [12 <C:/Dev/asprofiled/Docs/MS/images/rettypedi
+agram.png (PNG copy)> <C:/Dev/asprofiled/Docs/MS/images/customattrib.png (PNG c
+opy)>]
 Underfull \hbox (badness 10000) in paragraph at lines 252--254
 
  []
 
-[17 <C:/Dev/asprofiled/Docs/MS/images/customattrib.png (PNG copy)>]
+[13]
 Underfull \hbox (badness 10000) in paragraph at lines 345--347
 
  []
 
-[18]
+
 Underfull \hbox (badness 10000) in paragraph at lines 364--369
 
  []
 
-[19]) (C:\Dev\asprofiled\Docs\MS\chap5//chap5.tex [20]
+[14]) (C:\Dev\asprofiled\Docs\MS\chap5//chap5.tex [15]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 7--7
 [][][][][][][] 
  []
 
-[21
+[16
 
 ]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 29--29
 [][][][][][][] 
  []
 
-[22]
+[17]
 Underfull \hbox (badness 2744) in paragraph at lines 104--104
 []|\OT4/cmss/m/n/10.95 Definicja struk-tur prze-cho-wu-j¡-cych
  []
@@ -1127,7 +1127,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 109--113
 
  []
 
-[23]
+[18]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 114--114
 [][][][][][][] 
  []
@@ -1142,7 +1142,7 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 129--129
 [][][][][][][] 
  []
 
-[24] [25]
+[19] [20]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 192--192
 [][][][][][][] 
  []
@@ -1162,7 +1162,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 215--219
 
  []
 
-[26]
+[21]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 226--226
 [][][][][][][] 
  []
@@ -1172,7 +1172,7 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 237--237
 [][][][][][][] 
  []
 
-[27]
+[22]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 254--254
 [][][][][][][] 
  []
@@ -1182,7 +1182,7 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 277--277
 [][][][][][][] 
  []
 
-[28]
+[23]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 320--320
 [][][][][][][] 
  []
@@ -1197,7 +1197,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 335--337
 
  []
 
-[29]
+[24]
 LaTeX Font Info:    Font shape `OT4/cmss/m/it' in size <10.95> not available
 (Font)              Font shape `OT4/cmss/m/sl' tried instead on input line 345.
 
@@ -1208,7 +1208,7 @@ Underfull \vbox (badness 10000) detected at line 373
 
 Overfull \hbox (3.15147pt too wide) in paragraph at lines 380--386
 \OT4/cmss/m/n/10.95 prze-ka-zy-wa-na jest struk-tu-ra \OT4/cmss/m/sl/10.95 COR[
-]PRF[]FUNCTION[]ARGUMENT[]RANGE \OT4/cmss/m/n/10.95 (zob. [][]4.4[][]),
+]PRF[]FUNCTION[]ARGUMENT[]RANGE \OT4/cmss/m/n/10.95 (zob. [][]3.4[][]),
  []
 
 
@@ -1218,10 +1218,7 @@ Overfull \hbox (16.6921pt too wide) in paragraph at lines 380--386
 NT[]RANGE
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [30]
+[25]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 386--386
 [][][][][][][] 
  []
@@ -1241,27 +1238,28 @@ Underfull \hbox (badness 10000) in paragraph at lines 405--407
 
  []
 
-[31]
-Overfull \hbox (52.14275pt too wide) in paragraph at lines 411--414
-\OT4/cmss/m/n/10.95 war-to±¢ po-bie-ra jest z po-la \OT4/cmss/m/sl/10.95 star-t
-Ad-dress \OT4/cmss/m/n/10.95 struk-tu-ry \OT4/cmss/m/sl/10.95 COR[]PRF[]FUNCTIO
-N[]ARGUMENT[]RANGE\OT4/cmss/m/n/10.95 .
+[26] [27]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 432--432
+[][][][][][][] 
  []
 
-) (C:\Dev\asprofiled\Docs\MS\chap6//chap6.tex [32])
-(C:\Dev\asprofiled\Docs\MS\chap7//chap7.tex [33
 
-] [34
+Overfull \hbox (6.0pt too wide) in paragraph at lines 449--449
+[][][][][][][] 
+ []
+
+[28]) (C:\Dev\asprofiled\Docs\MS\chap6//chap6.tex [29])
+(C:\Dev\asprofiled\Docs\MS\chap7//chap7.tex [30
 
 ])
-(C:\Dev\asprofiled\Docs\MS\ms.bbl [35] [36
+(C:\Dev\asprofiled\Docs\MS\ms.bbl [31
 
 ]
 bibitemlist
 
 LaTeX Warning: Empty `thebibliography' environment on input line 5.
 
-) [37] [38
+) [32
 
 ]
 \tf@toc=\write7
@@ -1276,8 +1274,8 @@ Package rerunfilecheck Warning: File `ms.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `ms.out':
-(rerunfilecheck)             Before: D41498AF1110BB89C8C4B1841D093712;2906
-(rerunfilecheck)             After:  D57CADA2E4B356A8962158E7E294EBFD;7995.
+(rerunfilecheck)             Before: 4D0583DDF434F50FCE75695E1E1D0CE4;2369
+(rerunfilecheck)             After:  0C4D33536AAA98CBF77D5DDB8AF99F1A;6579.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -1286,13 +1284,13 @@ LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
- 14607 strings out of 494019
- 202299 string characters out of 3146427
- 497549 words of memory out of 3000000
- 17271 multiletter control sequences out of 15000+200000
+ 14602 strings out of 494019
+ 202163 string characters out of 3146427
+ 497759 words of memory out of 3000000
+ 17270 multiletter control sequences out of 15000+200000
  20199 words of font info for 57 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 41i,13n,45p,812b,1831s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 41i,13n,45p,844b,1831s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/pl/plrm.enc}{C:/Program Files/Mi
 KTeX 2.9/fonts/enc/dvips/pl/pltt.enc}<C:/Program Files/MiKTeX 2.9/fonts/type1/p
 ublic/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/pl
@@ -1301,9 +1299,9 @@ ogram Files/MiKTeX 2.9/fonts/type1/public/pl/plss10.pfb><C:/Program Files/MiKTe
 X 2.9/fonts/type1/public/pl/plss12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
 /public/pl/plssbx10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/pl/plss
 i10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/pl/pltt9.pfb>
-Output written on ms.pdf (42 pages, 316646 bytes).
+Output written on ms.pdf (35 pages, 308808 bytes).
 PDF statistics:
- 782 PDF objects out of 1000 (max. 8388607)
- 359 named destinations out of 1000 (max. 500000)
- 357 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 728 PDF objects out of 1000 (max. 8388607)
+ 360 named destinations out of 1000 (max. 500000)
+ 293 words of extra memory for PDF output out of 10000 (max. 10000000)
 

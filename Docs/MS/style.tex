@@ -170,6 +170,7 @@
 \makeoddhead{headings}{\small\slshape\rightmark}{}{\thepage}
 
 
+
 % *************** Styl spisu treœci ***************
 \settocdepth{subsection}
 
@@ -216,5 +217,18 @@
          framexrightmargin=5pt,
          framexbottommargin=4pt,
          showstringspaces=false}
+%********* Listy ******
+\newenvironment{packed_enum}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
 
+\newenvironment{packed_item}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
 % *************** Koniec definicji stylu dokumentu ***************
