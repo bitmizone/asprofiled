@@ -7,38 +7,30 @@
 \contentsline {chapter}{\chapternumberline {2}Programowanie kontraktowe}{3}{chapter.2}
 \contentsline {section}{\numberline {2.1}Historia}{3}{section.2.1}
 \contentsline {section}{\numberline {2.2}Opis}{4}{section.2.2}
-\contentsline {chapter}{\chapternumberline {3}Profilowanie}{7}{chapter.3}
-\contentsline {section}{\numberline {3.1}Profilowanie \IeC {\textendash } opis}{7}{section.3.1}
-\contentsline {section}{\numberline {3.2}Typy profilowania}{8}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Instrumentacja}{8}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Pr\'obkowanie}{8}{subsection.3.2.2}
-\contentsline {section}{\numberline {3.3}Profilowanie w \'srodowisku .NET}{8}{section.3.3}
-\contentsline {section}{\numberline {3.4}Profilowanie a dynamiczna weryfikacja program\'ow}{8}{section.3.4}
-\contentsline {chapter}{\chapternumberline {4}Om\'owienie funkcjonalno\'sci biblioteki}{9}{chapter.4}
-\contentsline {section}{\numberline {4.1}Inspekcja nadzorowanego programu}{9}{section.4.1}
-\contentsline {section}{\numberline {4.2}Kontrakty}{10}{section.4.2}
-\contentsline {section}{\numberline {4.3}Metadane}{10}{section.4.3}
-\contentsline {subsection}{\numberline {4.3.1}Reprezentacja metadanych}{11}{subsection.4.3.1}
-\contentsline {subsection}{\numberline {4.3.2}Interpretacja metadanych}{14}{subsection.4.3.2}
-\contentsline {section}{\numberline {4.4}Odczytywanie warto\'sci argument\'ow metod}{18}{section.4.4}
-\contentsline {section}{\numberline {4.5}Warto\'sci zwracane}{19}{section.4.5}
-\contentsline {section}{\numberline {4.6}Warto\'sci pocz\k atkowe}{19}{section.4.6}
-\contentsline {section}{\numberline {4.7}Ograniczenia}{20}{section.4.7}
-\contentsline {chapter}{\chapternumberline {5}Szczeg\'o\IeC {\l }y implementacji}{21}{chapter.5}
-\contentsline {section}{\numberline {5.1}Atrybuty jako kontrakty}{21}{section.5.1}
-\contentsline {section}{\numberline {5.2}Gramatyka kontrakt\'ow}{22}{section.5.2}
-\contentsline {section}{\numberline {5.3}Om\'owienie i implementacja interfejs\'ow}{23}{section.5.3}
-\contentsline {section}{\numberline {5.4}Odbieranie notyfikacji o zdarzeniach zachodz\k acych w programie}{26}{section.5.4}
-\contentsline {section}{\numberline {5.5}Odczyt metadanych}{27}{section.5.5}
-\contentsline {section}{\numberline {5.6}Parsowanie wyra\.ze\'n zawartych w kontraktach}{28}{section.5.6}
-\contentsline {section}{\numberline {5.7}Inspekcja warto\'sci zmiennych}{29}{section.5.7}
-\contentsline {subsection}{\numberline {5.7.1}Typy wbudowane}{31}{subsection.5.7.1}
-\contentsline {subsection}{\numberline {5.7.2}Typy definiowane przez u\.zytkownika}{32}{subsection.5.7.2}
-\contentsline {section}{\numberline {5.8}Ewaluacja kontrakt\'ow}{32}{section.5.8}
-\contentsline {subsection}{\numberline {5.8.1}Ramki funkcji}{32}{subsection.5.8.1}
-\contentsline {subsection}{\numberline {5.8.2}Zachowywanie warto\'sci pocz\k atkowych}{32}{subsection.5.8.2}
-\contentsline {chapter}{\chapternumberline {6}Por\'ownanie z innymi bibliotekami}{33}{chapter.6}
-\contentsline {section}{\numberline {6.1}CodeContracts}{33}{section.6.1}
-\contentsline {section}{\numberline {6.2}LinFu.Contracts}{33}{section.6.2}
-\contentsline {chapter}{\chapternumberline {7}Podsumowanie}{35}{chapter.7}
-\contentsline {chapter}{Bibliografia}{37}{section*.3}
+\contentsline {chapter}{\chapternumberline {3}Om\'owienie funkcjonalno\'sci biblioteki}{6}{chapter.3}
+\contentsline {section}{\numberline {3.1}Inspekcja nadzorowanego programu}{6}{section.3.1}
+\contentsline {section}{\numberline {3.2}Kontrakty}{7}{section.3.2}
+\contentsline {section}{\numberline {3.3}Metadane}{7}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Reprezentacja metadanych}{8}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Interpretacja metadanych}{10}{subsection.3.3.2}
+\contentsline {section}{\numberline {3.4}Odczytywanie warto\'sci argument\'ow metod}{13}{section.3.4}
+\contentsline {section}{\numberline {3.5}Warto\'sci zwracane}{14}{section.3.5}
+\contentsline {section}{\numberline {3.6}Warto\'sci pocz\k atkowe}{14}{section.3.6}
+\contentsline {section}{\numberline {3.7}Ograniczenia}{15}{section.3.7}
+\contentsline {chapter}{\chapternumberline {4}Szczeg\'o\IeC {\l }y implementacji}{16}{chapter.4}
+\contentsline {section}{\numberline {4.1}Atrybuty jako kontrakty}{16}{section.4.1}
+\contentsline {section}{\numberline {4.2}Gramatyka kontrakt\'ow}{17}{section.4.2}
+\contentsline {section}{\numberline {4.3}Om\'owienie i implementacja interfejs\'ow}{18}{section.4.3}
+\contentsline {section}{\numberline {4.4}Odbieranie notyfikacji o zdarzeniach zachodz\k acych w programie}{21}{section.4.4}
+\contentsline {section}{\numberline {4.5}Odczyt metadanych}{22}{section.4.5}
+\contentsline {section}{\numberline {4.6}Parsowanie wyra\.ze\'n zawartych w kontraktach}{23}{section.4.6}
+\contentsline {section}{\numberline {4.7}Inspekcja warto\'sci zmiennych}{24}{section.4.7}
+\contentsline {subsection}{\numberline {4.7.1}Typy wbudowane}{26}{subsection.4.7.1}
+\contentsline {subsection}{\numberline {4.7.2}Odwo\IeC {\l }ania do warto\'sci sk\IeC {\l }adowych obiekt\'ow z\IeC {\l }o\.zonych}{27}{subsection.4.7.2}
+\contentsline {section}{\numberline {4.8}Ewaluacja kontrakt\'ow}{28}{section.4.8}
+\contentsline {subsection}{\numberline {4.8.1}Zachowywanie warto\'sci pocz\k atkowych}{28}{subsection.4.8.1}
+\contentsline {chapter}{\chapternumberline {5}Por\'ownanie z innymi bibliotekami}{30}{chapter.5}
+\contentsline {section}{\numberline {5.1}CodeContracts}{30}{section.5.1}
+\contentsline {section}{\numberline {5.2}LinFu.Contracts}{30}{section.5.2}
+\contentsline {chapter}{\chapternumberline {6}Podsumowanie}{31}{chapter.6}
+\contentsline {chapter}{Bibliografia}{32}{section*.3}

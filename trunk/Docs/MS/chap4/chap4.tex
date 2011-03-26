@@ -84,27 +84,27 @@ Wiersz zerowy ka¿dej z powy¿szych tablic nigdy nie zawiera w sobie danych, wiêc 
 
 %The lower three bytes, referred to as the record identifier (RID), contain the %index of the row within the metadata table to which the token's MSB refers. For %example, the metadata token with value 0x02000007 refers to row 7 in the %TypeDef table in the current scope. Similarly, token 0x0400001A refers to row %26 (decimal) in the FieldDef table in the current scope. Row zero of a metadata %table never contains data, so a metadata token whose RID is zero is referred to %as a nil token. The metadata API defines a host of such nil tokens, one for %each token type, such as mdTypeRefNil, with the value 0x01000000.
 
-W poni¿szej tabeli znajduj¹ siê wszystkie typy tokenów, typy które opisuj¹ oraz nazwy tablic metadanych. Wszystkie tokeny s¹ pochodnymi typu bazowego - mdToken.
+W poni¿szej tabeli znajduj¹ siê typy tokenów wykorzystywane w ramach aplikacji, typy które opisuj¹ oraz nazwy tablic metadanych. Wszystkie tokeny s¹ pochodnymi typu bazowego - mdToken.
 
 \begin{center}
     \begin{longtable}{ |c | c | p{6cm} |}
     \hline
 Token Type & Metadata Table & Abstraction \\ \hline
-mdModule &
-Module &
-Module: A compilation unit, an executable, or some other development unit, deployment unit, or run-time unit. It is possible (though not required) to declare attributes on the module as a whole, including a name, a GUID, custom attributes, and so forth. \\ \hline
+%mdModule &
+%Module &
+%Module: A compilation unit, an executable, or some other development unit, %deployment unit, or run-time unit. It is possible (though not required) to %declare attributes on the module as a whole, including a name, a GUID, custom %attributes, and so forth. \\ \hline
 
-mdModuleRef &
-ModuleRef &
-Module reference: A compile-time reference to a module, which records the source for type and member imports. \\ \hline
+%mdModuleRef &
+%ModuleRef &
+%Module reference: A compile-time reference to a module, which records the %source for type and member imports. \\ \hline
 
 mdTypeDef &
 TypeDef &
 Type declaration: Declaration of either a runtime reference type (class or interface) or a value type. \\ \hline
 
-mdTypeRef &
-TypeRef &
-Type reference: Reference to either a runtime reference type or a value type. In a sense, the collection of type references in a module is the collection of compile-time import dependencies. \\ \hline
+%mdTypeRef &
+%TypeRef &
+%Type reference: Reference to either a runtime reference type or a value type. %In a sense, the collection of type references in a module is the collection of %compile-time import dependencies. \\ \hline
 
 mdMethodDef &
 MethodDef &
@@ -118,45 +118,45 @@ mdFieldDef &
 FieldDef &
 Field declaration: Declaration of a variable as a data member of a class or interface, or declaration of a global, module-level variable. \\ \hline
 
-mdProperty &
-Property &
-Property declaration: Declaration of a property as a member of a class or interface. \\ \hline
+%mdProperty &
+%Property &
+%Property declaration: Declaration of a property as a member of a class or %interface. \\ \hline
 
-mdEvent &
-Event &
-Event declaration: Declaration of a named event as a member of a class or interface. \\ \hline
+%mdEvent &
+%Event &
+%Event declaration: Declaration of a named event as a member of a class or %interface. \\ \hline
 
 mdMemberRef &
 MemberRef &
 Member reference: Reference to a method or field. A member reference is generated in metadata for every method invocation or field access that is made by any implementation in the current module, and a token is persisted in the Microsoft intermediate language (MSIL) stream. There is no runtime support for property or event references. \\ \hline
 
-mdIfaceImpl &
-IfaceImpl &
-Interface implementation: A specific class’s implementation of a specific interface. This metadata abstraction enables the storing of information that is the intersection of that which is specific to neither the class nor the interface. \\ \hline
+%mdIfaceImpl &
+%IfaceImpl &
+%Interface implementation: A specific class’s implementation of a specific %interface. This metadata abstraction enables the storing of information that is %the intersection of that which is specific to neither the class nor the %interface. \\ \hline
 
-mdMethodImpl &
-MethodImpl &
-Method implementation: A specific class’s implementation of a method that is inherited using interface inheritance. This metadata abstraction enables information to be persisted that is specific to the implementation rather than to the contract. Method declaration information cannot be modified by the implementing class. \\ \hline
+%mdMethodImpl &
+%MethodImpl &
+%Method implementation: A specific class’s implementation of a method that is inherited using interface inheritance. This metadata abstraction enables information to be persisted that is specific to the implementation rather than to the contract. Method declaration information cannot be modified by the implementing class. \\ \hline
 
 mdCustomAttribute &
 CustomAttribute &
 Custom attribute: An arbitrary data structure associated with any metadata object that can be referenced with an mdToken. (An exception is that custom attributes themselves cannot have custom attributes.) \\ \hline
 
-mdPermission &
-Permission &
-Permission set: A declarative security permission set associated with mdTypeDef, mdMethodDef, and mdAssembly. For more information, see Adding Declarative Security Support. \\ \hline
+%mdPermission &
+%Permission &
+%Permission set: A declarative security permission set associated with mdTypeDef, mdMethodDef, and mdAssembly. For more information, see Adding Declarative Security Support. \\ \hline
 
-mdTypeSpec &
-TypeSpec &
-Type constructor: A method that obtains a token for a type (such as a boxed value type) that can be used as input to any MSIL instruction that takes a type. \\ \hline 
+%mdTypeSpec &
+%TypeSpec &
+%Type constructor: A method that obtains a token for a type (such as a boxed value type) that can be used as input to any MSIL instruction that takes a type. \\ \hline 
 
-mdSignature &
-Signature &
-Stand-alone signature: A local variable signature in the portable executable (PE) file or a method signature that is passed to an MSIL instruction. \\ \hline
+%mdSignature &
+%Signature &
+%Stand-alone signature: A local variable signature in the portable executable (PE) file or a method signature that is passed to an MSIL instruction. \\ \hline
 
-mdString & 
-String &
-User string: A string that is passed to an MSIL instruction. \\ \hline
+%mdString & 
+%String &
+%User string: A string that is passed to an MSIL instruction. \\ \hline
 
 	\end{longtable}
 \end{center}

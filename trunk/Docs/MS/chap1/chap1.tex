@@ -10,19 +10,19 @@ Nale¿y wspomnieæ, i¿ w kontekœcie programowania kontraktowego jest to rozwi¹zani
 
 \section{Platforma .NET i CLR}
 \label{sec:chapter1:section2}
-Zasada dzia³ania opisywanego rozwi¹zania mocno opiera siê na mechanizmach s³u¿¹cych do profilowania aplikacji. Teoria profilowania zosta³a przedstawiona w kolejnych rozdzia³ach.  
+Zasada dzia³ania opisywanego rozwi¹zania mocno opiera siê na mechanizmach s³u¿¹cych do profilowania aplikacji. 
 Jak ka¿de podobne rozwi¹zanie tak i to jest silnie zwi¹zane ze œrodowiskiem uruchomieniowym. W tym przypadku jest to platforma .NET stworzona przez firmê Microsoft i przeznaczona dla systemów z rodziny Windows. \\
-Technologia ta nie jest zwi¹zana z ¿adnym konkretnym jêzykiem programowania, a programy mog¹ byæ pisane w jednym z wielu jêzyków – na przyk³ad C++/CLI, C\#, J\#, Delphi 8 dla .NET, Visual Basic .NET.
-Zadaniem kompilatorów jest translacja programów wyra¿onych w w/w jêzyków na jêzyk poœredni CIL (wczeœniej MSIL). Dopiero tak przygotowane programy mog¹ byæ wykonane na maszynie wirtualnej CLR, która to jest œrodowiskiem uruchomieniowym 
-platformy .NET.
-Taka konstrukcja pozwoli³a rozszerzyæ zakres dzia³ania utworzonego rozwi¹zania na wszystkie jêzyki programowania w obrêbie tej platformy, pod warunkiem, ¿e dany jêzyk wspiera konstrukcje programowe zwane atrybutami. 
+Technologia ta nie jest zwi¹zana z ¿adnym konkretnym jêzykiem programowania, aczkolwiek jêzyk C\# jest uwa¿any za flagowe rozwi¹zanie s³u¿¹ce do tworzenia aplikacji pod t¹ platformê.  Z drugiej strony, do tej pory powsta³o wiele innych rozwi¹zañ, czêœæ z nich zosta³a zbudowana bezpoœrednio przez firmê Microsoft, inne powsta³y jako niezale¿ne projekty.Do tej pierwszej grupy, poza wspomnianym C\#, zaliczaj¹ siê takie jêzyki jak C++/CLI, J\#, F\#, Delphi 8 dla .NET, Visual Basic .NET. W drugiej grupie znajduj¹ siê m.in. Scala, IronPython, IronRuby, Nemerle.
+Z ka¿dym z tych jêzyków zwi¹zany jest odpowiedni kompilator, którego zadaniem jest translacja programów na jêzyk poœredni CIL (wczeœniej MSIL). Dopiero tak przygotowane programy mog¹ byæ wykonane na maszynie wirtualnej CLR, która to jest œrodowiskiem uruchomieniowym platformy .NET. \\
+
+Taka konstrukcja pozwoli³a rozszerzyæ zakres dzia³ania utworzonego rozwi¹zania na wszystkie jêzyki programowania w obrêbie tej platformy, pod warunkiem, ¿e dany jêzyk wspiera konstrukcje programowe zwane atrybutami. W niniejszej pracy wszystkie przyk³ady opieraj¹ siê na programach napisanych w jêzyku C\#.
 
 
 \section{Za³o¿enia}
 \label{sec:chapter1:section3}
- W celu zapewnienia jak najwiêkszej u¿ytecznoœci, zosta³y przyjête minimalne za³o¿enia co do funkcjonalnoœci jakie musz¹ byæ zawarte w bibliotece.
+W celu zapewnienia jak najwiêkszej u¿ytecznoœci, zosta³y przyjête minimalne za³o¿enia co do funkcjonalnoœci jakie musz¹ byæ zawarte w bibliotece.
 Wszystkie z nich zosta³y szczegó³owo opisane w rozdziale czwartym, jednak wprowadzamy je ju¿ teraz, aby w dalszej uzasadniæ decyzje podjête przy konstrukcji kolejnych etapów aplikacji.\\
-\begin{itemize}
+\begin{packed_item}
 \item biblioteka musi œledziæ proces wykonywania programu po jego uruchomieniu
 \item w celu weryfikacji poprawnoœci programu musi byæ mo¿liwoœæ zdefiniowana kontraktu
 \item musi byæ mo¿liwoœæ odczytania zadanego kontraktu
@@ -30,7 +30,7 @@ Wszystkie z nich zosta³y szczegó³owo opisane w rozdziale czwartym, jednak wprowa
 \item aplikacja musi umieæ odczytaæ argumenty przekazywane do badanych metod
 \item aplikacja musi zachowywaæ stan pocz¹tkowy argumentów metody do momentu jej zakoñczenia
 \item aplikacja musi byæ w stanie odczytaæ wartoœci zwracane z badanych metod
-\end{itemize}  
+\end{packed_item}
 W kolejnych rozdzia³ach opisane w jaki sposób ka¿de z powy¿szych za³o¿eñ zosta³o spe³nione.
-Nie przewidziano ¿adnych za³o¿eñ co do wymagañ pozafunkcjonalnych, co oznacza, i¿ takie parametry jak szybkoœæ dzia³ania aplikacji czy bezpieczeñstwo rozwi¹zania, nie by³y przedmiotem zainteresowania.
+Nie przewidziano ¿adnych za³o¿eñ co do wymagañ poza funkcjonalnych, co oznacza, i¿ takie parametry jak szybkoœæ dzia³ania aplikacji czy bezpieczeñstwo rozwi¹zania, nie by³y przedmiotem zainteresowania.
 % ********** Koniec rozdzia³u **********
