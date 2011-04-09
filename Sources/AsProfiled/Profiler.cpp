@@ -20,7 +20,7 @@ CProfiler::CProfiler()
 	// Configure Log4cxx
 	BasicConfigurator::configure();
 	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
-	myMainLogger->setLevel(Level::toLevel(log4cxx::Level::WARN_INT));
+	myMainLogger->setLevel(Level::toLevel(log4cxx::Level::ERROR_INT));
 }
 
 
@@ -48,10 +48,18 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	// Buffer for function name
 	WCHAR szMethodName[NAME_BUFFER_SIZE];
 	// Read method's full qualified name
-	HRESULT hr = GetFullMethodName(*methodInfo, szMethodName);
 	
-	LOG4CXX_DEBUG(myMainLogger, szMethodName);
+	HRESULT hr = GetFullMethodName(*methodInfo, szMethodName);
+	static bool mainOccured = false;
+	if (std::wstring(szMethodName).find(L"Main") != std::string::npos)
+		mainOccured = true;
+	
+	if (mainOccured == true)
+		LOG4CXX_INFO(myMainLogger, szMethodName); 
 
+	
+	
+	
 	PrintMethodInfo(*methodInfo);
 
 	// A pointer that references the metadata for called function 
@@ -71,12 +79,13 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	DWORD corElementType = 0;
 	
 	ULONG32 pcTypeArgs = 0;		
-
+	
 	this->attributeReader->Initialize(methodInfo->GetMethodToken(), methodInfo->GetMetaDataImport());
 	
 	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 3);
+	
 	if (attributeInfo == NULL) {
-		LOG4CXX_DEBUG(myMainLogger, "attribute not found");
+		LOG4CXX_INFO(myMainLogger, "attribute not found");
 	}else{
 		methodInfo->ReadArgumentsValues(argumentInfo);
 		CClousureEvaluator* evaluator = new CClousureEvaluator(methodInfo, attributeInfo, _ICorProfilerInfo2, argumentInfo);
@@ -91,10 +100,10 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 			exit(-1);
 		}
 	}
-	
 }
 
 void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO func, COR_PRF_FUNCTION_ARGUMENT_RANGE *retvalRange) {
+	
 	//cout << "leave " << functionID << endl;
 	std::map<FunctionID, CClousureEvaluator*>::iterator iter;
 	iter = functionsMap->find(functionID);
@@ -111,6 +120,7 @@ void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PR
 		LOG4CXX_WARN(myMainLogger, evaluator->GetMethodInfo()->GetMethodName());	
 		exit(-1);
 	}	
+	
 }
 
 
@@ -281,7 +291,7 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 	
 	// Setting function mapper
 	_ICorProfilerInfo2->SetFunctionIDMapper(FunctionMapper);
-	LOG4CXX_DEBUG(myMainLogger, "Program has started");
+	LOG4CXX_INFO(myMainLogger, "Program has started");
 	
 	LOG4CXX_DEBUG(myMainLogger, "Initializing grammar parser...");
 
@@ -293,9 +303,9 @@ STDMETHODIMP CProfiler::Initialize(IUnknown *pICorProfilerInfoUnk)
 } 
 
 STDMETHODIMP CProfiler::Shutdown() {
-	delete grammarParser;
-	delete attributeReader;
+//	delete grammarParser;
+//	delete attributeReader;
 	
-	LOG4CXX_DEBUG(myMainLogger, "Program has ended");
+	LOG4CXX_INFO(myMainLogger, "Program has ended");
 	return S_OK;
 }

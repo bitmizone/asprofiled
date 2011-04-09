@@ -5,68 +5,41 @@ using System.Text;
 
 namespace TestApplication.Calculator
 {
-    class Test
-    {
-        
-    }
 
     class  Calculator : Object
     {
         private int aa = 2;
-        private TT abba = new TT();
-        [AsContract("c.abba.baba == 31 && divided > 1", "^c.abba.baba == 31", null)]
+        private Test test = new Test();
+        [AsContract("c.test.member == 31 && divided > 1 || val == \"test\"", "divided / divisor > 0 && @returnValue == 0 || val == \"test\"",null)]
         public int Div(bool t, int divided, int divisor, string val, string delta, Calculator c)
         {
             if (divided > 0) 
-                Div(t, --divided, divisor,val, delta,c);
+                //Div(t, --divided, divisor,val, delta,c);
             val = "barabara";
-            c.abba.baba = 3;
+            c.test.member = 3;
             return 0;
         }
 
-        [AsContract("", "@returnValue.abba.baba == 31 && @returnValue.aa == 2", null)]
+        [AsContract("", "@returnValue.abba.baba == 31 && @returnValue.aa == 2",null)]
         public Calculator TestMe()
         {
             Calculator c = new Calculator();
-            c.abba.baba = 10;
+            c.test.member = 10;
             return c;
         }
     }
 
-    class TT
+    class Test
     {
-        public int baba = 31;
+        public int member = 31;
     }
 
-    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
     public class AsContractAttribute : Attribute
     {
 
-        public AsContractAttribute()
+        public AsContractAttribute(string preCondition, string postCondition,string t)
         {
-        }
-
-        public AsContractAttribute(string preCondition, string invariant, string postCondition)
-        {
-
-        }
-
-        public string PostCondition
-        {
-            get;
-            set;
-        }
-
-        public string Invariant
-        {
-            get;
-            set;
-        }
-
-        public string PreCondition
-        {
-            get;
-            set;
 
         }
     }

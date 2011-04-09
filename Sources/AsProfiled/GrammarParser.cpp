@@ -31,7 +31,7 @@ bool CGrammarParser::Initialize() {
 	
 	this->cgtFile = new CGTFile();
 	bool loadOk = this->cgtFile->load(const_cast<char*>(this->filePath.c_str()));
-	ASSERT(loadOk);
+	ASSERT(loadOk);	
 	return loadOk;
 }
 
