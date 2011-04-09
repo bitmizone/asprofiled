@@ -132,8 +132,7 @@ bool CClousureEvaluator::LessOrEqual(CNode* left, CNode* right){
 }
 bool CClousureEvaluator::GreaterOrEqual(CNode* left, CNode* right){
 	left = this->GoToLeaf(left);
-	right = this->GoToLeaf(right);
-
+	right = this->GoToLeaf(right);	
 	return left->GetValue().compare(right->GetValue()) >= 0;
 }
 bool CClousureEvaluator::Greater(CNode* left, CNode* right){
@@ -283,6 +282,7 @@ bool CClousureEvaluator::EvaluateNode(CNode* node) {
 }
 
 bool CClousureEvaluator::EvalPreCondition() {
+	
 	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
 	ASSERT(arguments->size() >= 2);
 	CAttributeArgument* preCondition = arguments->at(0);

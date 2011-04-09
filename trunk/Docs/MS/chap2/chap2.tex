@@ -3,18 +3,18 @@ W tym rozdziale zosta³a przybli¿ona specyfika programowania kontraktowego.
 Programowanie kontraktowe jest metodologi¹ sprawdzania poprawnoœci oprogramowania. 
 \section{Historia}
 Koncepcja ta ma korzenie w pracach nad formaln¹ weryfikacj¹ programów, formaln¹ specyfikacj¹ oraz zwi¹zanych z logik¹ Hoara.
-Wszystkie z powy¿szych d¹¿¹ do dowodzenia poprawnoœci programów komputerowych, a tym samym przyczyniaj¹ siê podnoszeniu ich jakoœci.
+Wszystkie z powy¿szych d¹¿¹ do dowodzenia poprawnoœci programów komputerowych, a tym samym przyczyniaj¹ siê podnoszenia ich jakoœci.
 Nie inaczej jest w przypadku programowanie kontraktowego. 
-Po raz w obecnej postaci wprowadzi³ je Bertrand Meyer w 1986 roku przy okazji wprowadzenia na rynek projektu jêzyka programowania Eiffel. 
+Po raz pierwszy w obecnej postaci wprowadzi³ je Bertrand Meyer w 1986 roku przy okazji projektu jêzyka programowania Eiffel. 
 Do dnia dzisiejszego powsta³o wiele ró¿nych ró¿nych implementacji tej koncepcji.
 Czeœæ jêzyków programowania ma wbudowane mechanizmy pozwalaj¹ce na definiowanie i sprawdzanie poprawnoœci kontraktów. Do tej grupy zaliczamy:
 \begin{packed_item}
 \item Cobra
 \item Eiffel
 \item D
-\item jêzyków opartych na platformie .NET w wersji 4.0
+\item jêzyki oparte na platformie .NET w wersji 4.0
 \end{packed_item}
-Drug¹ grupê stanowi¹ jêzyki dla których powsta³y nak³adki umo¿liwiaj¹ce ten rodzaj weryfikacji. Ta grupa jest znacznie obszerna i obejmuje wiêkszoœæ znacz¹cych jêzyków programowania, takich jak :
+Drug¹ grupê stanowi¹ jêzyki dla których powsta³y nak³adki umo¿liwiaj¹ce ten rodzaj weryfikacji. Ta grupa jest znacznie bardziej obszerna i obejmuje wiêkszoœæ znacz¹cych jêzyków programowania, takich jak :
 \begin{packed_item}
 \item C/C++, 
 \item C\#
@@ -37,10 +37,10 @@ Ten rodzaj programowania zak³ada, ¿e elementy programu powinny odnosiæ siê do si
 Koncepcja ta polega na zawieraniu swego rodzaju umowy pomiêdzy dostawc¹ funkcjonalnoœci i klientami. W ogólnym przypadku poprzez dostawców rozumiemy klasy lub metody zawarte w programie, klientem zaœ jest ka¿dy kto z tych encji korzysta. \\
 Dla danej klasy kontrakt definiowany jest jako inwariant, to znaczy,
 warunek jaki musi byæ spe³niony przed i po wywo³aniu dowolnej publicznej metody w obrêbie tej klasy. \\
-Z kolei dla metod kontrakt definiowany przy pomocy warunków pocz¹tkowego i koñcowego, gdzie ten pierwszy specyfikuje jakie za³o¿enia powinny byæ spe³nione w momencie wywo³ania metody, a drugi okreœla stan aplikacji po jej zakoñczeniu.\\ 
+Z kolei dla metod, kontrakt definiowany jest przy pomocy warunków pocz¹tkowego i koñcowego, gdzie ten pierwszy specyfikuje jakie za³o¿enia powinny byæ spe³nione w momencie wywo³ania metody, a drugi okreœla stan aplikacji po jej zakoñczeniu.\\ 
 
 Rozwi¹zanie, które jest tu opisywane skupia siê na drugim rodzaju kontraktów.
-W jêzyku programowania Eiffel, sk¹d wywodzi siê ca³a idea, kontrakty opisywane s¹ w sposób nastêpuj¹cy: \\
+W jêzyku programowania Eiffel, sk¹d wywodzi siê ca³a idea, tego rodzaju kontrakty opisywane s¹ w sposób nastêpuj¹cy: \\
 
 \begin{lstlisting}[label=DesignByContract, caption=Programowanie kontraktowe]
 NazwaMetody (deklaracja argumentów) is
@@ -53,14 +53,13 @@ ensure
 end 
 \end{lstlisting}
 
-Przy budowie prezentowanej aplikacji wykorzystano cechê szczególn¹ platformy .NET, a w szczególnoœci jêzyka C\#, jak¹ jest mo¿liwoœæ dekorowania metod atrybutami. Ten element jêzyka bêdzie dok³adniej opisany w dalszej czêœci pracy, przy okazji przedstawiania szczegó³ów implementacyjnych. W tym momencie wystarczy przyj¹æ, i¿ atrybuty te staj¹ siê czêœci¹ meta informacji o danej metodzie, co z kolei mo¿e byæ wykorzystywane przy jej inspekcji. W³aœnie ta cecha zosta³a wykorzystana w rozwa¿anej aplikacji. Dla ilustracji, poni¿ej zosta³a zademonstrowana ogólna postaæ zapisu kontraktów w jêzyku C\#:
+Przy budowie prezentowanej aplikacji wykorzystano cechê szczególn¹ platformy .NET, a w szczególnoœci jêzyka C\#, jak¹ jest mo¿liwoœæ dekorowania metod atrybutami. Ten element jêzyka bêdzie dok³adniej opisany w dalszej czêœci pracy, przy omawianiu funkcjonalnoœci biblioteki. W tym momencie wystarczy przyj¹æ, i¿ atrybuty te staj¹ siê czêœci¹ meta informacji o danej metodzie, co z kolei mo¿e byæ wykorzystywane przy jej inspekcji.
+Dla ilustracji, poni¿ej zosta³a zademonstrowana ogólna postaæ zapisu kontraktów jako strubyty w jêzyku C\#:
 
 \begin{lstlisting}[label=ContractDefinition, caption=Definicja kontraktu]
-
 [NazwaAtrybutuDefiniuj¹cegoKontrakt( warunek pocz¹tkowy, warunek koñcowy )]
 NazwaMetody( deklaracja argumentów )
 {
   -- definicja metody
 }
-
 \end{lstlisting}

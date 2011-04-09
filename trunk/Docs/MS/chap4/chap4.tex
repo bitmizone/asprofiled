@@ -1,70 +1,72 @@
 %*********** Rodzia³ 4 ************
 \chapter{Omówienie funkcjonalnoœci biblioteki}
-W tym rozdziale szczegó³owo opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka.
-
+W tym rozdziale  opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka.
 
 \section{Inspekcja nadzorowanego programu}
-Jak to zosta³o wspomniane we wczeœniejszych rozdzia³ach, aplikacja weryfikuj¹ca kontrakty ma postaæ biblioteki COM i jako taka musi byæ wczeœniej zarejestrowana w systemie. Do tego celu u¿ywana jest aplikacja o nazwie regsrv32.exe, która to jest czêœci¹ narzêdzi dostarczanych wraz z platform¹ .NET.
-Zadaniem tego narzêdzia jest pobranie identyfikatora biblioteki i umieszczenie w rejestrze systemu klucza przechowuj¹cego ten identyfikator oraz œcie¿kê w systemie pliku pod która znajduje siê biblioteka.\\
+Jak to zosta³o wspomniane we wczeœniejszych rozdzia³ach, aplikacja weryfikuj¹ca kontrakty ma postaæ biblioteki COM. Niesie to ze sob¹ pewne konsekwencje. Przede wszystkim biblioteka musi byæ zgodna z konwencj¹ definiowan¹ dla tego typu bibliotek. Szczegó³y dotycz¹ce tego tematu przedstawione zosta³y w kolejnych rozdzia³ach. Drug¹ konsekwencj¹ tego jest koniecznoœæ rejestracji takiej biblioteki w systemie.
+Do tego celu u¿ywana jest aplikacja o nazwie regsrv32.exe, która to jest jednym z narzêdzi dostarczanych wraz z platform¹ .NET.
+Pobiera ona identyfikator biblioteki, którym jest wartoœæ typu GUID, a nastêpnie  umieszcza w rejestrze systemu klucz sk³adaj¹cy siê z tego identyfikatora i œcie¿ki w systemie plików, okreœlaj¹cej po³o¿enie biblioteki.\\
 
 Rozpoczêcie procesu profilowania/weryfikacji aplikacji odbywa siê poprzez uruchomienie programu z linii poleceñ w odpowiednio przygotowanym œrodowisku.
 Etap ten polega na ustawieniu zmiennych œrodowiskowych, instruuj¹cych maszynê wirtualn¹ CLR, aby ta wysy³a³a powiadomienia na temat zdarzeñ zachodz¹cych wewn¹trz uruchamianej aplikacji. 
-Proces ten wygl¹da w sposób nastêpuj¹cy: 
+Odbywa siê to w podany poni¿ej sposób: 
 
-
-\begin{lstlisting}
+\begin{lstlisting}[label=lst:initProfiling, caption=Inicjalizacja œrodowiska]
 SET COR_ENABLE_PROFILING=1
 SET COR_PROFILER={GUID}
 \end{lstlisting} 
 
-Powy¿sze zmienne s¹ nastêpnie odczytywane przez œrodowisko uruchomieniowe.
-Pierwsza z nich informuje maszynê wirtualn¹, ¿e ta powinna przesy³aæ informacje o zdarzeniach do biblioteki, której po³o¿enie okreœlanie jest przy wykorzystaniu identyfikatora GUID.\\
+Powy¿sze zmienne s¹ nastêpnie odczytywane przez œrodowisko uruchomieniowe .NET.
+Informuj¹ one maszynê wirtualn¹, ¿e ta powinna przesy³aæ informacje o zdarzeniach do biblioteki, której po³o¿enie okreœlanie jest przy wykorzystaniu identyfikatora GUID.\\
 
 Liczba i rodzaj wysy³anych powiadomieñ okreœlany jest wewn¹trz biblioteki profiluj¹cej. W szczegó³ach temat ten opisany jest w kolejnym rozdziale.
 
 \section{Kontrakty}
-Podstawowym elementem, dziêki któremu mo¿liwa jest weryfikacja metod, jest oczywiœcie mo¿liwoœæ definiowania kontraktu. Jak ju¿ zosta³o wspomniane we wczeœniejszych rozdzia³ach kontrakty definiujemy za pomoc¹ atrybutów. \\
+Podstawowym elementem, dziêki któremu mo¿liwa jest weryfikacja metod, jest  mo¿liwoœæ definiowania kontraktu. Zgodnie z tym co zosta³o powiedziane kontrakty definiujemy za pomoc¹ atrybutów. \\
 
 Atrybuty s¹ to znaczniki o charakterze deklaracyjnym zawieraj¹ce
-informacjê o elementach programu (np. klasach, typach wyliczeniowych, metodach) przeznaczon¹ dla œrodowiska wykonania programu.
-Co jest w tym kontekœcie istotne to i¿ s¹ one pamiêtane jako meta-dane elementu programu.
+informacjê o elementach programu (np. klasach, typach wyliczeniowych, metodach) przeznaczon¹ do wykorzystania w trakcie dzia³ania programu.
 
-Definicja atrybutów jest jedynym elementem, wchodz¹cym bezpoœrednio w sk³ad omawianego rozwi¹zania, który musi znajdowaæ siê po stronie weryfikowanej aplikacji.
+%Ich odczyt mo¿liwy jest dziêki mechanizmowi zwanym refleksj¹.
 
-Jak ju¿ zosta³o wspomniane atrybuty okreœlaj¹ce kontrakt maj¹ postaæ: \\
+Co jest w tym kontekœcie istotne to, i¿ s¹ one pamiêtane jako meta dane danego elementu programu.
+Definicja atrybutów jest jedynym elementem, wchodz¹cym bezpoœrednio w sk³ad omawianego rozwi¹zania, który musi znajdowaæ siê po stronie weryfikowanej aplikacji. \\
+
+Atrybuty okreœlaj¹ce kontrakt maj¹ postaæ: 
 \begin{lstlisting}[label=AsContract, caption=Ogólna postaæ kontraktu]
 AsContract(Warunek pocz¹tkowy, Warunek koñcowy)
 \end{lstlisting}
-Oba warunki zdefiniowane s¹ poprzez pewne, okreœlone przez u¿ytkownika wyra¿enie. Te z kolei maj¹ postaæ okreœlon¹ przez zadan¹ gramatykê, której definicjê przedstawiono w nastêpnym rozdziale dotycz¹cych implementacji.
-Nale¿y tu jednak wspomnieæ, i¿ oba warunki zapisywane s¹ jako ³añcuchy znakowe, tak wiêc konieczne jest ich parsowanie, w celu otrzymania drzewa rozbioru takiego wyra¿enia.
-Kolejnym krokiem jest ewaluacja tego drzewa, aby mo¿na by³o okreœliæ czy udekorowana metoda spe³nia na³o¿ony na ni¹ kontrakt.
-
-
+Oba warunki zdefiniowane s¹ poprzez pewne, okreœlone przez u¿ytkownika wyra¿enie. Te z kolei maj¹ postaæ okreœlon¹ przez zadan¹ gramatykê, której definicjê przedstawiono w nastêpnym rozdziale dotycz¹cym implementacji.
+Nale¿y tu jednak wspomnieæ, i¿ oba warunki zapisywane s¹ jako ³añcuchy znakowe.
+Oznacza to, i¿ przed ewaluacj¹ takiego wyra¿enia musi byæ zaimplementowany mechanizm pozwalaj¹cy na jego analizê sk³adniow¹.
+W jej wyniku otrzymywane jest drzewo rozbioru, które nastêpnie poddawane jest ewaluacji. Ostatecznie, otrzymywana jest wartoœæ okreœlaj¹ca czy udekorowana metoda spe³nia za³o¿ony na ni¹ kontrakt w kontekœcie danego wywo³ania.
 
 \section{Metadane}
-Metadane w kontekœcie platformy .NET, to dodatkowe informacje opisuj¹ce sk³adowe jêzyka. S¹ usystematyzowanym sposobem reprezentowania wszystkich informacji, których CLI u¿ywa do lokalizowania i ³adowania klas, u³o¿enia obiektów w pamiêci, wywo³ywania metod, translacji jêzyka CIL do kodu natywnego.
+Metadane w kontekœcie platformy .NET, to dodatkowe informacje opisuj¹ce sk³adowe programu. S¹ usystematyzowanym sposobem reprezentowania wszystkich informacji, których CLI u¿ywa do lokalizowania i ³adowania klas, u³o¿enia obiektów w pamiêci, wywo³ywania metod, translacji jêzyka CIL do kodu natywnego.
 
 Dane te, emitowane przez kompilator, przechowywane s¹ wewn¹trz ka¿dego wykonywalnego programu w postaci binarnej.
 
 \subsection{Reprezentacja metadanych}
-W ramach systemu Windows zdefiniowany jest format plików wykonywalnych - PE (eng. Portable Executables), okreœlaj¹cy strukturê jak¹ musi posiadaæ ka¿dy program, aby móg³ byæ uruchomiony w systemie.
+W ramach systemu Windows zdefiniowany jest format plików wykonywalnych - PE (eng. Portable Executables), okreœlaj¹cy strukturê jak¹ musi posiadaæ ka¿dy program, aby móg³ byæ w nim uruchomiony.
 %%% RYSUNEK 
 Aplikacje przeznaczone na platformê .NET naturalnie równie¿ musz¹ byæ zorganizowane w sposób zgodny z tym standardem.
-Jednym z pól w ramach nag³ówka CLI jest offset (RVA) okreœlaj¹cy po³o¿enie zbioru metadanych w ramach pliku wykonywalnego czy biblioteki. 
+Jednym z pól w ramach nag³ówka PE jest offset 
+%(RVA)
+okreœlaj¹cy po³o¿enie zbioru metadanych w ramach pliku wykonywalnego czy biblioteki. 
  
 %One field in the CLI header is the RVA for the metadata directory, which gives %access to all the metadata used by the assembly
-W sk³ad tego zbioru wchodzi piêæ rodzajów strumieni. W tym kontekœcie, przez pojêcie strumieñ, rozumiany jest jako sekcja w obrêbie metadanych, w której przechowywane s¹ informacje posegregowane wzglêdem ich typu.
+W sk³ad tego zbioru wchodzi piêæ rodzajów strumieni. W tym kontekœcie, przez pojêcie strumieñ, okreœlana jest sekcja w obrêbie metadanych, w której przechowywane s¹ informacje posegregowane wzglêdem ich typu.
 Te strumienie to:
 \begin{enumerate}
 \item \#Strings - zawiera listê napisów, które okreœlaj¹ nazwê programu, metod, parametrów. 
 \item \#US (User Strings) - zawiera tablicê wszystkich sta³ych ³añcuchowych definiowanych przez u¿ytkownika. 
 \item \#GUID - przechowuje listê wszystkich u¿ytych w aplikacji 128 bitowych wartoœci GUID, m.in. t¹ która jednoznacznie identyfikuje aplikacjê  
 %This table contains a list of all of the 128-bit GUIDs used in the application, %including the GUID that is used to uniquely identify this application. Whenever %a program is compiled, it is assigned a new GUID to uniquely identify it. This %is reminiscent of COM, which has similar unique identifiers that were %registered in the registry for the local machine so that this component could %be found.
-\item \#~ - ten strumieñ jest tablic¹ tablic. Ka¿da tablica nadrzêdna identyfikowana przy pomocy pojednynczego bajtu o wartoœci od 0x00 do 0x29. Tablice te opisuj¹ metody, pola, parametry, typy.
+\item \#~ - ten strumieñ jest tablic¹ tablic. Ka¿da tablica nadrzêdna identyfikowana przy pomocy pojedynczego bajtu o wartoœci od 0x00 do 0x29. Tablice wewnêtrzne opisuj¹ metody, pola, parametry, typy.
 \item \#Blob - zawiera ci¹gi danych binarnych, które nie mog¹ byæ przedstawione w prosty sposób jako napisy. Dane te wykorzystywane s¹ do opisywania sygnatur metod.
 \end{enumerate}
 
-Metadane przechowuj¹ informacje na temat typów definiowanych w ramach programu (klasy, struktury, interfejsy), globalnych funkcji i zmienny. Ka¿da z tych abstrakcyjnych encji niesie ze sob¹ wartoœæ wartoœci typu mdToken (metadata token). Jest ona u¿ywana przez mechanizmy odczytuj¹ce metadane do identyfikacji informacji na temat encji w ramach okreœlonego zasiêgu. 
+Metadane przechowuj¹ informacje na temat typów definiowanych w ramach programu (klasy, struktury, interfejsy), globalnych funkcji i zmiennych. Ka¿da z tych abstrakcyjnych encji identyfikowana jest przez wartoœæ typu mdToken (metadata token). Jest ona u¿ywana przez mechanizmy odczytuj¹ce metadane do okreœlenia  po³o¿enia w pamiêci informacji na ich temat.
 %Metadata stores declarative information about runtime types (classes, value %types,
 %and interfaces), global-functions and global-variable. Each such abstraction in %a
 %given metadata scope carries an identity as an mdToken (metadata token), where
@@ -78,7 +80,7 @@ Dla przyk³adu, wartoœæ 1 przechowywana w MSB (most significant byte) oznacza, i¿
 
 %A metadata token is a 4-byte value. The most significant byte (MSB) specifies %the token type and consequently identifies the abstraction and its associated %metadata table. For example, a value of 1 in the MSB means that the token is an %mdTypeRef token, which represents a type reference, and that its metadata is %stored in the TypeRef metadata table; a value of 4 in the MSB corresponds to an %mdFieldDef token. The CorTokenType enumeration is used to specify the token %types.
 
-Pozosta³e, mniej znacz¹ce bajty, oznaczaj¹ identyfikator rekordu (record identifier - RID) i zawieraj¹ w sobie indeks do wiersza w/w tablicy, która okreœlona jest przez wartoœæ najbardziej znacz¹cego bajtu.
+Pozosta³e, mniej znacz¹ce bajty, oznaczaj¹ identyfikator rekordu (record identifier - RID) i zawieraj¹ w sobie indeks do wiersza w/w tablicy, która okreœlona jest przez wartoœæ najbardziej znacz¹cego bajtu.\\
 Przyk³adowo, token o wartoœci 0x02000007 odnosi siê do siódmego wiersza tablicy TypeRef. Podobnie, wartoœæ 0x0400001A oznacza odwo³anie do wiersza dwudziestego szóstego tabliy FieldDef.
 Wiersz zerowy ka¿dej z powy¿szych tablic nigdy nie zawiera w sobie danych, wiêc jeœli identyfikator RID jest równy zeru, to znaczy to, ¿e token jest pusty, ma wartoœæ nil. Taki token zdefiniowany jest dla ka¿dego typu encji, np. wartoœæ 0x10000000 okreœla pusty token mdTypeRefNil.
 
@@ -89,7 +91,7 @@ W poni¿szej tabeli znajduj¹ siê typy tokenów wykorzystywane w ramach aplikacji, 
 \begin{center}
     \begin{longtable}{ |c | c | p{6cm} |}
     \hline
-Token Type & Metadata Table & Abstraction \\ \hline
+Typ tokenu & Nazwa tablicy z metadanymi & Opis \\ \hline
 %mdModule &
 %Module &
 %Module: A compilation unit, an executable, or some other development unit, %deployment unit, or run-time unit. It is possible (though not required) to %declare attributes on the module as a whole, including a name, a GUID, custom %attributes, and so forth. \\ \hline
@@ -100,7 +102,8 @@ Token Type & Metadata Table & Abstraction \\ \hline
 
 mdTypeDef &
 TypeDef &
-Type declaration: Declaration of either a runtime reference type (class or interface) or a value type. \\ \hline
+Token odnosz¹cy siê do typów referencyjnych (klasy i interfejsy) i wartoœciowych (struktury) \\ \hline
+%Type declaration: Declaration of either a runtime reference type (class or %interface) or a value type. \\ \hline
 
 %mdTypeRef &
 %TypeRef &
@@ -108,15 +111,18 @@ Type declaration: Declaration of either a runtime reference type (class or inter
 
 mdMethodDef &
 MethodDef &
-Method definition: Definition of a method as a member of a class or interface, or as a global module-level method. \\ \hline
+Token odnosz¹cy do informacji opisuj¹cych metody bêd¹ce czêœci¹ klasy lub interfejsu \\ \hline
+%Method definition: Definition of a method as a member of a class or interface, %or as a global module-level method. \\ \hline
 
 mdParamDef &
 ParamDef &
-Parameter declaration: Definition of an optional data structure that stores additional metadata for the parameter. It is not necessary to emit a data structure for each parameter in a method. However, when there is additional metadata to persist for the parameter, such as marshaling or type-mapping information, an optional parameter data structure can be created. \\ \hline
+Typ tokenu, którego wartoœci odnosz¹ siê do informacji okreœlaj¹cych parametry metod \\ \hline
+%Parameter declaration: Definition of an optional data structure that stores additional metadata for the parameter. It is not necessary to emit a data structure for each parameter in a method. However, when there is additiona metadata to persist for the parameter, such as marshaling or type-mapping information, an optional parameter data structure can be created. \\ \hline
 
 mdFieldDef &
 FieldDef &
-Field declaration: Declaration of a variable as a data member of a class or interface, or declaration of a global, module-level variable. \\ \hline
+Odniesienie do metadanych dotycz¹cych sk³adowych  wchodz¹cych w sk³ad klas, interfejsów \\ \hline
+%Field declaration: Declaration of a variable as a data member of a class or interface, or declaration of a global, module-level variable. \\ \hline
 
 %mdProperty &
 %Property &
@@ -126,9 +132,9 @@ Field declaration: Declaration of a variable as a data member of a class or inte
 %Event &
 %Event declaration: Declaration of a named event as a member of a class or %interface. \\ \hline
 
-mdMemberRef &
-MemberRef &
-Member reference: Reference to a method or field. A member reference is generated in metadata for every method invocation or field access that is made by any implementation in the current module, and a token is persisted in the Microsoft intermediate language (MSIL) stream. There is no runtime support for property or event references. \\ \hline
+%mdMemberRef &
+%MemberRef &
+%Member reference: Reference to a method or field. A member reference is generated in metadata for every method invocation or field access that is made by any implementation in the current module, and a token is persisted in the Microsoft intermediate language (MSIL) stream. There is no runtime support for property or event references. \\ \hline
 
 %mdIfaceImpl &
 %IfaceImpl &
@@ -140,7 +146,8 @@ Member reference: Reference to a method or field. A member reference is generate
 
 mdCustomAttribute &
 CustomAttribute &
-Custom attribute: An arbitrary data structure associated with any metadata object that can be referenced with an mdToken. (An exception is that custom attributes themselves cannot have custom attributes.) \\ \hline
+Zawiera odniesienie do metadanych atrybutów \\ \hline
+%Custom attribute: An arbitrary data structure associated with any metadata object that can be referenced with an mdToken. (An exception is that custom attributes themselves cannot have custom attributes.) \\ \hline
 
 %mdPermission &
 %Permission &
@@ -163,9 +170,9 @@ Custom attribute: An arbitrary data structure associated with any metadata objec
 
 \subsection{Interpretacja metadanych}
 
-Do zaimplementowania procesu weryfikacji programów przy obranym tutaj podejœciu zachodzi potrzeba interpretacji metadanych. W tym celu potrzebna jest wiedza na temat reprezentacji metadanych i w jaki sposób nale¿y je interpretowaæ.
+Do zaimplementowania procesu weryfikacji programów przy obranym podejœciu zachodzi potrzeba interpretacji metadanych. W tym celu potrzebna jest wiedza na temat reprezentacji metadanych i w jaki sposób nale¿y je interpretowaæ.
 Jak to zosta³o opisane w poprzednim paragrafie, metadane przechowywane s¹ w tablicach, do których dostêp uzyskiwany jest poprzez token odpowiedniego typu.
-W ramach tych tablic, które s¹ czêœci¹ strumienia \#\~, znajduj¹ siê odwo³ania do strumienia \#Blob. W strumieniu tym zawarte s¹ m,in. informacje na temat sygnatury metody.
+W ramach tych tablic, które s¹ czêœci¹ strumienia \#\~, znajduj¹ siê odwo³ania do strumienia \#Blob. W strumieniu tym zawarte s¹ dane opisuj¹ce sygnatury metod.
 Sygnatura opisuj¹ca metody zawiera w sobie wszelkie dotycz¹ce jej informacje, m.in. typy argumentów, typ wartoœci zwracanej. Inne rodzaje sygnatur przechowuj¹ informacjê o typach pól klasy, propercji czy te¿ zmiennych lokalnych.
 Niezale¿nie od opisywanego elementu jêzyka, sygnatura przechowywana jest jako tablica bajtowa. Istnieje kilka rodzajów sygnatur, z których ka¿da opisuje inny rodzaj encji:
 \begin{itemize}
@@ -233,7 +240,7 @@ BOOLEAN | CHAR | I1 | U1 | I2 | U2 | I4 | U4 | I8 | U8 | R4 | R8 | I  | U |
 \end{lstlisting}
 Wartoœci te odpowiadaj¹ typom w ramach platformy .NET.
 
-Innym wa¿nym elementem dla biblioteki AsProfiled jest struktura sygnatury atrybutów, które s³u¿¹ jako noœnik kontraktów. Ilustruj¹ j¹ poni¿szy schemat: 
+Innym wa¿nym elementem istotnym z punktu widzenia biblioteki AsProfiled jest struktura sygnatury atrybutów, które s³u¿¹ jako noœnik kontraktów. Ilustruje j¹ poni¿szy schemat: 
 
 \begin{figure}[h]
 \centering
@@ -243,35 +250,14 @@ Innym wa¿nym elementem dla biblioteki AsProfiled jest struktura sygnatury atrybu
 \end{figure}
 
 Interpretacja tych sygnatur jest podstawowym elementem, który nale¿y wzi¹æ pod uwagê w zadaniu ewaluacji kontraktów.
-Dziêki tym informacjom mo¿na okreœliæ typ obiektu, w szczególnoœci argumentów funkcji, co z kolei umo¿liwia odczytanie ich aktualnych wartoœci w momencie wywo³ania funkcji.
+Dziêki tym informacjom mo¿na okreœliæ typ obiektu, w szczególnoœci argumentów funkcji, co z kolei umo¿liwia odczytanie ich aktualnych wartoœci w momencie wywo³ania funkcji. 
 
 
 
 Proces ten rozpoczyna siê od pobrania wartoœci tokenu, opisanych w poprzedniej sekcji, odpowiedniego typu. 
 
 Tokeny odpowiedniego rodzaju uzyskiwane s¹ poprzez wywo³ania odpowiednich metod na obiektach implementuj¹cych okreœlone interfejsów.
-Dziêki informacj¹ zawartych w metadanych mo¿liwy jest odczyt niezbêdnych informacji. W opisywanej bibliotece zaimplementowano uzyskiwanie nastêpuj¹cych danych: \\
-
-Metody:
-GetMethodName
-GetCallingConvention
-GetArgumentsCount
-GetReturnValue
-ReadArgumentsValues
-GetAttribute
-
-Parametry:
-GetType
-
-Typy:
-GetName
-
-Atrybuty:
-ParseAttributeMetaData
-
-
-
-
+Dziêki informacj¹ zawartych w metadanych mo¿liwy jest odczyt niezbêdnych informacji.
 
 
 %used to encode the keyword instance in the calling convention, see §15.3
@@ -319,7 +305,7 @@ ParseAttributeMetaData
 
 %Kolejnym krokiem na drodze do ewaluacji kontraktów jest odczyt wartoœci %argumentów przekazywanych do metody w trakcie jej wywo³ania.
 Dziêki informacjom zawartym w metadanych, mo¿liwe jest okreœlenie liczby i typów parametrów przekazywanych do metod. S¹ to dane statyczne, w tym sensie, ¿e s¹ one sta³e w ramach raz zdefiniowanego programu. Z drugiej wartoœci parametrów mog¹ byæ inne dla ka¿dego wywo³ania metody, tak wiêc nie mog¹ w ¿aden sposób stanowiæ czêœci metadanych. Musi wiêc zatem istnieæ osobny mechanizm pozwalaj¹cy na realizacjê tego zadania. \\
-W momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê COR\_PRF\_FUNCTION\_ARGUMENT\_INFO, która jest przekazywana do odbiorcy. 
+Okazuje siê, ¿e w momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê COR\_PRF\_FUNCTION\_ARGUMENT\_INFO, która jest przekazywana do odbiorcy. 
 Zdefiniowana jest w nastêpuj¹cy sposób:
 \begin{lstlisting}[label=CorPrfFunctionArgumentInfo]
 typedef struct _COR_PRF_FUNCTION_ARGUMENT_INFO {
@@ -330,12 +316,12 @@ typedef struct _COR_PRF_FUNCTION_ARGUMENT_INFO {
 \end{lstlisting}
 Objaœenia:
 \begin{itemize}
-\item numRanges - The number of blocks of arguments. That is, this value is the number of COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE structures in the ranges array.
-\item totalArgumentSize - The total size of all arguments. In other words, this value is the sum of the argument lengths.
-\item ranges An array of COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE structures, each of which represents one block of function arguments.
+\item \emph{numRanges} - Liczba bloków pamiêci, wewn¹trz których znajduj¹ siê wartoœci argumentów. Okreœla liczbê elementów tablicy typu \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}
+\item \emph{totalArgumentSize} - Ca³kowita d³ugoœæ wszystkich argumentów wyra¿ona w bajtach.
+\item \emph{ranges} Tablica obiektów typu \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, z których ka¿da reprezentuje jeden blok pamiêci, gdzie zawarte s¹ wartoœci argumentów metody
 \end{itemize}
-Struktura ta reprezentuje argumenty metody, zgodnie z porz¹dkiem od lewej do prawej.
-Typ COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE u¿yty w ramach tej struktury okreœlony jest jak nastêpuje:
+Struktura ta reprezentuje wartoœci argumentów metody, zgodnie z porz¹dkiem od lewej do prawej.
+Typ \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE }u¿yty w ramach tej struktury okreœlony jest jak nastêpuje:
 \begin{lstlisting}[label=lst:CorPrfFunctionArgumentRange]
 typedef struct _COR_PRF_FUNCTION_ARGUMENT_RANGE {
     UINT_PTR startAddress;
@@ -344,28 +330,27 @@ typedef struct _COR_PRF_FUNCTION_ARGUMENT_RANGE {
 \end{lstlisting}
 ,gdzie\\
 \begin{itemize}
-\item startAddress - The starting address of the block
-\item length - The length of the contiguous block
+\item startAddress - Adres pocz¹tku bloku.
+\item length - Wielkoœæ bloku pamiêci.
 \end{itemize}
 
-Te dane w po³¹czeniu z informacj¹ o typie argumentu pozwalaj¹ na poprawny odczyt argumentów metody.
+Te dane w po³¹czeniu z informacj¹ o typie argumentu pozwalaj¹ na poprawny odczyt argumentów metody. 
 
 \section{Wartoœci zwracane}
-
+\label{sec:chapter4:section5}
 Kolejnym elementem jest mo¿liwoœæ weryfikacji kontraktów zawieraj¹cych w sobie odniesienia do wartoœci zwracanej przez metodê.
 Takie odniesienia maj¹ tylko sens przy warunkach koñcowych, po odebraniu notyfikacji o zdarzeniu opuszczenia metody. 
-Sposób odczytu wartoœci zwracanej jest analogiczny do odczytywania wartoœci parametrów metody. W tym wypadku, odbiorca zdarzenia otrzymuje dostêp do pojedynczego obiektu typu COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE, który to jest rzeczywistym noœnikiem danych, na temat po³o¿enia wartoœci w pamiêci.
-
+Sposób odczytu wartoœci zwracanej jest analogiczny do odczytywania wartoœci parametrów metody. W tym wypadku, odbiorca zdarzenia otrzymuje dostêp do pojedynczego obiektu typu \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, który zawiera w sobie informacje na temat po³o¿enia wartoœci zwracanej w pamiêci.
 
 \section{Wartoœci pocz¹tkowe}
 
 Termin wartoœci pocz¹tkowe odnosi siê do stanu argumentów w momencie wywo³ania metody. Zgodnie z za³o¿eniami z rozdzia³u pierwszego, biblioteka powinna udostêpniaæ funkcjonalnoœæ definiowania kontraktów z³o¿onych z odwo³añ do pocz¹tkowych wartoœci obiektów. Naturalnie, stan obiektów mo¿e ulec zmianie w czasie dzia³ania metody, nale¿a³o wiêc przedsiêwzi¹æ kroki umo¿liwiaj¹ce tego rodzaju odwo³ania do pocz¹tkowych wartoœci obiektów. 
 
-Jedyn¹ sytuacj¹ jak¹ nale¿a³o rozwa¿yæ, jest w przypadku kontraktów, w których odwo³ania do wartoœci pocz¹tkowych ma miejsce w warunkach koñcowych.
+Jedyn¹ sytuacj¹ jak¹ nale¿y rozwa¿yæ jest przypadek, w którym odwo³ania do wartoœci pocz¹tkowych ma miejsce w warunku koñcowym w ramach danego kontraktu.
 Rzecz jasna, odwo³ania do tych wartoœci nie maj¹ sensu w przypadku warunków pocz¹tkowych, gdy¿ te ewaluowane s¹ zanim sterowanie dojdzie do momentu wykonywania instrukcji wewn¹trz metody, a które mog³yby zmodyfikowaæ stan obiektu. 
-Z drugiej strony, co wynika ze specyfiki otrzymywanych powiadomieñ, odczytywanie argumentów jest mo¿liwe tylko w momencie wywo³ywania metody. Co za tym idzie, niezbêdne jest zachowanie stanu obiektu w tym momencie i odwo³ywanie siê do niego w czasie weryfikacji warunków pocz¹tkowych. Dodatkowo, nie wystarczy zachowanie referencji do obiektu. Wynika to z faktu, i¿ pomimo przekazywanie argumentów do metody odbywa siê poprzez kopiowanie, to kopiowana jest tylko referencja do obiektu, a nie sam obiekt. Oczywiœcie kopia referencji dalej wskazuje na ten sam obiekt, wiêc zmieniaj¹c jego stan przy jej u¿ycia, zmieniany jest oryginalny obiekt.
+Z drugiej strony, co wynika ze specyfiki otrzymywanych powiadomieñ, odczytywanie argumentów jest mo¿liwe tylko w momencie wywo³ywania metody. Co za tym idzie, niezbêdne jest zachowanie stanu obiektu w tym momencie i odwo³ywanie siê do niego w czasie weryfikacji warunków koñcowych. Dodatkowo, nie wystarczy zachowanie referencji do obiektu. Wynika to z faktu, i¿ pomimo przekazywanie argumentów do metody odbywa siê poprzez kopiowanie, to kopiowana jest tylko referencja do obiektu, a nie sam obiekt. Oczywiœcie kopia referencji dalej wskazuje na ten sam obiekt, wiêc zmieniaj¹c stan obiektu przy jej u¿yciu, zmieniany jest oryginalny obiekt.
 Z tego powodu niezbêdne okazuje siê kopiowanie poszczególnych wartoœci do których wystêpuje odwo³anie w warunkach koñcowych.
-Konieczne jest wiêc przeprowadzanie przetwarzania wstêpnego, tzn. w chwili otrzymania powiadomienia o wywo³aniu metody przeprowadzona zostaje analiza zarówno warunków pocz¹tkowych (co jest jasne) i warunków koñcowych kontraktu. W czasie tej analizy warunek koñcowy sprawdzany jest pod k¹tem wystêpowania elementów odnosz¹cych siê do stanu pocz¹tkowego argumentów funkcji. Nastêpnie odpowiednie argumenty poddawane s¹ inspekcji, a nastêpnie wy³uskiwana jest wartoœæ sk³adowej obiektu, do którego odniesienie znajduje siê w warunku koñcowym. Ta wartoœæ zapisywana jest w pamiêci podrêcznej aplikacji, do której dostêp jest mo¿liwy do momentu otrzymania powiadomienia o wyjœciu z zasiêgu weryfikowanej metody, kiedy to mo¿e zostaæ u¿yta do weryfikacji warunku koñcowego.\\
+Konieczne jest wiêc przeprowadzanie przetwarzania wstêpnego, tzn. w chwili otrzymania powiadomienia o wywo³aniu metody przeprowadzona zostaje analiza zarówno warunków pocz¹tkowych i warunków koñcowych kontraktu. W czasie tej analizy warunek koñcowy sprawdzany jest pod k¹tem wystêpowania elementów odnosz¹cych siê do stanu pocz¹tkowego argumentów funkcji. Nastêpnie argumenty, do których takie odwo³ania wystêpuj¹ poddawane s¹ inspekcji i wy³uskiwana jest wartoœæ sk³adowej obiektu, do którego odniesienie znajduje siê w warunku koñcowym. Ta wartoœæ zapisywana jest w pamiêci podrêcznej aplikacji, do której dostêp jest mo¿liwy w momencie otrzymania powiadomienia o zakoñczeniu wykonywania weryfikowanej metody, kiedy to mo¿e zostaæ u¿yta do weryfikacji warunku koñcowego.\\
 
-\section{Ograniczenia}
-tekst
+%\section{Ograniczenia}
+

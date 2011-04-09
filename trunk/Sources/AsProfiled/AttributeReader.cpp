@@ -60,7 +60,7 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 
 		attributeInfo->argumentsCount = attributeMethodInfo.GetArgumentsCount();
 		attributeInfo->typeName = typeInfo.GetName();
-
+		
 		std::vector<WCHAR*>* argumentsValues = CProfilerHelper::GetInstance().ParseAttributeMetaData(attributeInfo->attributeBlob, 
 																									attributeInfo->attributeBlobSize, 
 																									attributeInfo->argumentsCount);
@@ -71,6 +71,7 @@ void CAttributeReader::Initialize(mdMethodDef methodTokenArg, IMetaDataImport* p
 			CAttributeArgument* attributeArgument = new CAttributeArgument();
 			attributeArgument->argumentValue = argumentsValues->at(i);
 			std::wstring st(typeInfo.GetName());
+			
 			if (st.find(L"AsContractAttribute") != std::wstring::npos) {
 				// ASSERT(false);
 			}
