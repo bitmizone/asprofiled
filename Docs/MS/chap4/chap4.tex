@@ -1,7 +1,14 @@
 %*********** Rodzia³ 4 ************
 \chapter{Omówienie funkcjonalnoœci biblioteki}
-W tym rozdziale  opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka.
-
+W tym rozdziale opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka.
+Poni¿ej przedstawiony jest ogólny schemat dzia³ania aplikacji:
+\begin{figure}[h]
+\centering
+\includegraphics[width=5in]{generalflow}
+\caption{Schemat dzia³ania aplikacji}
+\label{fig:generalFlowDiagram}
+\end{figure}
+\clearpage
 \section{Inspekcja nadzorowanego programu}
 Jak to zosta³o wspomniane we wczeœniejszych rozdzia³ach, aplikacja weryfikuj¹ca kontrakty ma postaæ biblioteki COM. Niesie to ze sob¹ pewne konsekwencje. Przede wszystkim biblioteka musi byæ zgodna z konwencj¹ definiowan¹ dla tego typu bibliotek. Szczegó³y dotycz¹ce tego tematu przedstawione zosta³y w kolejnych rozdzia³ach. Drug¹ konsekwencj¹ tego jest koniecznoœæ rejestracji takiej biblioteki w systemie.
 Do tego celu u¿ywana jest aplikacja o nazwie regsrv32.exe, która to jest jednym z narzêdzi dostarczanych wraz z platform¹ .NET.
@@ -191,11 +198,10 @@ Poni¿ej przedstawiono strukturê tej sygnatury:
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=5in]{MethodDefSig}
+\includegraphics[width=5in]{MethodDefSig2}
 \caption{Struktura sygnatury metadanych opisuj¹cych metodê}
 \label{fig:MethodDefSigDiagram}
 \end{figure}
-
 Legenda:
 \begin{itemize}
 \item HASTHIS = 0x20, EXPLICITTHIS = 0x40, DEFAULT = 0x0, VARARG = 0x5 - konwencja w jakiej wywo³ywana jest metoda
@@ -206,22 +212,22 @@ Legenda:
 \item Param - opisuje typ ka¿dego parametru metody, w ramach sygnatury element ten powinien wystêpowaæ ParamCount razy
 \end{itemize}
 
-Poni¿ej zamieszczono schematy ilustruj¹ce strukturê parametrów metody oraz jej wartoœæ zwrac¹.
+Poni¿ej zamieszczono schematy ilustruj¹ce strukturê parametrów metody oraz jej wartoœæ zwracan¹.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=5in]{paramdiagram}
+\includegraphics[width=5in]{paramdiagram.ps}
 \caption{Struktura sygnatury parametru metody}
 \label{fig:ParamDiag}
 \end{figure}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=5in]{rettypediagram}
+\includegraphics[width=5in]{rettypediagram.ps}
 \caption{Struktura sygnatury okreœlaj¹cej wartoœæ zwracan¹}
 \label{fig:RetTypeDiag}
 \end{figure}
-
+\clearpage
 Powy¿sze ilustracje ró¿ni¹ siê tylko dodatkowym rozga³êzieniem z elementem VOID, który oznacza, i¿ metoda nie zwraca ¿adnej wartoœci.
 
 Element TYPE zdefiniowany jako jedna z wartoœci:\\
@@ -244,7 +250,7 @@ Innym wa¿nym elementem istotnym z punktu widzenia biblioteki AsProfiled jest str
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=5in]{customattrib}
+\includegraphics[width=5in]{customattrib.ps}
 \caption{}
 \label{fig:CustomAttribDiag}
 \end{figure}
