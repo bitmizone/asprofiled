@@ -1,3 +1,26 @@
 \chapter{Porównanie z innymi bibliotekami}
+W tej czêœci opisano dwa rozwi¹zania realizuj¹ce podejœcie programowania kontraktowego. Podobnie jak biblioteka AsProfiled s¹ one przeznaczone dla programów pracuj¹cych w ramach platformy .NET.
+
 \section{CodeContracts}
+Jest to kompleksowe rozwi¹zanie firmy Microsoft, pocz¹tkowe tworzone w ramach komórki badawczej Mirosoft Research. Obecnie jest ju¿ dostêpna na rynku w pe³ni funkcjonalna wersja tego zestawu narzêdzi i wchodz¹ one w sk³ad œrodowiska programistycznego Visual Studio 2010. //
+
+Zasadnicza ró¿nica, z punktu widzenia u¿ytkownika, w stosunku do biblioteki AsProfiled polega na sposobie okreœlania kontraktów.
+W tym wypadku s¹ one definiowane jako wywo³ania statycznych metod klasy \emph{Contract}, przy czym kontrakt podawany jako ich argument, w postaci wyra¿enia logicznego. Poprawnym wyra¿eniem jest dowolne wyra¿enie zgodne z regu³ami ich budowania w ramach ustalonego jêzyka programowania.
+Podejœcie to ma zasadnicz¹ zaletê, mianowicie kontrakty s¹ silnie typowane.
+Poni¿szy wycinek kodu ilustruje dotychczasowy opis:
+
+\begin{lstlisting}[label=lst:CodeContracts1, caption=CodeContracts - sposób u¿ycia]
+
+public int Test(int arg1, int arg2)
+{
+ Contract.Requires(PreCondition);
+ int result = arg1 * arg2;
+ Contract.Ensures(PostCondition);
+ return result;
+}
+\end{lstlisting}
+
+Przy pomocy metod \emph{Requires} i \emph{Ensure} okreœlane s¹ odpowiednio warunki pocz¹tkowe i warunki koñcowe. Ich argumentem mo¿e byæ dowolnie skomplikowane wyra¿enie obliczalne do wartoœci logicznej, a ka¿da z tych metod mo¿e byæ wywo³ana dowoln¹ liczbê razy.
+
+
 \section{LinFu.Contracts}
