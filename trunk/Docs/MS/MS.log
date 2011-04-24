@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (MiKTeX 2.9) (preloaded format=latex 2011.3.9)  18 APR 2011 01:17
+This is pdfTeX, Version 3.1415926-1.40.11 (MiKTeX 2.9) (preloaded format=latex 2011.3.9)  24 APR 2011 00:06
 entering extended mode
 **ms.tex
 (C:\Dev\asprofiled\Docs\MS\ms.tex
@@ -1216,30 +1216,51 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 465--465
 [][][][][][][] 
  []
 
-) (C:\Dev\asprofiled\Docs\MS\chap6//chap6.tex [33] [34])
-(C:\Dev\asprofiled\Docs\MS\ms.bbl) [35
+) (C:\Dev\asprofiled\Docs\MS\chap6//chap6.tex [33] [34] [35
 
-] (C:\Dev\asprofiled\Docs\MS\back.tex
-(C:\Dev\asprofiled\Docs\MS\ms.ind))
+]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 20--20
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 36--36
+[][][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 54--56
+
+ []
+
+[36]) (C:\Dev\asprofiled\Docs\MS\ms.bbl) [37]
+(C:\Dev\asprofiled\Docs\MS\back.tex (C:\Dev\asprofiled\Docs\MS\ms.ind))
 \tf@toc=\write6
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 34.
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 34.
- (C:\Dev\asprofiled\Docs\MS\ms.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 34.
-Package rerunfilecheck Info: File `ms.out' has not changed.
-(rerunfilecheck)             Checksum: 5677073F4480932FBC79495E2BF505F4;2282.
 
+(C:\Dev\asprofiled\Docs\MS\ms.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 34.
+
+
+Package rerunfilecheck Warning: File `ms.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `ms.out':
+(rerunfilecheck)             Before: 6B37FF44ED9A96F2F32462E22FDC1D30;2219
+(rerunfilecheck)             After:  5677073F4480932FBC79495E2BF505F4;2282.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 12541 strings out of 494020
- 178264 string characters out of 3146450
- 411378 words of memory out of 3000000
- 15583 multiletter control sequences out of 15000+200000
+ 12542 strings out of 494020
+ 178280 string characters out of 3146450
+ 411527 words of memory out of 3000000
+ 15584 multiletter control sequences out of 15000+200000
  19703 words of font info for 56 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
  41i,13n,45p,845b,1813s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on ms.dvi (38 pages, 207828 bytes).
+Output written on ms.dvi (40 pages, 220608 bytes).
