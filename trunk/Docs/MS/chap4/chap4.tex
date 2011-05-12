@@ -1,7 +1,7 @@
 %*********** Rodzia³ 4 ************
 \chapter{Omówienie funkcjonalnoœci biblioteki}
 W tym rozdziale opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka.
-Poni¿ej przedstawiony jest ogólny schemat dzia³ania aplikacji:
+Poni¿ej przedstawiony jest ogólny schemat dzia³ania aplikacji, którego poszczególne elementy rozpatrzone s¹ w dalszej czêœci.
 \begin{figure}[h]
 \centering
 \includegraphics[width=5in]{generalflow}
@@ -49,7 +49,7 @@ Oznacza to, i¿ przed ewaluacj¹ takiego wyra¿enia musi byæ zaimplementowany mecha
 W jej wyniku otrzymywane jest drzewo rozbioru, które nastêpnie poddawane jest ewaluacji. Ostatecznie, otrzymywana jest wartoœæ okreœlaj¹ca czy udekorowana metoda spe³nia za³o¿ony na ni¹ kontrakt w kontekœcie danego wywo³ania.
 
 \section{Metadane}
-Metadane w kontekœcie platformy .NET, to dodatkowe informacje opisuj¹ce sk³adowe programu. S¹ usystematyzowanym sposobem reprezentowania wszystkich informacji, których CLI u¿ywa do lokalizowania i ³adowania klas, u³o¿enia obiektów w pamiêci, wywo³ywania metod, translacji jêzyka CIL do kodu natywnego.
+Metadane w kontekœcie platformy .NET, to dodatkowe informacje opisuj¹ce sk³adowe programu. S¹ usystematyzowanym sposobem reprezentowania wszystkich informacji, których CLI u¿ywa do lokalizowania i ³adowania klas, u³o¿enia obiektów w pamiêci, wywo³ywania metod, translacji jêzyka MSIL do kodu natywnego.
 
 Dane te, emitowane przez kompilator, przechowywane s¹ wewn¹trz ka¿dego wykonywalnego programu w postaci binarnej.
 
@@ -61,37 +61,27 @@ Jednym z pól w ramach nag³ówka PE jest offset
 %(RVA)
 okreœlaj¹cy po³o¿enie zbioru metadanych w ramach pliku wykonywalnego czy biblioteki. 
  
-%One field in the CLI header is the RVA for the metadata directory, which gives %access to all the metadata used by the assembly
 W sk³ad tego zbioru wchodzi piêæ rodzajów strumieni. W tym kontekœcie, przez pojêcie strumieñ, okreœlana jest sekcja w obrêbie metadanych, w której przechowywane s¹ informacje posegregowane wzglêdem ich typu.
 Te strumienie to:
 \begin{enumerate}
 \item \#Strings - zawiera listê napisów, które okreœlaj¹ nazwê programu, metod, parametrów. 
 \item \#US (User Strings) - zawiera tablicê wszystkich sta³ych ³añcuchowych definiowanych przez u¿ytkownika. 
 \item \#GUID - przechowuje listê wszystkich u¿ytych w aplikacji 128 bitowych wartoœci GUID, m.in. t¹ która jednoznacznie identyfikuje aplikacjê  
-%This table contains a list of all of the 128-bit GUIDs used in the application, %including the GUID that is used to uniquely identify this application. Whenever %a program is compiled, it is assigned a new GUID to uniquely identify it. This %is reminiscent of COM, which has similar unique identifiers that were %registered in the registry for the local machine so that this component could %be found.
+
 \item \#~ - ten strumieñ jest tablic¹ tablic. Ka¿da tablica nadrzêdna identyfikowana przy pomocy pojedynczego bajtu o wartoœci od 0x00 do 0x29. Tablice wewnêtrzne opisuj¹ metody, pola, parametry, typy.
 \item \#Blob - zawiera ci¹gi danych binarnych, które nie mog¹ byæ przedstawione w prosty sposób jako napisy. Dane te wykorzystywane s¹ do opisywania sygnatur metod.
 \end{enumerate}
 
 Metadane przechowuj¹ informacje na temat typów definiowanych w ramach programu (klasy, struktury, interfejsy), globalnych funkcji i zmiennych. Ka¿da z tych abstrakcyjnych encji identyfikowana jest przez wartoœæ typu mdToken (metadata token). Jest ona u¿ywana przez mechanizmy odczytuj¹ce metadane do okreœlenia  po³o¿enia w pamiêci informacji na ich temat.
-%Metadata stores declarative information about runtime types (classes, value %types,
-%and interfaces), global-functions and global-variable. Each such abstraction in %a
-%given metadata scope carries an identity as an mdToken (metadata token), where
-%an mdToken is used by the metadata engine to index into a specific metadata %data
-%table in that scope. The metadata APIs return a token from each Define method %and
-%it is this token that, when passed into the appropriate Get method, is used to %obtain
-%its associated attributes.
 
 Token metadanych ma postaæ czterobajtowej wartoœci. Najbardziej znacz¹cy bajt   okreœla typ tokenu, pozosta³e okreœlaj¹ po³o¿enie pozosta³ych informacji w tablicy metadanych.
 Dla przyk³adu, wartoœæ 1 przechowywana w MSB (most significant byte) oznacza, i¿ token jest typu mdTypeRef, który oznacza referencjê do typu, a informacje na jego temat s¹ przechowywane w tablicy TypeRef.
 
-%A metadata token is a 4-byte value. The most significant byte (MSB) specifies %the token type and consequently identifies the abstraction and its associated %metadata table. For example, a value of 1 in the MSB means that the token is an %mdTypeRef token, which represents a type reference, and that its metadata is %stored in the TypeRef metadata table; a value of 4 in the MSB corresponds to an %mdFieldDef token. The CorTokenType enumeration is used to specify the token %types.
 
 Pozosta³e, mniej znacz¹ce bajty, oznaczaj¹ identyfikator rekordu (record identifier - RID) i zawieraj¹ w sobie indeks do wiersza w/w tablicy, która okreœlona jest przez wartoœæ najbardziej znacz¹cego bajtu.\\
 Przyk³adowo, token o wartoœci 0x02000007 odnosi siê do siódmego wiersza tablicy TypeRef. Podobnie, wartoœæ 0x0400001A oznacza odwo³anie do wiersza dwudziestego szóstego tabliy FieldDef.
 Wiersz zerowy ka¿dej z powy¿szych tablic nigdy nie zawiera w sobie danych, wiêc jeœli identyfikator RID jest równy zeru, to znaczy to, ¿e token jest pusty, ma wartoœæ nil. Taki token zdefiniowany jest dla ka¿dego typu encji, np. wartoœæ 0x10000000 okreœla pusty token mdTypeRefNil.
 
-%The lower three bytes, referred to as the record identifier (RID), contain the %index of the row within the metadata table to which the token's MSB refers. For %example, the metadata token with value 0x02000007 refers to row 7 in the %TypeDef table in the current scope. Similarly, token 0x0400001A refers to row %26 (decimal) in the FieldDef table in the current scope. Row zero of a metadata %table never contains data, so a metadata token whose RID is zero is referred to %as a nil token. The metadata API defines a host of such nil tokens, one for %each token type, such as mdTypeRefNil, with the value 0x01000000.
 
 W poni¿szej tabeli znajduj¹ siê typy tokenów wykorzystywane w ramach aplikacji, typy które opisuj¹ oraz nazwy tablic metadanych. Wszystkie tokeny s¹ pochodnymi typu bazowego - mdToken.
 
@@ -99,172 +89,32 @@ W poni¿szej tabeli znajduj¹ siê typy tokenów wykorzystywane w ramach aplikacji, 
     \begin{longtable}{ |c | c | p{6cm} |}
     \hline
 Typ tokenu & Nazwa tablicy z metadanymi & Opis \\ \hline
-%mdModule &
-%Module &
-%Module: A compilation unit, an executable, or some other development unit, %deployment unit, or run-time unit. It is possible (though not required) to %declare attributes on the module as a whole, including a name, a GUID, custom %attributes, and so forth. \\ \hline
-
-%mdModuleRef &
-%ModuleRef &
-%Module reference: A compile-time reference to a module, which records the %source for type and member imports. \\ \hline
 
 mdTypeDef &
 TypeDef &
 Token odnosz¹cy siê do typów referencyjnych (klasy i interfejsy) i wartoœciowych (struktury) \\ \hline
 %Type declaration: Declaration of either a runtime reference type (class or %interface) or a value type. \\ \hline
 
-%mdTypeRef &
-%TypeRef &
-%Type reference: Reference to either a runtime reference type or a value type. %In a sense, the collection of type references in a module is the collection of %compile-time import dependencies. \\ \hline
 
 mdMethodDef &
 MethodDef &
 Token odnosz¹cy do informacji opisuj¹cych metody bêd¹ce czêœci¹ klasy lub interfejsu \\ \hline
-%Method definition: Definition of a method as a member of a class or interface, %or as a global module-level method. \\ \hline
 
 mdParamDef &
 ParamDef &
 Typ tokenu, którego wartoœci odnosz¹ siê do informacji okreœlaj¹cych parametry metod \\ \hline
-%Parameter declaration: Definition of an optional data structure that stores additional metadata for the parameter. It is not necessary to emit a data structure for each parameter in a method. However, when there is additiona metadata to persist for the parameter, such as marshaling or type-mapping information, an optional parameter data structure can be created. \\ \hline
 
 mdFieldDef &
 FieldDef &
 Odniesienie do metadanych dotycz¹cych sk³adowych  wchodz¹cych w sk³ad klas, interfejsów \\ \hline
-%Field declaration: Declaration of a variable as a data member of a class or interface, or declaration of a global, module-level variable. \\ \hline
-
-%mdProperty &
-%Property &
-%Property declaration: Declaration of a property as a member of a class or %interface. \\ \hline
-
-%mdEvent &
-%Event &
-%Event declaration: Declaration of a named event as a member of a class or %interface. \\ \hline
-
-%mdMemberRef &
-%MemberRef &
-%Member reference: Reference to a method or field. A member reference is generated in metadata for every method invocation or field access that is made by any implementation in the current module, and a token is persisted in the Microsoft intermediate language (MSIL) stream. There is no runtime support for property or event references. \\ \hline
-
-%mdIfaceImpl &
-%IfaceImpl &
-%Interface implementation: A specific class’s implementation of a specific %interface. This metadata abstraction enables the storing of information that is %the intersection of that which is specific to neither the class nor the %interface. \\ \hline
-
-%mdMethodImpl &
-%MethodImpl &
-%Method implementation: A specific class’s implementation of a method that is inherited using interface inheritance. This metadata abstraction enables information to be persisted that is specific to the implementation rather than to the contract. Method declaration information cannot be modified by the implementing class. \\ \hline
 
 mdCustomAttribute &
 CustomAttribute &
 Zawiera odniesienie do metadanych atrybutów \\ \hline
-%Custom attribute: An arbitrary data structure associated with any metadata object that can be referenced with an mdToken. (An exception is that custom attributes themselves cannot have custom attributes.) \\ \hline
 
-%mdPermission &
-%Permission &
-%Permission set: A declarative security permission set associated with mdTypeDef, mdMethodDef, and mdAssembly. For more information, see Adding Declarative Security Support. \\ \hline
-
-%mdTypeSpec &
-%TypeSpec &
-%Type constructor: A method that obtains a token for a type (such as a boxed value type) that can be used as input to any MSIL instruction that takes a type. \\ \hline 
-
-%mdSignature &
-%Signature &
-%Stand-alone signature: A local variable signature in the portable executable (PE) file or a method signature that is passed to an MSIL instruction. \\ \hline
-
-%mdString & 
-%String &
-%User string: A string that is passed to an MSIL instruction. \\ \hline
 
 	\end{longtable}
 \end{center}
-
-\subsection{Interpretacja metadanych}
-
-Do zaimplementowania procesu weryfikacji programów przy obranym podejœciu zachodzi potrzeba interpretacji metadanych. W tym celu potrzebna jest wiedza na temat reprezentacji metadanych i w jaki sposób nale¿y je interpretowaæ.
-Jak to zosta³o opisane w poprzednim paragrafie, metadane przechowywane s¹ w tablicach, do których dostêp uzyskiwany jest poprzez token odpowiedniego typu.
-W ramach tych tablic, które s¹ czêœci¹ strumienia \#\~, znajduj¹ siê odwo³ania do strumienia \#Blob. W strumieniu tym zawarte s¹ dane opisuj¹ce sygnatury metod.
-Sygnatura opisuj¹ca metody zawiera w sobie wszelkie dotycz¹ce jej informacje, m.in. typy argumentów, typ wartoœci zwracanej. Inne rodzaje sygnatur przechowuj¹ informacjê o typach pól klasy, propercji czy te¿ zmiennych lokalnych.
-Niezale¿nie od opisywanego elementu jêzyka, sygnatura przechowywana jest jako tablica bajtowa. Istnieje kilka rodzajów sygnatur, z których ka¿da opisuje inny rodzaj encji:
-\begin{itemize}
-\item MethodRefSig
-\item MethodDefSig
-\item FieldSig
-\item PropertySig
-\item LocalVarSig
-\item TypeSpec
-\item MethodSpec
-\end{itemize}
-
-W przypadku biblioteki AsProfiled konieczne jest odczytywanie informacji na temat metod, w tym celu konieczna jest funkcjonalnoœæ sygnatur typu MethodDefSig.
-
-Poni¿ej przedstawiono strukturê tej sygnatury:
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=5in]{MethodDefSig2}
-\caption{Struktura sygnatury metadanych opisuj¹cych metodê}
-\label{fig:MethodDefSigDiagram}
-\end{figure}
-Legenda:
-\begin{itemize}
-\item HASTHIS = 0x20, EXPLICITTHIS = 0x40, DEFAULT = 0x0, VARARG = 0x5 - konwencja w jakiej wywo³ywana jest metoda
-\item GENERIC = 0x10 - oznaczenie okreœlaj¹ca czy metoda posiada co najmniej jeden parametr generyczny
-\item GenParamCount - oznacza liczbê parametrów generycznych
-\item ParamCount - okreœla liczbê parametrów metody
-\item RetType - niesie informacjê o typie wartoœci zwracanej
-\item Param - opisuje typ ka¿dego parametru metody, w ramach sygnatury element ten powinien wystêpowaæ ParamCount razy
-\end{itemize}
-
-Poni¿ej zamieszczono schematy ilustruj¹ce strukturê parametrów metody oraz jej wartoœæ zwracan¹.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=5in]{paramdiagram.ps}
-\caption{Struktura sygnatury parametru metody}
-\label{fig:ParamDiag}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=5in]{rettypediagram.ps}
-\caption{Struktura sygnatury okreœlaj¹cej wartoœæ zwracan¹}
-\label{fig:RetTypeDiag}
-\end{figure}
-\clearpage
-Powy¿sze ilustracje ró¿ni¹ siê tylko dodatkowym rozga³êzieniem z elementem VOID, który oznacza, i¿ metoda nie zwraca ¿adnej wartoœci.
-
-Element TYPE zdefiniowany jako jedna z wartoœci:\\
-\begin{lstlisting}[label=TypeDef, caption=Znaczenie elementu TYPE]
-BOOLEAN | CHAR | I1 | U1 | I2 | U2 | I4 | U4 | I8 | U8 | R4 | R8 | I  | U | 
-| VALUETYPE TypeDefOrRefEncoded
-| CLASS TypeDefOrRefEncoded
-| STRING
-| OBJECT
-| PTR CustomMod* VOID
-| PTR CustomMod* Type
-| FNPTR MethodDefSig
-| FNPTR MethodRefSig
-| ARRAY Type ArrayShape
-| SZARRAY CustomMod* Type
-\end{lstlisting}
-Wartoœci te odpowiadaj¹ typom w ramach platformy .NET.
-
-Innym wa¿nym elementem istotnym z punktu widzenia biblioteki AsProfiled jest struktura sygnatury atrybutów, które s³u¿¹ jako noœnik kontraktów. Ilustruje j¹ poni¿szy schemat: 
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=5in]{customattrib.ps}
-\caption{}
-\label{fig:CustomAttribDiag}
-\end{figure}
-
-Interpretacja tych sygnatur jest podstawowym elementem, który nale¿y wzi¹æ pod uwagê w zadaniu ewaluacji kontraktów.
-Dziêki tym informacjom mo¿na okreœliæ typ obiektu, w szczególnoœci argumentów funkcji, co z kolei umo¿liwia odczytanie ich aktualnych wartoœci w momencie wywo³ania funkcji. 
-
-
-
-Proces ten rozpoczyna siê od pobrania wartoœci tokenu, opisanych w poprzedniej sekcji, odpowiedniego typu. 
-
-Tokeny odpowiedniego rodzaju uzyskiwane s¹ poprzez wywo³ania odpowiednich metod na obiektach implementuj¹cych okreœlone interfejsów.
-Dziêki informacj¹ zawartych w metadanych mo¿liwy jest odczyt niezbêdnych informacji.
-
 
 %used to encode the keyword instance in the calling convention, see §15.3
 %EXPLICITTHIS = 0x40, used to encode the keyword explicit in the calling %convention, see §15.3
@@ -310,9 +160,9 @@ Dziêki informacj¹ zawartych w metadanych mo¿liwy jest odczyt niezbêdnych informa
 \section{Odczytywanie wartoœci argumentów metod}
 
 %Kolejnym krokiem na drodze do ewaluacji kontraktów jest odczyt wartoœci %argumentów przekazywanych do metody w trakcie jej wywo³ania.
-Dziêki informacjom zawartym w metadanych, mo¿liwe jest okreœlenie liczby i typów parametrów przekazywanych do metod. S¹ to dane statyczne, w tym sensie, ¿e s¹ one sta³e w ramach raz zdefiniowanego programu. Z drugiej wartoœci parametrów mog¹ byæ inne dla ka¿dego wywo³ania metody, tak wiêc nie mog¹ w ¿aden sposób stanowiæ czêœci metadanych. Musi wiêc zatem istnieæ osobny mechanizm pozwalaj¹cy na realizacjê tego zadania. \\
-Okazuje siê, ¿e w momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê COR\_PRF\_FUNCTION\_ARGUMENT\_INFO, która jest przekazywana do odbiorcy. 
-Zdefiniowana jest w nastêpuj¹cy sposób:
+Dziêki informacjom zawartym w metadanych, mo¿liwe jest okreœlenie liczby i typów parametrów przekazywanych do metod. S¹ to dane statyczne, w tym sensie, ¿e s¹ one sta³e w ramach raz zdefiniowanego programu. Z drugiej strony, wartoœci parametrów mog¹ byæ inne dla ka¿dego wywo³ania metody, tak wiêc nie mog¹ w ¿aden sposób stanowiæ czêœci metadanych. Musi wiêc zatem istnieæ osobny mechanizm pozwalaj¹cy na realizacjê tego zadania. \\
+Okazuje siê, ¿e w momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê \emph{\_COR\_PRF\_FUNCTION\_ARGUMENT\_INFO}, która jest przekazywana do odbiorcy. 
+Jej definicja przedstawia siê w sposób nastêpuj¹cy:
 \begin{lstlisting}[label=CorPrfFunctionArgumentInfo]
 typedef struct _COR_PRF_FUNCTION_ARGUMENT_INFO {
     ULONG numRanges;
@@ -320,7 +170,7 @@ typedef struct _COR_PRF_FUNCTION_ARGUMENT_INFO {
     COR_PRF_FUNCTION_ARGUMENT_RANGE ranges[1];
 } COR_PRF_FUNCTION_ARGUMENT_INFO;
 \end{lstlisting}
-Objaœenia:
+Objaœnienia:
 \begin{itemize}
 \item \emph{numRanges} - Liczba bloków pamiêci, wewn¹trz których znajduj¹ siê wartoœci argumentów. Okreœla liczbê elementów tablicy typu \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}
 \item \emph{totalArgumentSize} - Ca³kowita d³ugoœæ wszystkich argumentów wyra¿ona w bajtach.
@@ -344,8 +194,49 @@ Te dane w po³¹czeniu z informacj¹ o typie argumentu pozwalaj¹ na poprawny odczyt
 
 \section{Wartoœci zwracane}
 \label{sec:chapter4:section5}
-Kolejnym elementem jest mo¿liwoœæ weryfikacji kontraktów zawieraj¹cych w sobie odniesienia do wartoœci zwracanej przez metodê.
-Takie odniesienia maj¹ tylko sens przy warunkach koñcowych, po odebraniu notyfikacji o zdarzeniu opuszczenia metody. 
+
+Kolejnym elementem jest mo¿liwoœæ weryfikacji kontraktów zawieraj¹cych w sobie odniesienia do wartoœci zwracanej przez metodê.\\
+
+W dalszych przyk³adach wykorzystano klasê \emph{Account} reprezentuj¹c¹ konto bankowe, której czêœciowa definicja zawarta jest poni¿ej.
+\begin{lstlisting}[label=AccountClass, caption=Klasa Account]
+class Account {
+ // Identyfikator konta
+ public long AccountId;
+ // Stan œrodków na koncie
+ public int Balance;
+ // Nazwisko posiadacza
+ public string OwnerName;
+ 
+ ...
+}
+\end{lstlisting}
+
+
+Dodatkowo, niech dana bêdzie klasa \emph{AccountManager} definiuj¹ca operacje na obiektach typu \emph{Account}.
+
+\begin{lstlisting}[label=AccountClass, caption=Klasa AccountManager]
+class AccountManager {
+ public Account ChangeOwnerName(Account account, string newName) {
+  // Wywo³anie metody rejestruj¹cej bie¿¹c¹ operacjê w bazie danych
+  // Zwraca zapisan¹ wartoœæ
+  account.OwnerName = Database.SetAccountOwnerInternal(account.accountId, newName);
+  return account; 
+ }
+}
+\end{lstlisting}
+
+Metoda ta zwraca obiekt typu \emph{Account}, z uaktualnion¹ wartoœci¹ \emph{OwnerName} mówi¹c¹ o dostêpnych œrodkach. W celu sprawdzenia poprawnoœci dzia³ania tej funkcjonalnoœci mo¿liwe jest na³o¿enie odpowiedniego kontraktu  na metodê \emph{ChangeOwnerName}. Przy u¿yciu atrybutów z biblioteki \emph{AsProfiled} mo¿liwa jest inspekcja obiektu zwracanego z metody. Warto zaznaczyæ, ¿e takie odniesienia maj¹ tylko sens przy warunkach koñcowych, po odebraniu notyfikacji o zdarzeniu opuszczenia metody.
+W ramach atrybutów \emph{AsContract} odwo³anie do wartoœci zwracanej odbywa siê poprzez u¿ycie  identyfikatora \emph{@returnValue}. Maj¹c to na uwadze, warunek koñcowy, sprawdzaj¹cy czy nazwisko posiadacza rzeczywiœcie zosta³o uaktualnione, na³o¿ony na t¹ metodê, móg³by mieæ nastêpuj¹c¹ postaæ:
+
+\begin{lstlisting}[label=AccountClass, caption=Sprawdzenie poprawnoœci operacji uaktualnienia nazwiska posiadacza konta]
+ [AsContract(null, "@returnValue.OwnerName == newName")]
+ public Account ChangeOwnerName(Account account, string newName) {
+  account.OwnerName = Database.SetAccountOwnerInternal(account.accountId, newName);
+  return account; 
+ }
+}
+\end{lstlisting}
+
 Sposób odczytu wartoœci zwracanej jest analogiczny do odczytywania wartoœci parametrów metody. W tym wypadku, odbiorca zdarzenia otrzymuje dostêp do pojedynczego obiektu typu \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, który zawiera w sobie informacje na temat po³o¿enia wartoœci zwracanej w pamiêci.
 
 \section{Wartoœci pocz¹tkowe}
@@ -354,7 +245,41 @@ Termin wartoœci pocz¹tkowe odnosi siê do stanu argumentów w momencie wywo³ania m
 
 Jedyn¹ sytuacj¹ jak¹ nale¿y rozwa¿yæ jest przypadek, w którym odwo³ania do wartoœci pocz¹tkowych ma miejsce w warunku koñcowym w ramach danego kontraktu.
 Rzecz jasna, odwo³ania do tych wartoœci nie maj¹ sensu w przypadku warunków pocz¹tkowych, gdy¿ te ewaluowane s¹ zanim sterowanie dojdzie do momentu wykonywania instrukcji wewn¹trz metody, a które mog³yby zmodyfikowaæ stan obiektu. 
-Z drugiej strony, co wynika ze specyfiki otrzymywanych powiadomieñ, odczytywanie argumentów jest mo¿liwe tylko w momencie wywo³ywania metody. Co za tym idzie, niezbêdne jest zachowanie stanu obiektu w tym momencie i odwo³ywanie siê do niego w czasie weryfikacji warunków koñcowych. Dodatkowo, nie wystarczy zachowanie referencji do obiektu. Wynika to z faktu, i¿ pomimo przekazywanie argumentów do metody odbywa siê poprzez kopiowanie, to kopiowana jest tylko referencja do obiektu, a nie sam obiekt. Oczywiœcie kopia referencji dalej wskazuje na ten sam obiekt, wiêc zmieniaj¹c stan obiektu przy jej u¿yciu, zmieniany jest oryginalny obiekt.
+Z drugiej strony, co wynika ze specyfiki otrzymywanych powiadomieñ, odczytywanie argumentów jest mo¿liwe tylko w momencie wywo³ywania metody.\\
+
+
+Niech dana bêdzie metoda zwiêkszaj¹ca bilans konta bankowego po wp³yniêciu na nie œrodków.
+
+\begin{lstlisting}[label=InitialValues, caption=Metoda zwiêkszaj¹ca bilans konta]
+
+class AccountManager {
+ public Account Deposit(Account account, int sum) {
+  // Wywo³anie metody zapisuj¹cej do bazy danych nowy stan konta o danym
+  // identyfikatorze
+  // Zwraca uaktualniony obiekt typu Account
+  int newBalance = Database.DepositInternal(AccountId, sum);
+  account.Balance = newBalance;
+  return account; 
+ }
+}
+\end{lstlisting}
+
+W tej sytuacji ma sens weryfikacja stanu konta po zakoñczeniu metody \emph{Deposit}. W ramach biblioteki \emph{AsProfiled} mo¿liwe jest zdefiniowanie warunku koñcowego, który weryfikuje t¹ wartoœæ, przy uwzglêdnieniu wartoœci pocz¹tkowej elementu Balance.
+W tej konkretnej sytuacji bêdzie mia³ on nastêpuj¹c¹ postaæ:
+\begin{lstlisting}[label=InitialValuesConstrained, caption=Odwo³anie do wartoœci pocz¹tkowej]
+[AsContract(null, "account.Balance == ^account.Balance + sum")]
+public Account Deposit(Account account, int sum) {
+ int newBalance = Database.DepositInternal(AccountId, sum);
+ account.Balance = newBalance;
+ return account; 
+}
+\end{lstlisting}
+
+Kontrakt ten nak³ada warunek okreœlaj¹cy, i¿ po spe³niony po zakoñczeniu wykonywania metody nowa wartoœæ pola \emph{Balance} obiektu typu \emph{Account} musi byæ równa pocz¹tkowej wartoœci tego pola powiêkszonej o wartoœæ \emph{sum}
+Odwo³anie do wartoœci pocz¹tkowych danego argumentu odbywa siê poprzez poprzedzenie jego nazwy symbolem \^{}, tutaj \^{}account.Balance. \\
+
+
+Zgodnie z tym co zosta³o powiedziane wczeœniej, niezbêdne jest zachowanie stanu obiektu w momencie otrzymania notyfikacji o rozpoczêciu wykonywania metody i odwo³ywanie siê do niego w czasie weryfikacji warunków koñcowych. Dodatkowo, nie wystarczy zachowanie referencji do obiektu. Wynika to z faktu, i¿ pomimo tego, ¿e przekazywanie argumentów do metody odbywa siê poprzez kopiowanie, to kopiowana jest tylko referencja do obiektu, a nie sam obiekt. Oczywiœcie, kopia referencji dalej wskazuje na ten sam obiekt, wiêc zmieniaj¹c stan obiektu przy jej u¿yciu, zmieniany jest oryginalny obiekt.
 Z tego powodu niezbêdne okazuje siê kopiowanie poszczególnych wartoœci do których wystêpuje odwo³anie w warunkach koñcowych.
 Konieczne jest wiêc przeprowadzanie przetwarzania wstêpnego, tzn. w chwili otrzymania powiadomienia o wywo³aniu metody przeprowadzona zostaje analiza zarówno warunków pocz¹tkowych i warunków koñcowych kontraktu. W czasie tej analizy warunek koñcowy sprawdzany jest pod k¹tem wystêpowania elementów odnosz¹cych siê do stanu pocz¹tkowego argumentów funkcji. Nastêpnie argumenty, do których takie odwo³ania wystêpuj¹ poddawane s¹ inspekcji i wy³uskiwana jest wartoœæ sk³adowej obiektu, do którego odniesienie znajduje siê w warunku koñcowym. Ta wartoœæ zapisywana jest w pamiêci podrêcznej aplikacji, do której dostêp jest mo¿liwy w momencie otrzymania powiadomienia o zakoñczeniu wykonywania weryfikowanej metody, kiedy to mo¿e zostaæ u¿yta do weryfikacji warunku koñcowego.\\
 

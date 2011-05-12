@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TestApplication.Calculator;
+using LinFu.DesignByContract2.Contracts;
 
 namespace TestApplication
 {
@@ -19,6 +20,13 @@ namespace TestApplication
             {
                 //Test(r.Next() % 2 == 0);
             }
+
+            MsContractsCalculator cc = new MsContractsCalculator();
+            cc.Div(DateTime.Now.Second, 2);
+
+            AdHocContract contract = new AdHocContract();
+            Require.On(contract).ForMethodWith(t => t.Name == "Mult").That<int>(arg => arg != 0).OtherwisePrint("Error");
+            
         }
 
         static void Test(bool val)
