@@ -12,23 +12,25 @@
 \contentsline {section}{\numberline {3.2}Kontrakty}{9}{section.3.2}
 \contentsline {section}{\numberline {3.3}Metadane}{10}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Reprezentacja metadanych}{10}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Interpretacja metadanych}{12}{subsection.3.3.2}
-\contentsline {section}{\numberline {3.4}Odczytywanie warto\'sci argument\'ow metod}{16}{section.3.4}
-\contentsline {section}{\numberline {3.5}Warto\'sci zwracane}{17}{section.3.5}
-\contentsline {section}{\numberline {3.6}Warto\'sci pocz\k atkowe}{17}{section.3.6}
-\contentsline {chapter}{\chapternumberline {4}Szczeg\'o\IeC {\l }y implementacji}{19}{chapter.4}
-\contentsline {section}{\numberline {4.1}Atrybuty jako kontrakty}{21}{section.4.1}
-\contentsline {section}{\numberline {4.2}Gramatyka kontrakt\'ow}{21}{section.4.2}
-\contentsline {section}{\numberline {4.3}Om\'owienie i implementacja interfejs\'ow}{23}{section.4.3}
-\contentsline {section}{\numberline {4.4}Odbieranie notyfikacji o zdarzeniach zachodz\k acych w programie}{25}{section.4.4}
-\contentsline {section}{\numberline {4.5}Odczyt metadanych}{26}{section.4.5}
-\contentsline {section}{\numberline {4.6}Parsowanie wyra\.ze\'n zawartych w kontraktach}{27}{section.4.6}
-\contentsline {section}{\numberline {4.7}Inspekcja warto\'sci zmiennych}{29}{section.4.7}
-\contentsline {subsection}{\numberline {4.7.1}Typy wbudowane}{30}{subsection.4.7.1}
-\contentsline {subsection}{\numberline {4.7.2}Odwo\IeC {\l }ania do warto\'sci sk\IeC {\l }adowych obiekt\'ow z\IeC {\l }o\.zonych}{32}{subsection.4.7.2}
-\contentsline {section}{\numberline {4.8}Ewaluacja kontrakt\'ow}{32}{section.4.8}
-\contentsline {subsection}{\numberline {4.8.1}Zachowywanie warto\'sci pocz\k atkowych}{33}{subsection.4.8.1}
-\contentsline {subsection}{\numberline {4.8.2}Warto\'sci zwracane}{33}{subsection.4.8.2}
-\contentsline {chapter}{\chapternumberline {5}Por\'ownanie z innymi bibliotekami}{35}{chapter.5}
-\contentsline {section}{\numberline {5.1}CodeContracts}{35}{section.5.1}
-\contentsline {section}{\numberline {5.2}LinFu.Contracts}{37}{section.5.2}
+\contentsline {section}{\numberline {3.4}Odczytywanie warto\'sci argument\'ow metod}{12}{section.3.4}
+\contentsline {section}{\numberline {3.5}Warto\'sci zwracane}{13}{section.3.5}
+\contentsline {section}{\numberline {3.6}Warto\'sci pocz\k atkowe}{14}{section.3.6}
+\contentsline {chapter}{\chapternumberline {4}Szczeg\'o\IeC {\l }y implementacji}{17}{chapter.4}
+\contentsline {section}{\numberline {4.1}Atrybuty jako kontrakty}{19}{section.4.1}
+\contentsline {section}{\numberline {4.2}Gramatyka kontrakt\'ow}{19}{section.4.2}
+\contentsline {section}{\numberline {4.3}Om\'owienie i implementacja interfejs\'ow}{21}{section.4.3}
+\contentsline {section}{\numberline {4.4}Odbieranie notyfikacji o zdarzeniach zachodz\k acych w programie}{23}{section.4.4}
+\contentsline {section}{\numberline {4.5}Odczyt metadanych}{24}{section.4.5}
+\contentsline {subsection}{\numberline {4.5.1}Interpretacja metadanych}{25}{subsection.4.5.1}
+\contentsline {subsection}{\numberline {4.5.2}Odczyt metadanych w bibliotece AsProfiled}{28}{subsection.4.5.2}
+\contentsline {section}{\numberline {4.6}Parsowanie wyra\.ze\'n zawartych w kontraktach}{29}{section.4.6}
+\contentsline {section}{\numberline {4.7}Inspekcja warto\'sci zmiennych}{31}{section.4.7}
+\contentsline {subsection}{\numberline {4.7.1}Typy wbudowane}{32}{subsection.4.7.1}
+\contentsline {subsection}{\numberline {4.7.2}Odwo\IeC {\l }ania do warto\'sci sk\IeC {\l }adowych obiekt\'ow z\IeC {\l }o\.zonych}{34}{subsection.4.7.2}
+\contentsline {section}{\numberline {4.8}Ewaluacja kontrakt\'ow}{34}{section.4.8}
+\contentsline {subsection}{\numberline {4.8.1}Zachowywanie warto\'sci pocz\k atkowych}{35}{subsection.4.8.1}
+\contentsline {subsection}{\numberline {4.8.2}Warto\'sci zwracane}{35}{subsection.4.8.2}
+\contentsline {chapter}{\chapternumberline {5}Por\'ownanie z innymi bibliotekami}{36}{chapter.5}
+\contentsline {section}{\numberline {5.1}CodeContracts}{36}{section.5.1}
+\contentsline {section}{\numberline {5.2}LinFu.Contracts}{39}{section.5.2}
+\contentsline {chapter}{\chapternumberline {6}Podsumowanie}{40}{chapter.6}

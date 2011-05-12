@@ -1,7 +1,7 @@
 %*********** Rodzial 4 ************
 \chapter{Szczegó³y implementacji}
 W tym rozdziale opisano szczegó³y dotycz¹ce implementacyjne biblioteki.
-
+Poni¿szy diagram ilustruje proces przetwarzania jakiemu poddawany jest kontrakt w celu oceny jego prawdziwoœci. Poszczególne elementy opisane s¹ w odpowiadaj¹cych im podrozdzia³ach.
 \begin{figure}[h]
 \centering
 \includegraphics[width=5in]{evalflow}
@@ -234,6 +234,99 @@ Te funkcje maj¹ bezpoœrednie prze³o¿enie na zadanie ewaluacji kontraktów. W rama
 
 \section{Odczyt metadanych}
 W tym podrozdziale opisano kolejny krok na drodze do ewaluacji kontraktu, jakim jest interpretacja metadanych w celu uzyskania informacji o wywo³ywanych metodach i jej argumentach.
+
+\subsection{Interpretacja metadanych}
+
+Do zaimplementowania procesu weryfikacji programów przy obranym podejœciu zachodzi potrzeba interpretacji metadanych. W tym celu potrzebna jest wiedza na temat reprezentacji metadanych i w jaki sposób nale¿y je interpretowaæ.
+Jak to zosta³o opisane w poprzednim paragrafie, metadane przechowywane s¹ w tablicach, do których dostêp uzyskiwany jest poprzez token odpowiedniego typu.
+W ramach tych tablic, które s¹ czêœci¹ strumienia \#\~, znajduj¹ siê odwo³ania do strumienia \#Blob. W strumieniu tym zawarte s¹ dane opisuj¹ce sygnatury metod.
+Sygnatura opisuj¹ca metody zawiera w sobie wszelkie dotycz¹ce jej informacje, m.in. typy argumentów, typ wartoœci zwracanej. Inne rodzaje sygnatur przechowuj¹ informacjê o typach pól klasy, propercji czy te¿ zmiennych lokalnych.
+Niezale¿nie od opisywanego elementu jêzyka, sygnatura przechowywana jest jako tablica bajtowa. Istnieje kilka rodzajów sygnatur, z których ka¿da opisuje inny rodzaj encji:
+\begin{itemize}
+\item MethodRefSig
+\item MethodDefSig
+\item FieldSig
+\item PropertySig
+\item LocalVarSig
+\item TypeSpec
+\item MethodSpec
+\end{itemize}
+
+W przypadku biblioteki AsProfiled konieczne jest odczytywanie informacji na temat metod, w tym celu konieczna jest funkcjonalnoœæ sygnatur typu MethodDefSig.
+
+Poni¿ej przedstawiono strukturê tej sygnatury:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5in]{MethodDefSig2}
+\caption{Struktura sygnatury metadanych opisuj¹cych metodê}
+\label{fig:MethodDefSigDiagram}
+\end{figure}
+Legenda:
+\begin{itemize}
+\item HASTHIS = 0x20, EXPLICITTHIS = 0x40, DEFAULT = 0x0, VARARG = 0x5 - konwencja w jakiej wywo³ywana jest metoda
+\item GENERIC = 0x10 - oznaczenie okreœlaj¹ca czy metoda posiada co najmniej jeden parametr generyczny
+\item GenParamCount - oznacza liczbê parametrów generycznych
+\item ParamCount - okreœla liczbê parametrów metody
+\item RetType - niesie informacjê o typie wartoœci zwracanej
+\item Param - opisuje typ ka¿dego parametru metody, w ramach sygnatury element ten powinien wystêpowaæ ParamCount razy
+\end{itemize}
+
+Poni¿ej zamieszczono schematy ilustruj¹ce strukturê parametrów metody oraz jej wartoœæ zwracan¹.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5in]{paramdiagram.ps}
+\caption{Struktura sygnatury parametru metody}
+\label{fig:ParamDiag}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5in]{rettypediagram.ps}
+\caption{Struktura sygnatury okreœlaj¹cej wartoœæ zwracan¹}
+\label{fig:RetTypeDiag}
+\end{figure}
+\clearpage
+Powy¿sze ilustracje ró¿ni¹ siê tylko dodatkowym rozga³êzieniem z elementem VOID, który oznacza, i¿ metoda nie zwraca ¿adnej wartoœci.
+
+Element TYPE zdefiniowany jako jedna z wartoœci:\\
+\begin{lstlisting}[label=TypeDef, caption=Znaczenie elementu TYPE]
+BOOLEAN | CHAR | I1 | U1 | I2 | U2 | I4 | U4 | I8 | U8 | R4 | R8 | I  | U | 
+| VALUETYPE TypeDefOrRefEncoded
+| CLASS TypeDefOrRefEncoded
+| STRING
+| OBJECT
+| PTR CustomMod* VOID
+| PTR CustomMod* Type
+| FNPTR MethodDefSig
+| FNPTR MethodRefSig
+| ARRAY Type ArrayShape
+| SZARRAY CustomMod* Type
+\end{lstlisting}
+Wartoœci te odpowiadaj¹ typom w ramach platformy .NET.
+
+Innym wa¿nym elementem istotnym z punktu widzenia biblioteki AsProfiled jest struktura sygnatury atrybutów, które s³u¿¹ jako noœnik kontraktów. Ilustruje j¹ poni¿szy schemat: 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5in]{customattrib.ps}
+\caption{}
+\label{fig:CustomAttribDiag}
+\end{figure}
+
+Interpretacja tych sygnatur jest podstawowym elementem, który nale¿y wzi¹æ pod uwagê w zadaniu ewaluacji kontraktów.
+Dziêki tym informacjom mo¿na okreœliæ typ obiektu, w szczególnoœci argumentów funkcji, co z kolei umo¿liwia odczytanie ich aktualnych wartoœci w momencie wywo³ania funkcji. 
+
+
+
+Proces ten rozpoczyna siê od pobrania wartoœci tokenu, opisanych w poprzedniej sekcji, odpowiedniego typu. 
+
+Tokeny odpowiedniego rodzaju uzyskiwane s¹ poprzez wywo³ania odpowiednich metod na obiektach implementuj¹cych okreœlone interfejsów.
+Dziêki informacj¹ zawartych w metadanych mo¿liwy jest odczyt niezbêdnych informacji.
+
+\subsection{Odczyt metadanych w bibliotece AsProfiled}
+
 Wywo³anie ka¿dej z metod kontrolowanego programu powoduje wywo³anie metody FunctionEnter. W ramach tej funkcji odczytywane s¹ informacje na temat metody, co do której otrzymano powiadomienie. Jest to mo¿liwe dziêki otrzymywaniu jej identyfikatora w postaci argumentu functionID funkcji FunctionEnter, a nastêpnie wykorzystaniu go do uzyskania dostêpu do metadanych.
 Krok ten realizowany jest poprzez wywo³anie metody o sygnaturze
 \begin{lstlisting}[label=GetTokenAndMetaDataFromFunction, caption=GetTokenAndMetaDataFromFunction]

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (MiKTeX 2.9) (preloaded format=latex 2011.3.9)  24 APR 2011 00:06
+This is pdfTeX, Version 3.1415926-1.40.11 (MiKTeX 2.9) (preloaded format=latex 2011.3.9)  26 APR 2011 02:25
 entering extended mode
 **ms.tex
 (C:\Dev\asprofiled\Docs\MS\ms.tex
@@ -784,7 +784,14 @@ Sidefoothsep and sidefootwidth: 7pt and 49pt
 Sidefootvsep and sidefootheight: 13.6pt and 594.32022pt
 ******************************************************
 
-) (C:\Dev\asprofiled\Docs\MS\ms.aux)
+) (C:\Dev\asprofiled\Docs\MS\ms.aux
+
+LaTeX Warning: Label `AccountClass' multiply defined.
+
+
+LaTeX Warning: Label `AccountClass' multiply defined.
+
+)
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 6.
 LaTeX Font Info:    ... okay on input line 6.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 6.
@@ -939,8 +946,13 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 57--57
 [][][][][][][] 
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--94
+
+ []
+
 [5]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 95--95
+Overfull \hbox (6.0pt too wide) in paragraph at lines 99--99
 [][][][][][][] 
  []
 
@@ -985,80 +997,91 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 43--43
  []
 
 [10]
-Underfull \hbox (badness 3872) in paragraph at lines 131--131
+Underfull \hbox (badness 3872) in paragraph at lines 109--109
 [][]|\OT4/cmss/m/n/10.95 Odniesienie do me-ta-da-nych do-ty-
  []
 
 
-Overfull \hbox (46.72351pt too wide) in alignment at lines 99--175
+Overfull \hbox (46.72351pt too wide) in alignment at lines 89--116
  [] [] [] 
  []
 
 
-Underfull \vbox (badness 10000) detected at line 175
+Underfull \vbox (badness 10000) detected at line 116
  []
 
 [11]
-File: ./images/MethodDefSig2.ps Graphic file (type eps)
- <./images/MethodDefSig2.ps>
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[12]
-File: ./images/paramdiagram.ps Graphic file (type eps)
- <./images/paramdiagram.ps>
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-File: ./images/rettypediagram.ps Graphic file (type eps)
-<./images/rettypediagram.ps>
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[13] [14]
-Underfull \hbox (badness 10000) in paragraph at lines 233--234
-
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 234--234
-[][][][][][][] 
- []
-
-File: ./images/customattrib.ps Graphic file (type eps)
-<./images/customattrib.ps>
-Overfull \hbox (55.61925pt too wide) in paragraph at lines 313--316
+Overfull \hbox (59.56125pt too wide) in paragraph at lines 163--166
 \OT4/cmss/m/n/10.95 me-to-dy, ma-szy-na wir-tu-al-na .NET wy-peª-nia struk-tu-r
-¦ COR[]PRF[]FUNCTION[]ARGUMENT[]INFO,
+¦ []\OT4/cmss/m/sl/10.95 COR[]PRF[]FUNCTION[]ARGUMENT[]INFO\OT4/cmss/m/n/10.95 
+,
  []
 
-[15
 
-]
-Overfull \hbox (76.82188pt too wide) in paragraph at lines 325--326
+Overfull \hbox (76.82188pt too wide) in paragraph at lines 175--176
 \OT4/cmss/m/n/10.95 gu-men-tów. Okre-±la licz-b¦ ele-men-tów ta-bli-cy ty-pu \O
 T4/cmss/m/sl/10.95 COR[]PRF[]FUNCTION[]ARGUMENT[]RANGE 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 337--339
-
- []
-
-[16]
-Underfull \hbox (badness 10000) in paragraph at lines 355--360
+[12]
+Underfull \hbox (badness 10000) in paragraph at lines 187--189
 
  []
 
-[17]) (C:\Dev\asprofiled\Docs\MS\chap5//chap5.tex [18]
+
+Underfull \hbox (badness 10000) in paragraph at lines 198--199
+
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 201--201
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 217--217
+[][][][][][][] 
+ []
+
+[13]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 231--231
+[][][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 246--249
+
+ []
+
+[14]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 253--253
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 269--269
+[][][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 278--280
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 282--285
+
+ []
+
+[15]) (C:\Dev\asprofiled\Docs\MS\chap5//chap5.tex [16]
 File: ./images/evalflow.ps Graphic file (type eps)
  <./images/evalflow.ps>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[19
+[17
 
-] [20]
+] [18]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 15--15
 [][][][][][][] 
  []
@@ -1068,9 +1091,9 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 37--37
 [][][][][][][] 
  []
 
-[21
+[19
 
-] [22]
+] [20]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 104--104
 [][][][][][][] 
  []
@@ -1089,7 +1112,7 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 128--128
 [][][][][][][] 
  []
 
-[23]
+[21]
 Underfull \hbox (badness 10000) in paragraph at lines 133--134
 
  []
@@ -1104,12 +1127,12 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 142--142
 [][][][][][][] 
  []
 
-[24]
+[22]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 205--205
 [][][][][][][] 
  []
 
-[25]
+[23]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 218--218
 [][][][][][][] 
  []
@@ -1124,99 +1147,136 @@ Underfull \hbox (badness 10000) in paragraph at lines 228--232
 
  []
 
-[26]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 239--239
+[24]
+File: ./images/MethodDefSig2.ps Graphic file (type eps)
+ <./images/MethodDefSig2.ps>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[25]
+File: ./images/paramdiagram.ps Graphic file (type eps)
+ <./images/paramdiagram.ps>
+File: ./images/rettypediagram.ps Graphic file (type eps)
+ <./images/rettypediagram.ps>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[26] [27]
+Underfull \hbox (badness 10000) in paragraph at lines 293--294
+
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 294--294
+[][][][][][][] 
+ []
+
+File: ./images/customattrib.ps Graphic file (type eps)
+<./images/customattrib.ps> [28
+
+]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 332--332
 [][][][][][][] 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 250--250
+Overfull \hbox (6.0pt too wide) in paragraph at lines 343--343
 [][][][][][][] 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 268--268
+Overfull \hbox (6.0pt too wide) in paragraph at lines 361--361
 [][][][][][][] 
- []
-
-[27]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 291--291
-[][][][][][][] 
- []
-
-[28]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 334--334
-[][][][][][][] 
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 344--344
-[][][][][][][] 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 349--351
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 358--360
-
  []
 
 [29]
-Underfull \vbox (badness 10000) detected at line 388
+Overfull \hbox (6.0pt too wide) in paragraph at lines 384--384
+[][][][][][][] 
+ []
+
+[30]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 427--427
+[][][][][][][] 
  []
 
 
-Overfull \hbox (3.15147pt too wide) in paragraph at lines 393--399
+Overfull \hbox (6.0pt too wide) in paragraph at lines 437--437
+[][][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 442--444
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 451--453
+
+ []
+
+[31]
+Underfull \vbox (badness 10000) detected at line 481
+ []
+
+
+Overfull \hbox (3.15147pt too wide) in paragraph at lines 486--492
 \OT4/cmss/m/n/10.95 prze-ka-zy-wa-na jest struk-tu-ra \OT4/cmss/m/sl/10.95 COR[
 ]PRF[]FUNCTION[]ARGUMENT[]RANGE \OT4/cmss/m/n/10.95 (zob. [][][][]),
  []
 
 
-Overfull \hbox (11.43pt too wide) in paragraph at lines 393--399
+Overfull \hbox (11.43pt too wide) in paragraph at lines 486--492
 \OT4/cmss/m/n/10.95 okre-±lo-na jest przez po-le \OT4/cmss/m/sl/10.95 len-ght \
 OT4/cmss/m/n/10.95 struk-tu-ry \OT4/cmss/m/sl/10.95 COR[]PRF[]FUNCTION[]ARGUMEN
 T[]RANGE
  []
 
-[30]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 399--399
-[][][][][][][] 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 407--408
-
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 412--412
-[][][][][][][] 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 418--420
-
- []
-
-[31]
-Underfull \hbox (badness 10000) in paragraph at lines 430--432
-
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 448--448
-[][][][][][][] 
- []
-
 [32]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 465--465
+Overfull \hbox (6.0pt too wide) in paragraph at lines 492--492
 [][][][][][][] 
  []
 
-) (C:\Dev\asprofiled\Docs\MS\chap6//chap6.tex [33] [34] [35
+
+Underfull \hbox (badness 10000) in paragraph at lines 500--501
+
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 505--505
+[][][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 511--513
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 523--525
+
+ []
+
+[33]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 541--541
+[][][][][][][] 
+ []
+
+[34]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 558--558
+[][][][][][][] 
+ []
+
+) (C:\Dev\asprofiled\Docs\MS\chap6//chap6.tex [35]
+Underfull \hbox (badness 10000) in paragraph at lines 5--6
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--13
+
+ []
+
+[36
 
 ]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 20--20
@@ -1228,39 +1288,91 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 36--36
 [][][][][][][] 
  []
 
+LaTeX Font Info:    Try loading font information for OML+cmss on input line 54.
+
+LaTeX Font Info:    No file OMLcmss.fd. on input line 54.
+
+LaTeX Font Warning: Font shape `OML/cmss/m/it' undefined
+(Font)              using `OML/cmm/m/it' instead
+(Font)              for symbol `textless' on input line 54.
+
 
 Underfull \hbox (badness 10000) in paragraph at lines 54--56
 
  []
 
-[36]) (C:\Dev\asprofiled\Docs\MS\ms.bbl) [37]
-(C:\Dev\asprofiled\Docs\MS\back.tex (C:\Dev\asprofiled\Docs\MS\ms.ind))
+[37]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 63--63
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 73--73
+[][][][][][][] 
+ []
+
+
+LaTeX Font Warning: Font shape `OML/cmss/m/n' undefined
+(Font)              using `OML/cmss/m/it' instead
+(Font)              for symbol `textless' on input line 83.
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 87--87
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (27.37506pt too wide) in paragraph at lines 87--87
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 87--87
+
+ []
+
+[38]
+Overfull \hbox (6.28276pt too wide) in paragraph at lines 95--96
+[]\OT4/cmss/m/n/10.95 Metoda ozna-czo-na atry-bu-tem \OT4/cmss/m/sl/10.95 [Con-
+trac-tI-nva-riant-Meh-tod] \OT4/cmss/m/n/10.95 jest wy-wo-ªy-wa-na przez
+ []
+
+) (C:\Dev\asprofiled\Docs\MS\chap7//chap7.tex [39]
+Underfull \hbox (badness 10000) in paragraph at lines 4--5
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6--8
+
+ []
+
+) (C:\Dev\asprofiled\Docs\MS\ms.bbl) [40
+
+] (C:\Dev\asprofiled\Docs\MS\back.tex
+(C:\Dev\asprofiled\Docs\MS\ms.ind))
 \tf@toc=\write6
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 34.
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 34.
-
-(C:\Dev\asprofiled\Docs\MS\ms.aux)
+ (C:\Dev\asprofiled\Docs\MS\ms.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 34.
+Package rerunfilecheck Info: File `ms.out' has not changed.
+(rerunfilecheck)             Checksum: 753A299FD05234A6A74B1AC4FDB4C4E0;2427.
 
-
-Package rerunfilecheck Warning: File `ms.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `ms.out':
-(rerunfilecheck)             Before: 6B37FF44ED9A96F2F32462E22FDC1D30;2219
-(rerunfilecheck)             After:  5677073F4480932FBC79495E2BF505F4;2282.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
+
+LaTeX Warning: There were multiply-defined labels.
+
  ) 
 Here is how much of TeX's memory you used:
- 12542 strings out of 494020
- 178280 string characters out of 3146450
- 411527 words of memory out of 3000000
- 15584 multiletter control sequences out of 15000+200000
- 19703 words of font info for 56 fonts, out of 3000000 for 9000
+ 12568 strings out of 494020
+ 178721 string characters out of 3146450
+ 412159 words of memory out of 3000000
+ 15603 multiletter control sequences out of 15000+200000
+ 20062 words of font info for 57 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 41i,13n,45p,845b,1813s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 41i,13n,45p,845b,1868s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on ms.dvi (40 pages, 220608 bytes).
+Output written on ms.dvi (43 pages, 252748 bytes).

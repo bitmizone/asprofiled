@@ -2,17 +2,24 @@
 W tej czêœci opisano dwa rozwi¹zania realizuj¹ce podejœcie programowania kontraktowego. Podobnie jak biblioteka AsProfiled s¹ one przeznaczone dla programów pracuj¹cych w ramach platformy .NET.
 
 \section{CodeContracts}
-Jest to kompleksowe rozwi¹zanie firmy Microsoft, pocz¹tkowe tworzone w ramach komórki badawczej Mirosoft Research. Obecnie jest ju¿ dostêpna na rynku w pe³ni funkcjonalna wersja tego zestawu narzêdzi i wchodz¹ one w sk³ad œrodowiska programistycznego Visual Studio 2010. //
+Jest to kompleksowe rozwi¹zanie firmy Microsoft, pocz¹tkowe tworzone w ramach komórki badawczej Mirosoft Research. Obecnie jest ju¿ dostêpna na rynku w pe³ni funkcjonalna wersja tego zestawu narzêdzi i wchodz¹ one w sk³ad œrodowiska programistycznego Visual Studio 2010. \\
 
 Z perspektywy implementacyjnej w ramach \emph{Code Contracts} zastosowano zgo³a inne podejœcie, od tego, które reprezentowane jest przez AsProfiled.
 Dla przypomnienia, AsProfiled stanowi zewnêtrzn¹ bibliotekê, do której odwo³ania wystêpuj¹ na poziomie maszyny wirtualnej .NET. Sprawdzany program nie ma œwiadomoœci istnienia tej biblioteki, a jedynym elementem zewnêtrznym jest klasa definiuj¹ca atrybuty, poprzez który reprezentowany jest kontrakt.
-W przypadku u¿ycia \emph{Code Contracts}, kontrolowany program (biblioteka) odwo³uje siê bezpoœrednio do metod zdefiniowanych w ramach przestrzeni nazw \emph{System.Diagnostics.Contracts}. Razem z bibliotek¹ dostarczane jest narzêdzie \emph{ccrewrite.exe}, które jest kluczowym elementem w zadaniu sprawdzania poprawnoœci kontraktów w czasie dzia³ania aplikacji.
-Modyfikuje ono skompilowan¹ do jêzyka poœredniego MSIL profilowan¹ bibliotekê, rozmieszczaj¹c metody weryfikacji kontraktów w odpowiedni sposób. 
-Dziêki temu mo¿liwe jest umieszczenie wszystkich sprawdzeñ na pocz¹tku metody.
-\emph{Ccrewrite.exe} umieœci je we wszystkich miejscach, w których mo¿liwe jest opuszczenie metody. Dodatkowo, jeœli warunek koñcowy zawiera w sobie odwo³ania do wartoœci pocz¹tkowych argumentów, zmodyfikowany kod zapewni ich skopiowanie i zachowanie w celu póŸniejszego u¿ycia. //
+W przypadku u¿ycia \emph{Code Contracts}, kontrolowany program (biblioteka) odwo³uje siê bezpoœrednio do metod zdefiniowanych w ramach przestrzeni nazw \emph{System.Diagnostics.Contracts}. 
 
+Razem z bibliotek¹ dostarczane jest narzêdzie \emph{ccrewrite.exe}, które jest kluczowym elementem w zadaniu sprawdzania poprawnoœci kontraktów w czasie dzia³ania aplikacji. Narzêdzie to, dostaj¹c na wejœciu skompilowan¹ bibliotekê,
+odnajduje wszelkie odwo³ania do metod zawartych w przestrzeni nazw \emph{System.Diagnostics.Contracts}, a nastêpnie modyfikuje jej kod poœredni.
+Transformacja ta polega na zamianie wszystkich odwo³añ do definicji kontraktów, na odpowiadaj¹ce im bloki kodu. Na przyk³ad, odwo³ania do wartoœci pocz¹tkowych 
+bêd¹ przet³umaczone na ci¹g operacji w wyniku których zostan¹ one skopiowane i zachowane, dziêki czemu bêd¹ mog³y byæ u¿yte w warunku koñcowym.
 
-Zasadnicza ró¿nica, z punktu widzenia u¿ytkownika, w stosunku do biblioteki AsProfiled polega na sposobie okreœlania kontraktów.
+Przepisywanie kodu skompilowanej biblioteki przy u¿yciu powy¿szego narzêdzia to g³ówna i zasadnicza ró¿nica w podejœciu w stosunku do tego co zosta³o wykorzystane w \emph{AsProfiled}. \\
+
+ 
+Narzêdzie \emph{Ccrewrite.exe} poprzez przepisywanie kodu umo¿liwia umieszczenie wszystkich deklaracji kontraktów na pocz¹tku metody.
+Zmodyfikowany kod bêdzie zawiera³ sprawdzenie kontraktu koñcowego we wszystkich miejscach, w których mo¿liwe jest opuszczenie metody.  \\
+
+Z punktu widzenia u¿ytkownika, zasadnicza ró¿nic¹, w stosunku do biblioteki AsProfiled jest sposób okreœlania kontraktów.
 W tym wypadku s¹ one definiowane jako wywo³ania statycznych metod klasy \emph{Contract}, przy czym kontrakt podawany jako ich argument, w postaci wyra¿enia logicznego. Poprawnym wyra¿eniem jest dowolne wyra¿enie zgodne z regu³ami ich budowania w ramach ustalonego jêzyka programowania.
 Podejœcie to ma zasadnicz¹ zaletê, mianowicie kontrakty s¹ silnie typowane.
 Poni¿szy wycinek kodu ilustruje dotychczasowy opis:
@@ -51,12 +58,12 @@ public int Div(int arg1, int arg2)
 }
 \end{lstlisting}
 
-W tym przyk³adnie, poza wczeœniej wymienionymi metodami \emph{Requires} i \emph{Ensures}, znajduje siê wywo³anie metody \emph{Contract.Results<int>()}.
+W tym przyk³adnie, poza wczeœniej wymienionymi metodami \emph{Requires} i \emph{Ensures}, znajduje siê wywo³anie metody \emph{Contract.Results \textless int\textgreater()}.
 Jest to odpowiednik elementu \emph{@returnValue} w obrêbie kontraktów AsContracts, a wiêc oznacza odwo³anie do wartoœci zwracanej z metody.\\
 
 Kolejn¹ wspóln¹ cech¹ bibliotek \emph{Code Contracts} oraz \emph{AsProfiled} jest mo¿liwoœæ odwo³ywania siê do wartoœci pocz¹tkowych argumentów metody.
-W ramach kontraktów \emph{AsContracts} odwo³anie do wartoœci pocz¹tkowych oznaczane s¹ przez \emph{\^nazwaArgumentu}, z kolei tutaj t¹ rolê pe³ni metoda 
-\emph{Contracts.OldValue\textless T \textgreater>(T value)}.
+W ramach kontraktów \emph{AsContracts} odwo³anie do wartoœci pocz¹tkowych oznaczane s¹ przez \emph{\^{}nazwaArgumentu}, z kolei tutaj t¹ rolê pe³ni metoda 
+\emph{Contracts.OldValue\textless T \textgreater(T value)}.
 Za zachowywanie tych wartoœci odpowiedzialny jest kod wygenerowany przez \emph{ccrewrite.exe}. 
 Poni¿szy kod ilustruje wykorzystanie tej funkcjonalnoœci.
 
@@ -80,9 +87,10 @@ public void Deposit(Account account, int amount)
 
 Dodatkowo \emph{Code Contracts} udostêpnia kilka innych, u¿ytecznych funcjoalnoœci, których nie posiada biblioteka \emph{AsProfiled}. S¹ to miêdzy innymi:
 \begin{enumerate}
-\item Contract.Requires\textless TException \textgreater( bool condition ) - w przypadku, niespe³nienia kontraktu, rzucany jest wyj¹tek okreœlonego typu
-\item Contract.EnsuresOnThrow\textless TException \textgreater( bool condition ) - okreœla warunek koñcowy jaki musi byæ zachowany w przypadku wyst¹pienia wyj¹tku typu TException
+\item Contract.Requires\textless TException\textgreater( bool condition ) - w przypadku, niespe³nienia kontraktu, rzucany jest wyj¹tek okreœlonego typu
+\item Contract.EnsuresOnThrow\textless TException\textgreater( bool condition ) - okreœla warunek koñcowy jaki musi byæ zachowany w przypadku wyst¹pienia wyj¹tku typu TException
 \item Deklaracja niezmiennków, czyli warunków nak³adanych na obiekt, które s¹ sprawdzane przed i po wywo³aniu ka¿dej z publicznych metod obiektu.
+
 \begin{lstlisting}[label=CodeContracts3, caption=Niezmiennik obiektu]
 [ContractInvariantMethod]
 private void ObjectInvariant () 
@@ -91,9 +99,9 @@ private void ObjectInvariant ()
  Contract.Invariant ( condition2 );
 }
 \end{lstlisting}
-Metoda oznaczona atrybutem \emph{ContractInvariantMehtod] jest wywo³ywana przez odpowiedni kod wygenerowany przez narzêdzie \emph{ccrewrite.exe} 
+Metoda oznaczona atrybutem \emph{[ContractInvariantMehtod]} jest wywo³ywana przez odpowiedni kod wygenerowany przez narzêdzie \emph{ccrewrite.exe} 
 \end{enumerate}
 
-Podsumowuj¹c, \emph{Code Contracts} w obecnej postaci jest dopracowanym rozwi¹zaniem, o czym œwiadczy fakt, i¿ jest czêœci¹ oficjalnej dystrybucji platformy .NET 4.0. Zalet¹ w stosunku do biblioteki AsProfiled, poza bogatsz¹ funkcjonalnoœci¹, jest silne typowanie wyra¿eñ okreœlaj¹cych warunki. U³atwia to ich pisanie oraz uniemo¿liwia tworzenie niepoprawnych w sensie sk³adniowym warunków. 
+Podsumowuj¹c, \emph{Code Contracts} w obecnej postaci jest dopracowanym rozwi¹zaniem, o czym œwiadczy fakt, i¿ jest czêœci¹ oficjalnej dystrybucji platformy .NET 4.0. Du¿¹ zalet¹ w stosunku do biblioteki AsProfiled, poza bogatsz¹ funkcjonalnoœci¹, jest silne typowanie wyra¿eñ okreœlaj¹cych warunki. U³atwia to ich pisanie oraz uniemo¿liwia tworzenie niepoprawnych w sensie sk³adniowym warunków. 
 
 \section{LinFu.Contracts}

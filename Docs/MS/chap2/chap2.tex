@@ -6,7 +6,7 @@ Koncepcja ta ma korzenie w pracach nad formaln¹ weryfikacj¹ programów, formaln¹ 
 Wszystkie z powy¿szych d¹¿¹ do dowodzenia poprawnoœci programów komputerowych, a tym samym przyczyniaj¹ siê podnoszenia ich jakoœci.
 Nie inaczej jest w przypadku programowanie kontraktowego. 
 Po raz pierwszy w obecnej postaci wprowadzi³ je Bertrand Meyer w 1986 roku przy okazji projektu jêzyka programowania Eiffel. 
-Do dnia dzisiejszego powsta³o wiele ró¿nych ró¿nych implementacji tej koncepcji.
+Do dnia dzisiejszego powsta³o wiele ró¿nych implementacji tej koncepcji.
 Czeœæ jêzyków programowania ma wbudowane mechanizmy pozwalaj¹ce na definiowanie i sprawdzanie poprawnoœci kontraktów. Do tej grupy zaliczamy:
 \begin{packed_item}
 \item Cobra
@@ -89,7 +89,11 @@ class ACCOUNT feature
 end -- class ACCOUNT 
 \end{lstlisting}
 
-Przy budowie prezentowanej aplikacji wykorzystano cechê szczególn¹ platformy .NET, a w szczególnoœci jêzyka C\#, jak¹ jest mo¿liwoœæ dekorowania metod atrybutami. Ten element jêzyka bêdzie dok³adniej opisany w dalszej czêœci pracy, przy omawianiu funkcjonalnoœci biblioteki. W tym momencie wystarczy przyj¹æ, i¿ atrybuty te staj¹ siê czêœci¹ meta informacji o danej metodzie, co z kolei mo¿e byæ wykorzystywane przy jej inspekcji.
+Fragment ten nie wymaga szerszego komentarza, warto jednak zwróciæ uwagê na s³owo kluczowe \emph{old} wykorzystane w warunkach koñcowych. Jego wyst¹pienie przed zmienn¹ oznacza odwo³anie do wartoœci pocz¹tkowej, czyli wartoœci na któr¹ wskazywa³a ta zmienna przed rozpoczêciem wykonywania metody. 
+Fakt, i¿ s³owo to jest czêœci¹ jêzyka Eiffel, pokazuje, ¿e koncepcja programowania kontraktowego by³a wziêta pod uwagê ju¿ na etapie jego projektowania.\\
+
+Sytuacja ma odmienny charakter w przypadku platformy .NET, gdzie nie wystêpuje bezpoœrednie wsparcie dla tego typu koncepcji.
+Przy budowie prezentowanej aplikacji wykorzystano cechê szczególn¹ œrodowiska .NET, a w szczególnoœci jêzyka C\#, jak¹ jest mo¿liwoœæ dekorowania metod atrybutami. Ten element jêzyka bêdzie dok³adniej opisany w dalszej czêœci pracy, przy omawianiu funkcjonalnoœci biblioteki. W tym momencie wystarczy przyj¹æ, i¿ atrybuty te staj¹ siê czêœci¹ meta informacji o danej metodzie, co z kolei mo¿e byæ wykorzystywane przy jej inspekcji.
 Dla ilustracji, poni¿ej zosta³a zademonstrowana ogólna postaæ zapisu kontraktów jako atrybuty w jêzyku C\#:
 
 \begin{lstlisting}[label=ContractDefinition, caption=Definicja kontraktu]
