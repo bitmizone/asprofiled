@@ -33,4 +33,4 @@
 \contentsline {chapter}{\chapternumberline {5}Por\'ownanie z innymi bibliotekami}{36}{chapter.5}
 \contentsline {section}{\numberline {5.1}CodeContracts}{36}{section.5.1}
 \contentsline {section}{\numberline {5.2}LinFu.Contracts}{39}{section.5.2}
-\contentsline {chapter}{\chapternumberline {6}Podsumowanie}{40}{chapter.6}
+\contentsline {chapter}{\chapternumberline {6}Podsumowanie}{42}{chapter.6}
