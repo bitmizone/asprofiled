@@ -20,7 +20,7 @@ CProfiler::CProfiler()
 	// Configure Log4cxx
 	BasicConfigurator::configure();
 	// Levels hierarchy: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
-	myMainLogger->setLevel(Level::toLevel(log4cxx::Level::ERROR_INT));
+	myMainLogger->setLevel(Level::toLevel(log4cxx::Level::INFO_INT));
 }
 
 
@@ -55,11 +55,8 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 		mainOccured = true;
 	
 	if (mainOccured == true)
-		LOG4CXX_INFO(myMainLogger, szMethodName); 
+		LOG4CXX_DEBUG(myMainLogger, szMethodName); 
 
-	
-	
-	
 	PrintMethodInfo(*methodInfo);
 
 	// A pointer that references the metadata for called function 
@@ -85,7 +82,7 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 3);
 	
 	if (attributeInfo == NULL) {
-		LOG4CXX_INFO(myMainLogger, "attribute not found");
+		LOG4CXX_TRACE(myMainLogger, "attribute not found");
 	}else{
 		methodInfo->ReadArgumentsValues(argumentInfo);
 		CClousureEvaluator* evaluator = new CClousureEvaluator(methodInfo, attributeInfo, _ICorProfilerInfo2, argumentInfo);
@@ -93,7 +90,7 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 		LOG4CXX_INFO(myMainLogger, attributeInfo->typeName);
 		bool result = evaluator->EvalPreCondition();
 		if (result == true) {
-			LOG4CXX_WARN(myMainLogger, "TRUE !!!");
+			LOG4CXX_INFO(myMainLogger, "TRUE !!!");
 		}else{
 			LOG4CXX_WARN(myMainLogger, "FALSE !!!");
 			LOG4CXX_WARN(myMainLogger, methodInfo->GetMethodName());

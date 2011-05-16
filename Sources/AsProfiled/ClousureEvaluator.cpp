@@ -161,9 +161,17 @@ bool CClousureEvaluator::Or(CNode* left, CNode* right) {
 	return leftValue || rightValue;
 }
 
+bool CClousureEvaluator::Add(CNode* left, CNode* right) {
+	left = this->GoToLeaf(left);
+	right = this->GoToLeaf(right);
+
+	return true;
+}
+
 bool CClousureEvaluator::Eval(std::vector<CNode*>* arguments, std::wstring operatorValue) {
 	Operator::OperatorType operatorType = Operator::GetOperatorType(operatorValue.c_str());
 	bool result = false;
+
 	switch (operatorType) {
 		case Operator::AddOperatorType:
 		{
@@ -282,7 +290,7 @@ bool CClousureEvaluator::EvaluateNode(CNode* node) {
 }
 
 bool CClousureEvaluator::EvalPreCondition() {
-	
+	//ASSERT(false);
 	std::vector<CAttributeArgument*>* arguments = attributeInfo->arguments;
 	ASSERT(arguments->size() >= 2);
 	CAttributeArgument* preCondition = arguments->at(0);

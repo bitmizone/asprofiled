@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics.Contracts;
 using LinFu.DesignByContract2.Contracts;
+using LinFu.DesignByContract2.Core;
 
 namespace TestApplication.Calculator
 {
 
-    class  Calculator : Object
+    class Calculator : Object
     {
         private Test test = new Test();
 
@@ -29,6 +30,26 @@ namespace TestApplication.Calculator
             c.test.member = 10;
             return c;
         }
+    }
+
+
+    class AccountAP
+    {
+        public int Balance;
+    }
+
+    class AccountManager
+    {
+        [AsContract("source.Balance > amount",
+            "@returnValue == amount", null)]// && ^source.Balance + ^destination.Balance == source.Balance + destination.Balance", null)]
+        public int Transfer(AccountAP source, AccountAP destination, int amount) 
+        {
+            source.Balance -= amount;
+            destination.Balance += amount;
+            //int transferredAmount = Math.Abs(source.Balance - destination.Balance);
+            return amount;
+        }
+
     }
 
     class MsContractsCalculator
@@ -58,14 +79,125 @@ namespace TestApplication.Calculator
 
     }
 
-    class LinFuCalculator
+   public class LinFuCalculator : ICalculator
     {
         
-        public int Mult(int arg1, int arg2)
+        public virtual int Mult(int arg1, int arg2)
         {
             
             return 0;
         }
+    }
+
+    public interface ICalculator
+    {
+        int Mult(int arg1, int arg2);
+    }
+
+    class LinFuCalculatorPoC : IPostcondition
+    {
+        #region IPostcondition Members
+
+        public void BeforeMethodCall(object target, LinFu.DynamicProxy.InvocationInfo info)
+        {
+            
+        }
+
+        public bool Check(object target, LinFu.DynamicProxy.InvocationInfo info, object returnValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowError(System.IO.TextWriter output, object target, LinFu.DynamicProxy.InvocationInfo info, object returnValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IContractCheck Members
+
+        public bool AppliesTo(object target, LinFu.DynamicProxy.InvocationInfo info)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Catch(Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+    }
+
+
+    class LinFuCalculatorPC : IPrecondition
+    {
+        #region IPrecondition Members
+
+        public bool Check(object target, LinFu.DynamicProxy.InvocationInfo info)
+        {
+            LinFuCalculator cc = (LinFuCalculator)target;
+            return true;
+        }
+
+        public void ShowError(System.IO.TextWriter output, object target, LinFu.DynamicProxy.InvocationInfo info)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IContractCheck Members
+
+        public bool AppliesTo(object target, LinFu.DynamicProxy.InvocationInfo info)
+        {
+            if (info.TargetMethod.Name == "Mult")
+                return true;
+            return false;
+        }
+
+        public void Catch(Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+
+    class AccountPC : IPostcondition
+    {
+        private int oldBalance;
+        public void BeforeMethodCall(object target, LinFu.DynamicProxy.InvocationInfo info)
+        {
+            oldBalance = (target as Account).Balance;
+        }
+
+        public bool Check(object target, LinFu.DynamicProxy.InvocationInfo info, object returnValue)
+        {
+            Account account = target as Account;
+            return account.Balance == oldBalance + (int)info.Arguments[0];
+        }
+
+        public bool AppliesTo(object target, LinFu.DynamicProxy.InvocationInfo info)
+        {
+            if (target as Account == null)
+                return false;
+            if (info.TargetMethod.Name == "Deposit")
+                return true;
+            return false;
+        }
+
+        public void ShowError(System.IO.TextWriter output, object target, LinFu.DynamicProxy.InvocationInfo info, object returnValue)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void Catch(Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 
 
@@ -73,6 +205,16 @@ namespace TestApplication.Calculator
     {
         
         public int member = 31;
+    }
+
+    public class Account
+    {
+        public int Balance;
+
+        public virtual void Deposit(int amount)
+        {
+            this.Balance += amount;
+        }
     }
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
