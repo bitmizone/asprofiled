@@ -63,9 +63,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LinFu.DesignByContract2.Attributes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\output\3.5\LinFu.DesignByContract2.Attributes.dll</HintPath>
+    </Reference>
     <Reference Include="LinFu.DesignByContract2.Contracts, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\output\3.5\LinFu.DesignByContract2.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="LinFu.DesignByContract2.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\output\3.5\LinFu.DesignByContract2.Core.dll</HintPath>
     </Reference>
     <Reference Include="LinFu.DynamicProxy, Version=1.0.3133.28097, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

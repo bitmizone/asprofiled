@@ -53,5 +53,8 @@ private:
 	bool Greater(CNode* leftNode, CNode* rightNode);
 	bool GreaterOrEqual(CNode* leftNode, CNode* rightNode);
 	bool NotEqual(CNode* leftNode, CNode* rightNode);
+	// Additive operators
+	bool Add(CNode* left, CNode* right);
+
 	CNode* GoToLeaf(CNode* node);
 };
