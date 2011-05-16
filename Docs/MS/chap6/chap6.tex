@@ -62,12 +62,12 @@ W tym przyk³adnie, poza wczeœniej wymienionymi metodami \emph{Requires} i \emph{
 Jest to odpowiednik elementu \emph{@returnValue} w obrêbie kontraktów AsContracts, a wiêc oznacza odwo³anie do wartoœci zwracanej z metody.\\
 
 Kolejn¹ wspóln¹ cech¹ bibliotek \emph{Code Contracts} oraz \emph{AsProfiled} jest mo¿liwoœæ odwo³ywania siê do wartoœci pocz¹tkowych argumentów metody.
-W ramach kontraktów \emph{AsContracts} odwo³anie do wartoœci pocz¹tkowych oznaczane s¹ przez \emph{\^{}nazwaArgumentu}, z kolei tutaj t¹ rolê pe³ni metoda 
+W ramach kontraktów \emph{AsContracts} odwo³anie do wartoœci pocz¹tkowych oznaczane s¹ przez \emph{\^{}nazwaArgumentu}, z kolei tutaj t¹ rolê pe³ni metoda \linebreak 
 \emph{Contracts.OldValue\textless T \textgreater(T value)}.
 Za zachowywanie tych wartoœci odpowiedzialny jest kod wygenerowany przez \emph{ccrewrite.exe}. 
 Poni¿szy kod ilustruje wykorzystanie tej funkcjonalnoœci.
 
-\begin{lstlisting}[label=CodeContracts2, caption=Wykorzystanie wartoœci pocz¹tkowych]
+\begin{lstlisting}[label=lst:CodeContracts2, caption=Wykorzystanie wartoœci pocz¹tkowych]
 public void Deposit(Account account, int amount)
 {
  Contract.Requires(amount > 0);
@@ -75,9 +75,9 @@ public void Deposit(Account account, int amount)
  account.Balance += amount;
 }
 \end{lstlisting}
-
+\cleardoublepage
 Odpowiednik powy¿szego kontraktu w ramach biblioteki AsProfiled jest nastêpuj¹cy:
-\begin{lstlisting}[label=CCvsAS2, caption=Warunki pocz¹tkowe w AsContract]
+\begin{lstlisting}[label=lst:AsContract, caption=Wartoœci pocz¹tkowe w AsContract]
 [AsContract("amount > 0", "^account.Balance + amount == account.Balance")]
 public void Deposit(Account account, int amount)
 {
@@ -85,7 +85,7 @@ public void Deposit(Account account, int amount)
 }
 \end{lstlisting} 
 
-Dodatkowo \emph{Code Contracts} udostêpnia kilka innych, u¿ytecznych funcjoalnoœci, których nie posiada biblioteka \emph{AsProfiled}. S¹ to miêdzy innymi:
+Dodatkowo \emph{Code Contracts} udostêpnia kilka innych, u¿ytecznych funkcjonalnoœci, których nie posiada biblioteka \emph{AsProfiled}. S¹ to miêdzy innymi:
 \begin{enumerate}
 \item Contract.Requires\textless TException\textgreater( bool condition ) - w przypadku, niespe³nienia kontraktu, rzucany jest wyj¹tek okreœlonego typu
 \item Contract.EnsuresOnThrow\textless TException\textgreater( bool condition ) - okreœla warunek koñcowy jaki musi byæ zachowany w przypadku wyst¹pienia wyj¹tku typu TException
@@ -105,7 +105,7 @@ Metoda oznaczona atrybutem \emph{[ContractInvariantMehtod]} jest wywo³ywana prze
 Podsumowuj¹c, \emph{Code Contracts} w obecnej postaci jest dopracowanym rozwi¹zaniem, o czym œwiadczy fakt, i¿ jest czêœci¹ oficjalnej dystrybucji platformy .NET 4.0. Du¿¹ zalet¹ w stosunku do biblioteki AsProfiled, poza bogatsz¹ funkcjonalnoœci¹, jest silne typowanie wyra¿eñ okreœlaj¹cych warunki. U³atwia to ich pisanie oraz uniemo¿liwia tworzenie niepoprawnych w sensie sk³adniowym warunków. 
 
 \section{LinFu.Contracts}
-LinFu.Contracts wchodzi w sk³ad bibliotek zgrupowanych w ramach projektu LinFu, stworzonego przez Philipa Laureano a udostêpnianego na zasadach wolnego oprogramowania. U podstaw tej biblioteki le¿y mechanizm generowania dynamicznych obiektów poœrednicz¹cych (eng. \emph{dynamic proxy}), które pozwalaj¹ na przechwytywanie wywo³añ metod na docelowym obiekcie. 
+LinFu.Contracts wchodzi w sk³ad bibliotek zgrupowanych w ramach projektu LinFu, stworzonego przez Philipa Laureano a udostêpnianego na zasadach wolnego oprogramowania. U podstaw tej biblioteki le¿y mechanizm generowania dynamicznych obiektów poœrednicz¹cych (ang. \emph{dynamic proxy}), które pozwalaj¹ na przechwytywanie wywo³añ metod na docelowym obiekcie. 
 Ten w³aœnie mechanizm wykorzystywany jest przy realizacji podejœcia programowania kontraktowego. \\
 Proces tworzenia obiektu poœrednicz¹cego odbywa siê poprzez metodê \emph{CreateProxy\textless T\textgreater(IInvokeWrapper wrapper)} nale¿¹cej do klasy \emph{ProxyFactory}. W rezultacie zwracany jest uchwyt to obiektu typu \emph{T}, przy czym ka¿de odwo³anie do jego metod bêdzie przechwytywane przez obiekt implementuj¹cy interfejs \emph{IInvokeWrapper}.
 Interfejs ten okreœlony jest w sposób nastêpuj¹cy:
@@ -175,7 +175,7 @@ public class Program
 }
 \end{lstlisting}
 
-Teraz ju¿, wiedz¹c czym jest obiekt poœrednicz¹cy, mo¿liwe jest opisanie sposobu realizacji programowania kontraktowego przez bibliotekê \emph{LinFu.Contracts}.
+Wiedz¹c czym jest obiekt poœrednicz¹cy, mo¿liwe jest opisanie sposobu realizacji programowania kontraktowego przez bibliotekê \emph{LinFu.Contracts}.
 Zasadniczo jest to rozwiniêcie powy¿szej koncepcji.
 Wewn¹trz przestrzeni nazw \emph{LinFu.DesignByContract2.Contracts} znajduje siê klasa \emph{AdHocContract}, które zdefiniowana jest jak nastêpuje:
 \begin{lstlisting}[label=AdHocContract, caption=Klasa AdHocContract]
@@ -207,7 +207,7 @@ W jej polach przechowywane s¹ odniesienia do inwariantów, warunków pocz¹tkowych 
 Powy¿szy fragment obrazuje sposób w jaki uaktywniany jest proces weryfikacji kontraktów, jednak w ¿aden sposób ich nie definiuje.
 W tym celu, konieczne jest ich zdefiniowanie, a nastêpnie do³¹czenie ich do odpowiedniej listy zdefiniowanej w ramach klasy \emph{AdHocContract}. \\
 
-Wszystkie rodzaje warunków definiuje siê poprzez implementacjê jednego z nastêpuj¹cych interfejsów \emph{IInvariant}, \emph{IPrecondition}, \emph{IPostcondition}. Wszystkie one rozszerzaj¹ interfejs \emph{IContractCheck} zdefiniowany w nastêpuj¹cy sposób:
+Wszystkie rodzaje warunków definiuje siê poprzez implementacjê jednego z nastêpuj¹cych interfejsów \emph{IInvariant}, \emph{IPrecondition}, \emph{IPostcondition}. Ka¿dy z powy¿szych rozszerza interfejs \emph{IContractCheck} zdefiniowany w nastêpuj¹cy sposób:
 \begin{lstlisting}
 public interface IContractCheck
 {
@@ -227,6 +227,193 @@ public interface IPrecondition : IMethodContractCheck, IContractCheck
         void ShowError(TextWriter output, object target, InvocationInfo info);
 }
 \end{lstlisting}
+Metoda \emph{Check} zawiera w³aœciw¹ definicjê kontraktu, w rezultacie zwracaj¹c wartoœæ logiczn¹ mówi¹c¹ o jego spe³nieniu w kontekœcie wywo³ywanej metody.
+Pobiera ona dwa argumenty, pierwszy z nich jest obiektem na rzecz którego metoda zosta³a wywo³ana, drugi z nich zawiera informacje o tym wywo³aniu, w szczególnoœci zawiera wartoœci argumentów przekazanych do metody. \\
+
+Maj¹c te informacje mo¿liwe jest stworzenie klasy okreœlaj¹cej przyk³adowy warunek pocz¹tkowy. Niech dana bêdzie klasa \emph{Calculator} z metod¹ \emph{Div(int arg1, int arg2)}. Definicja warunku pocz¹tkowego w ramach LinFu.Contracts mog³aby mieæ nastêpuj¹c¹ postaæ: 
+\begin{lstlisting}[label=LFC.Precondition, caption=Warunek pocz¹tkowy w LinFu.Contracts]
+class CalculatorPrecondition : IPrecondition
+{
+ public bool Check(object target, LinFu.DynamicProxy.InvocationInfo info)
+ {
+  int argument1 = (int) info.Arguments[0];
+  int argument2 = (int) info.Arguments[1];
+  // warunek dla którego kontrakt nie jest spe³niony
+  if (argument1 == 0 || argument2 == 0) 
+   return false;
+  // w pozosta³ych przypadkach warunek pocz¹tkowy uwa¿any jest za spe³niony
+  return false;
+ }
+ 
+ public bool AppliesTo(object target, LinFu.DynamicProxy.InvocationInfo info)
+ {
+  // Okreœlenie, i¿ ten warunek ma mieæ zastosowanie 
+  // tylko do klasy typu Calculator
+  Calculator calculator = target as Calculator
+  if (calculator == null)
+   return false;
+  // Sprawdzanie kontraktu ma siê odbywaæ tylko dla metody Div
+  if (info.TargetMethod.Name == "Div")
+   return true;
+  return false;
+ }
+ ...
+}
+\end{lstlisting}
+
+Dla przypomnienia, pokazano jak ten sam kontrakt okreœlany jest przy wykorzystaniu biblioteki \emph{AsProfiled} i \emph{Code.Contracts}
+\begin{lstlisting}[label=CCvsAsP1, caption=Deklaracja kontraktu]
+// AsProfiled
+[AsContract("arg1 != 0 && arg2 != 0", null)]
+public int Div(int arg1, int arg2)
+{
+ return arg1 / arg2;
+}
+
+// Code.Contracts
+public int Div(int arg1, int arg2)
+{
+ Contract.Requires(arg1 != 0);
+ Contract.Requires(arg2 != 0);
+ return arg1 / arg2;
+}
+\end{lstlisting}
+
+Widoczna jest tu znaczna ró¿nica w ³atwoœci definiowania kontraktu oraz 
+iloœci kodu potrzebnego do uzyskania tego samego efektu. \\
+
+Analogiczna sytuacja wystêpuje dla warunków koñcowych. Ponownie, konieczne jest zdefiniowanie klasy implementuj¹cej tym razem interfejs \emph{IPostcondition}, który ró¿ni siê od \emph{IPrecondition} metod¹ \emph{BeforeMethodCall} oraz zmienion¹ sygnatur¹ metody \emph{Check}.
+\begin{lstlisting}[label=BeforeMethodCall, caption=Deklaracja BeforeMethodCall]
+void BeforeMethodCall(object target, InvocationInfo info);
+bool Check(object target, InvocationInfo info, object returnValue);
+\end{lstlisting}
+
+Metoda \emph{Check} posiada dodatkowy argument \emph{returnValue}, który oznacza wartoœæ zwracan¹ metody (odpowiednik @returnValue z \emph{AsProfiled} oraz Contract.OldValue z \emph{CodeContracts}).\\
+
+Metoda \emph{BeforeMethodCall} zosta³a dodana w celu obs³ugi wartoœci pocz¹tkowych argumentów i wykonywana jest przed wejœciem do metody docelowej.
+W tym rozwi¹zaniu mo¿na dostrzec pewn¹ analogiê z podejœciem u¿ytym w \emph{AsProfiled}. Tam te¿ dokonywane jest przetwarzanie wstêpne przed wejœciem do metody, w³aœnie w celu przechowania stanu parametrów u¿ytych w kontrakcie.
+W przeciwieñstwie jednak do niej, tu za poprawne zachowanie ich wartoœci odpowiedzialny jest twórca kontraktu. W \emph{AsProfiled} i \emph{CodeContracts} czynnoœæ ta przerzucona zosta³a na bibliotekê i zachodzi ca³kowicie bez wiedzy osoby nak³adaj¹cej wiêzy poprawnoœci na metodê. \\
+
+Maj¹c wiedzê na temat definiowania warunków koñcowych, mo¿liwe jest porównanie  ich wykorzystania w stosunku do tego co zosta³o pokazane przyk³adzie \ref{lst:AsContract}.
+
+\begin{lstlisting}[label=AccountClass, caption=Klasa Account]
+public class Account
+{
+ public int Balance;
+ public virtual void Deposit(int amount)
+ {
+  this.Balance += amount;
+ }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[label=AccountPC, caption=Definicja warunku koñcowego]
+class AccountPC : IPostcondition
+{
+ private int oldBalance;
+ public void BeforeMethodCall(object target, InvocationInfo info)
+ {
+  oldBalance = (target as Account).Balance;
+ }
+
+ public bool Check(object target, InvocationInfo info, object returnValue)
+ {
+  Account account = target as Account;
+  return account.Balance == oldBalance + (int)info.Arguments[0];
+ }
+
+ public bool AppliesTo(object target, InvocationInfo info)
+ {
+  if (target as Account == null)
+   return false;
+  if (info.TargetMethod.Name == "Deposit")
+   return true;
+  return false;
+}
+\end{lstlisting}
+
+Warunek zawiera sprawdzenie bilans rachunku po wp³yniêciu depozytu jest równy jego wartoœci pocz¹tkowej powiêkszonej o zadan¹ wartoœæ. \\
+
+Podsumowuj¹c, biblioteka LinFu.Contracts spe³nia wszystkie funkcjonalnoœci niezbêdne do programowania kontraktowego. Z drugiej strony mo¿na podejrzewaæ, i¿ nie by³o to g³ównym za³o¿eniem podczas projektowania LinFu. Definiowanie kontraktów wymaga dosyæ du¿ego nak³adu pracy w porównaniu do prezentowanych wczeœniej rozwi¹zañ. \\
+
+Do zalet tego rozwi¹zania mo¿na z pewnoœci¹ zaliczyæ nieinwazyjnoœæ kontraktów w stosunku do sprawdzanego kodu. Zestaw kontraktów mo¿e byæ zawarty w osobnej bibliotece, za³¹czanej w zale¿noœci od potrzeby. Z drugiej strony wymusza definiowanie klas jako publicznych, zaœ metody które maj¹ byæ przes³oniête musz¹ byæ oznaczone jako wirtualne - wynika to ze specyfiki koncepcji tworzenia dynamicznych obiektów poœrednicz¹cych.
+
+\section{Porównanie funkcjonalnoœci opisywanych bibliotek}
+W tym miejscu prezentowane jest podsumowanie funkcjonalnoœci przedstawionych bibliotek.
+
+\begin{longtable}{ | l | p{3cm} | p{3cm} | p{3cm} |} \hline
+Cecha & AsProfiled & CodeContracts & LinFuContracts \\ \hline
+
+Okreœlenie kontraktu &
+\tiny Atrybut nak³adany na metodê &
+\tiny Wewn¹trz metody przy u¿yciu metod z biblioteki &
+\tiny Osobna klasa implementuj¹ca odpowiednie interfejsy \\ \hline
+
+U¿yte podejœcie &
+\tiny Zewnêtrzna biblioteka \newline
+\tiny Odbieranie powiadomieñ od maszyny CLR \newline
+\tiny Interpretacja danych binarnych  \newline &
+
+\tiny Przepisywanie jêzyka poœredniego skompilowanego programu &
+
+\tiny Dynamiczna generacja obiektu poœrednicz¹cego \\ \hline
+
+Warunki pocz¹tkowe &
+\checkmark &
+
+\checkmark \newline 
+\tiny (Contract.Requires) &
+
+\checkmark \newline 
+\tiny (interfejs IPrecondition) \\ \hline
+
+Warunki koñcowe &
+\checkmark &
+
+\checkmark \newline
+\tiny (Contract.Ensures) &
+
+\checkmark \newline
+\tiny (interfejs IPostcondition) \\ \hline
+
+Wartoœci pocz¹tkowe &
+\checkmark \newline
+\tiny (\textasciicircum identyfikator) &
+
+\checkmark \newline
+\tiny (Contract.Old) &
+
+\checkmark \newline
+\tiny (metoda BeforeMethodCall, wymaga rêcznej implementacji) \\ \hline
+
+Wartoœæ zwracana &
+\checkmark \newline
+\tiny (@returnValue) &
+
+\checkmark \newline
+\tiny (Contract.Result) &
+
+\checkmark \newline
+\tiny (parametr returnValue) \\ \hline
+
+Inwariant klasy &
+
+- \newline
+\tiny (³atwa implementacja, wystarczy sprawdzaæ kontrakt dla klasy w momencie wywo³ania i zakoñczenia metody) &
+
+\checkmark \newline
+\tiny (metoda oznaczona atrybutem [ContractInvariantMethod]) &
+
+\checkmark \newline
+\tiny (interfejs IInvariant) \\ \hline
+
+\end{longtable}
+
+
+
+
+
+
 
 
 

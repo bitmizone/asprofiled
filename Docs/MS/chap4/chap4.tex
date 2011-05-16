@@ -87,7 +87,7 @@ Wiersz zerowy ka¿dej z powy¿szych tablic nigdy nie zawiera w sobie danych, wiêc 
 W poni¿szej tabeli znajduj¹ siê typy tokenów wykorzystywane w ramach aplikacji, typy które opisuj¹ oraz nazwy tablic metadanych. Wszystkie tokeny s¹ pochodnymi typu bazowego - mdToken.
 
 \begin{center}
-    \begin{longtable}{ |c | c | p{6cm} |}
+    \begin{longtable}{ |c | c | p{4cm} |}
     \hline
 Typ tokenu & Nazwa tablicy z metadanymi & Opis \\ \hline
 
@@ -162,7 +162,7 @@ Zawiera odniesienie do metadanych atrybutów \\ \hline
 
 %Kolejnym krokiem na drodze do ewaluacji kontraktów jest odczyt wartoœci %argumentów przekazywanych do metody w trakcie jej wywo³ania.
 Dziêki informacjom zawartym w metadanych, mo¿liwe jest okreœlenie liczby i typów parametrów przekazywanych do metod. S¹ to dane statyczne, w tym sensie, ¿e s¹ one sta³e w ramach raz zdefiniowanego programu. Z drugiej strony, wartoœci parametrów mog¹ byæ inne dla ka¿dego wywo³ania metody, tak wiêc nie mog¹ w ¿aden sposób stanowiæ czêœci metadanych. Musi wiêc zatem istnieæ osobny mechanizm pozwalaj¹cy na realizacjê tego zadania. \\
-Okazuje siê, ¿e w momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê \emph{\_COR\_PRF\_FUNCTION\_ARGUMENT\_INFO}, która jest przekazywana do odbiorcy. 
+Okazuje siê, ¿e w momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê \linebreak \emph{\_COR\_PRF\_FUNCTION\_ARGUMENT\_INFO}, która jest przekazywana do odbiorcy. 
 Jej definicja przedstawia siê w sposób nastêpuj¹cy:
 \begin{lstlisting}[label=CorPrfFunctionArgumentInfo]
 typedef struct _COR_PRF_FUNCTION_ARGUMENT_INFO {
@@ -175,7 +175,7 @@ Objaœnienia:
 \begin{itemize}
 \item \emph{numRanges} - Liczba bloków pamiêci, wewn¹trz których znajduj¹ siê wartoœci argumentów. Okreœla liczbê elementów tablicy typu \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}
 \item \emph{totalArgumentSize} - Ca³kowita d³ugoœæ wszystkich argumentów wyra¿ona w bajtach.
-\item \emph{ranges} Tablica obiektów typu \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, z których ka¿da reprezentuje jeden blok pamiêci, gdzie zawarte s¹ wartoœci argumentów metody
+\item \emph{ranges} Tablica obiektów typu \linebreak \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, z których ka¿da reprezentuje jeden blok pamiêci, gdzie zawarte s¹ wartoœci argumentów metody
 \end{itemize}
 Struktura ta reprezentuje wartoœci argumentów metody, zgodnie z porz¹dkiem od lewej do prawej.
 Typ \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE }u¿yty w ramach tej struktury okreœlony jest jak nastêpuje:
@@ -238,7 +238,7 @@ W ramach atrybutów \emph{AsContract} odwo³anie do wartoœci zwracanej odbywa siê 
 }
 \end{lstlisting}
 
-Sposób odczytu wartoœci zwracanej jest analogiczny do odczytywania wartoœci parametrów metody. W tym wypadku, odbiorca zdarzenia otrzymuje dostêp do pojedynczego obiektu typu \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, który zawiera w sobie informacje na temat po³o¿enia wartoœci zwracanej w pamiêci.
+Sposób odczytu wartoœci zwracanej jest analogiczny do odczytywania wartoœci parametrów metody. W tym wypadku, odbiorca zdarzenia otrzymuje dostêp do pojedynczego obiektu typu \linebreak \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, który zawiera w sobie informacje na temat po³o¿enia wartoœci zwracanej w pamiêci.
 
 \section{Wartoœci pocz¹tkowe}
 
