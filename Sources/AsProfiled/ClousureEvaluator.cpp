@@ -109,6 +109,10 @@ CNode* CClousureEvaluator::GoToLeaf(CNode* node) {
 	while (node->children != NULL && node->children->size() == 1) {
 		node = node->children->at(0);
 	}
+	if (node->children != NULL  && node->children->size() != 1) //calculate subtree
+	{
+		this->EvaluateNode(node);
+	}
 	return node;
 }
 bool CClousureEvaluator::Equal(CNode* left, CNode* right) {
@@ -161,23 +165,27 @@ bool CClousureEvaluator::Or(CNode* left, CNode* right) {
 	return leftValue || rightValue;
 }
 
-bool CClousureEvaluator::Add(CNode* left, CNode* right) {
+std::wstring CClousureEvaluator::Add(CNode* left, CNode* right) {
+	
 	left = this->GoToLeaf(left);
 	right = this->GoToLeaf(right);
-
-	return true;
+	int arg1 = _wtoi(left->GetValue().c_str());
+	int arg2 = _wtoi(right->GetValue().c_str());
+	return Converters::IntToString(arg1 + arg2);
 }
 
-bool CClousureEvaluator::Eval(std::vector<CNode*>* arguments, std::wstring operatorValue) {
+void CClousureEvaluator::Eval(CNode* node, std::vector<CNode*>* arguments, std::wstring operatorValue) {
 	Operator::OperatorType operatorType = Operator::GetOperatorType(operatorValue.c_str());
 	bool result = false;
-
+	std::wstring value;
 	switch (operatorType) {
 		case Operator::AddOperatorType:
 		{
 			Operator::AddOperator additiveOp = Operator::GetAddOperator(operatorValue.c_str());
 			switch (additiveOp) {
 				case Operator::Add:
+					value = this->Add(arguments->at(0), arguments->at(2));
+					result = true;
 					break;
 				case Operator::Minus:
 					break;
@@ -203,28 +211,25 @@ bool CClousureEvaluator::Eval(std::vector<CNode*>* arguments, std::wstring opera
 			switch (cmpOperator) {
 				case Operator::Less:
 					result = this->Less(arguments->at(0), arguments->at(2));
-					return result;
 					break;
 				case Operator::LessOrEqual:
 					result = this->LessOrEqual(arguments->at(0), arguments->at(2));
-					return result;
 					break;
 				case Operator::Equal:
 					result = this->Equal(arguments->at(0), arguments->at(2));
-					return result;
+					break;
 				case Operator::NotEqual:
 					result = this->NotEqual(arguments->at(0), arguments->at(2));
-					return result;
 					break;
 				case Operator::Greater:
 					result = this->Greater(arguments->at(0), arguments->at(2));
-					return result;
 					break;
 				case Operator::GreaterOrEqual:
 					result = this->GreaterOrEqual(arguments->at(0), arguments->at(2));
-					return result;
 					break;
 			}
+			value = (result ? L"true" : L"false");
+			break;
 		}
 		case Operator::BooleanOperatorType:
 		{
@@ -232,13 +237,13 @@ bool CClousureEvaluator::Eval(std::vector<CNode*>* arguments, std::wstring opera
 			switch (booleanOperator) {
 				case Operator::BoolAnd:
 					result = this->And(arguments->at(0), arguments->at(2));
-					return result;
 					break;
 				case Operator::BoolOr:
 					result = this->Or(arguments->at(0), arguments->at(2));
-					return result;
 					break;
 			}
+			value = (result ? L"true" : L"false");
+			break;
 		}
 		case Operator::BitOperatorType: 
 		{
@@ -249,11 +254,13 @@ bool CClousureEvaluator::Eval(std::vector<CNode*>* arguments, std::wstring opera
 				case Operator::BitOr:
 					break;
 			}
+			break;
 		}
 		default:
 			break;
 	}
-	return false;
+	node->result = result;
+	node->value = value;
 }
 
 bool CClousureEvaluator::EvaluateNode(CNode* node) {
@@ -261,6 +268,7 @@ bool CClousureEvaluator::EvaluateNode(CNode* node) {
 		ASSERT(false);
 		return false;
 	}
+
 	if (node->evaluated == true) { // nothing to be done
 		return node->result;
 	}
@@ -283,7 +291,8 @@ bool CClousureEvaluator::EvaluateNode(CNode* node) {
 				break;
 			}
 		}	
-		node->result = this->Eval(node->children, operatorValue);
+		//node->result = this->Eval(node, node->children, operatorValue);
+		this->Eval(node, node->children, operatorValue);
 	}
 
 	return node->result;

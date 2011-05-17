@@ -41,7 +41,7 @@ namespace TestApplication.Calculator
     class AccountManager
     {
         [AsContract("source.Balance > amount",
-            "@returnValue == amount", null)]// && ^source.Balance + ^destination.Balance == source.Balance + destination.Balance", null)]
+             "@returnValue == amount && ^source.Balance + 1 == source.Balance + amount + 1", null)] //"
         public int Transfer(AccountAP source, AccountAP destination, int amount) 
         {
             source.Balance -= amount;
