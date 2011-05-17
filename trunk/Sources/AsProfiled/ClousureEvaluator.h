@@ -11,6 +11,7 @@
 #include "GrammarParser.h"
 #include "ValueReader.h"
 #include "Node.h"
+#include "Converters.h"
 using namespace log4cxx;
 
 class CClousureEvaluator
@@ -32,7 +33,7 @@ private:
 	void ParsePreCondition();
 	void ParsePostCondition(CParam* returnValue);
 	bool EvaluateNode(CNode* node);
-	bool Eval(std::vector<CNode*>* arguments, std::wstring operatorValue);
+	void Eval(CNode* node, std::vector<CNode*>* arguments, std::wstring operatorValue);
 	CParam* BuildParamChain(CParam* param, std::vector<std::wstring> paramPath);
 	COR_PRF_FUNCTION_ARGUMENT_INFO* argumentInfo;
 	COR_PRF_FUNCTION_ARGUMENT_INFO* initialArgumentInfo;
@@ -54,7 +55,7 @@ private:
 	bool GreaterOrEqual(CNode* leftNode, CNode* rightNode);
 	bool NotEqual(CNode* leftNode, CNode* rightNode);
 	// Additive operators
-	bool Add(CNode* left, CNode* right);
+	std::wstring Add(CNode* left, CNode* right);
 
 	CNode* GoToLeaf(CNode* node);
 };

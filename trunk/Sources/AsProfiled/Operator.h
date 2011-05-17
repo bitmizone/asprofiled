@@ -33,4 +33,6 @@ namespace Operator {
 	BitOperator GetBitOperator(const WCHAR* operatorAsString);
 
 	AddOperator GetAddOperator(const WCHAR* operatorAsString);
+
+	
 }

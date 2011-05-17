@@ -246,6 +246,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Converters.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\cor_profiler_callback_implementation.cpp"
 				>
 			</File>
@@ -431,6 +435,10 @@
 			</File>
 			<File
 				RelativePath=".\common.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Converters.h"
 				>
 			</File>
 			<File
