@@ -1,7 +1,8 @@
 %*********** Rodzia³ 3 ************
 \chapter{Omówienie funkcjonalnoœci biblioteki}
-W tym rozdziale opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka.
-Poni¿ej przedstawiony jest ogólny schemat dzia³ania aplikacji, którego poszczególne elementy rozpatrzone s¹ w dalszej czêœci.
+W tym rozdziale opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka AsProfiled.
+\section{Ogólny schemat architektury biblioteki AsProfiled}
+Poni¿ej przedstawiony jest ogólny schemat dzia³ania biblioteki AsProfiled.
 \begin{figure}[h]
 \centering
 \includegraphics[width=5in]{generalflow}
@@ -9,23 +10,140 @@ Poni¿ej przedstawiony jest ogólny schemat dzia³ania aplikacji, którego poszczegó
 \label{fig:generalFlowDiagram}
 \end{figure}
 \clearpage
+Na rysunku \ref{fig:generalFlowDiagram} wyszczególniono kolejne kroki w procesie weryfikacji kontraktów. 
+Biblioteka AsProfiled zaczyna swoje dzia³anie w momencie uruchomienia programu na maszynie wirtualnej .NET w odpowiednio przygotowanym œrodowisku. Œrodowisko uruchomieniowe CLR ³aduje bibliotekê do pamiêci, po czym nastêpuje proces inicjalizacji biblioteki. Uruchamianie poszczególnych funkcji biblioteki jest konsekwencj¹ odebrania jednego zdefiniowanych wczeœniej zdarzeñ zachodz¹cych wewn¹trz programu, którego poprawnoœæ jest sprawdzana. Biblioteka obs³uguje nastêpuj¹ce zdarzenia:
+\begin{enumerate}
+\item Rozpoczêcie wykonywania metody.
+\item Zakoñczenie wykonywania metody.
+\item Zakoñczenie wykonywania programu.
+\end{enumerate}
+Reakcj¹ na pierwsze dwa zdarzenia jest ewaluacja kontraktu metody, jeœli takowy zosta³ dla niej zdefiniowany. Cykl ten trwa do momentu, w którym badany program koñczy dzia³anie lub w przypadku, gdy któryœ z warunków pocz¹tkowych lub koñcowych nie zosta³ spe³niony.
+
+\section{Przyk³ad wykorzystania biblioteki AsProfiled}
+W celu demonstracji u¿ycia biblioteki \emph{AsProfiled} niech dany bêdzie przyk³adowy zestaw klas.
+\begin{lstlisting}[label=AccountTest, caption=Definicja klas]
+// Prosta klasa reprezentuj¹ca konto bankowe
+class Account
+{
+ public int Balance;
+}
+
+// Klasa definij¹ca zestaw operacji na kontach bankowych
+class AccountManager
+{
+ // Kontrakt nak³adaj¹cy warunki na wejœciowe i wyjœciowe dane
+ [AsContract("source.Balance > amount",
+ "@returnValue == true && ^source.Balance + ^destination.Balance == 
+source.Balance + destination.Balance")]
+ // Realizacja przelewu pewnej kwoty pomiêdzy dwoma kontami
+ public bool Transfer(Account source, Account destination, int amount) 
+ {
+ if (amount < 0)
+  return false;
+ source.Balance -= amount;
+ destination.Balance += amount;
+ return true;
+ }
+}
+\end{lstlisting}
+
+W tym przyk³adzie na³o¿ono kontrakt, wyra¿ony przy pomocy atrybutu \emph{AsContract}, na metodê \emph{Transfer}.
+Okreœla on warunek pocz¹tkowy, nak³adaj¹cy wiêzy na dane wejœciowe metody i oznacza tyle, ¿e kwota przelewu nie mo¿e byæ wiêksza ni¿ stan konta Ÿród³owego.
+Warunek koñcowy, zdefiniowany przy pomocy drugiego argumentu atrybutu, mówi i¿ metoda powinna zwróciæ wyniki \emph{true} i suma pocz¹tkowych stanów kont jest równa ich sumie po zakoñczeniu wykonywania metody. \\
+
+Niech dany bêdzie kod wykonuj¹cy t¹ metodê.
+\begin{lstlisting}[label=TestRun, caption=Wykonanie przelewu]
+Account acc1 = new Account();
+acc1.Balance = 500;
+Account acc2 = new Account();
+acc2.Balance = 300;
+AccountManager manager = new AccountManager();
+manager.Transfer(acc1, acc2, 100);
+\end{lstlisting}
+
+Nie jest trudno sprawdziæ, ¿e w tym wypadku kontrakt jest spe³niony. Potwierdza to uruchomienie tego przyk³adu z w³¹czon¹ opcj¹ weryfikacji kontraktów przez \emph{AsProfiled}. Dla tego przypadku wynik jej dzia³ania jest nastêpuj¹cy.
+
+\lstset{
+morecomment=[n][\textbf]{TRUE}
+}
+\begin{lstlisting}[label=lst:AsProfiledOutput, caption=Wynik dzia³ania AsProfiled]
+TestApplication.Calculator.AccountManager.Transfer
+source.Balance > amount
+Program
+ Cmp Exp
+  Value
+   Identifier:source.Balance
+  Cmp Operator
+   >:>
+  Value
+   Identifier:amount
+Precondition:TRUE
+TestApplication.Calculator.AccountManager.Transfer
+@returnValue == true && ^source.Balance + 
+ ^destination.Balance == source.Balance + destination.Balance
+Program
+ Boolean Exp
+  Cmp Exp
+   Value
+    ReturnValue:@returnValue
+   Cmp Operator
+    ==:==
+   Value
+    BooleanLiteral:true
+  Boolean Operator
+   &&:&&
+  Cmp Exp
+   Add Exp
+    Value
+     InitialValue:^source.Balance
+    Add Operator
+     +:+
+    Value
+     InitialValue:^destination.Balance
+   Cmp Operator
+    ==:==
+   Add Exp
+    Value
+     Identifier:source.Balance
+    Add Operator
+     +:+
+    Value
+     Identifier:destination.Balance
+Postcondition:TRUE
+\end{lstlisting}
+Oczywiœcie, s¹ to tylko komunikaty diagnostyczne, ukazuje jednak cykl pracy aplikacji. Wypisywane s¹ nazwy metod z przypisanym atrybutem \emph{AsContract},
+odczytywane jest wyra¿enie opisuj¹ce warunek pocz¹tkowy lub koñcowy, nastêpnie  jest tworzone jego drzewo rozbioru, w koñcu nastêpuje jego ewaluacja i wypisanie wartoœci oznaczaj¹cej czy kontrakt zosta³ spe³niony czy te¿ nie. Naturalnie, jeœli, któryœ z warunków nie by³by spe³niony to zgodnie z zasad¹ programowania kontraktowego nastêpuje przerwanie wykonywania dalszych instrukcji programu.
+Jak widaæ na listingu \ref{lst:AsProfiledOutput} zarówno warunek
+wejœcia jak i warunek wyjœcia by³y spe³nione w momencie ich
+ewaluacji. \\
+
+Tak pogl¹dowo przedstawia siê sposób dzia³ania biblioteki \emph{AsProfiled}. W dalszej czêœci poszczególne elementy zosta³y opisane w szczegó³owy sposób.
+
 
 \section{Inspekcja nadzorowanego programu}
-Jak to zosta³o wspomniane we wczeœniejszych rozdzia³ach, aplikacja weryfikuj¹ca kontrakty ma postaæ biblioteki COM. Niesie to ze sob¹ pewne konsekwencje. Przede wszystkim biblioteka musi byæ zgodna z konwencj¹ definiowan¹ dla tego typu bibliotek. Szczegó³y dotycz¹ce tego tematu przedstawione zosta³y w kolejnych rozdzia³ach. Drug¹ konsekwencj¹ tego jest koniecznoœæ rejestracji takiej biblioteki w systemie.
-Do tego celu u¿ywana jest aplikacja o nazwie regsrv32.exe, która to jest jednym z narzêdzi dostarczanych wraz z platform¹ .NET.
-Pobiera ona identyfikator biblioteki, którym jest wartoœæ typu GUID, a nastêpnie  umieszcza w rejestrze systemu klucz sk³adaj¹cy siê z tego identyfikatora i œcie¿ki w systemie plików, okreœlaj¹cej po³o¿enie biblioteki.\\
+
+W obrêbie œrodowiska Microsoft .NET jedyny sposób rozszerzenia mechanizmu profilowania o w³asn¹ funkcjonalnoœæ polega na zaimplementowania odpowiednich interfejsów profilera. Dodatkowo, biblioteka implementuj¹ca te interfejsy musi byæ utworzona w technologii COM (ang. \textbf C\textnormal omponent \textbf O\textnormal bject \textbf M\textnormal odel). Jest to standard definiowania i tworzenia interfejsów programistycznych na poziomie binarnym, niezale¿nym od konkretnego jêzyka programowania, dla komponentów oprogramowania wprowadzony przez firmê Microsoft. Obecnie czynione s¹ starania, aby odejœæ od tego standardu, w³aœnie poprzez upowszechnianie platformy .NET. Nale¿y jednak dodaæ, ¿e czêœæ tej platformy ma postaæ bibliotek COM, wiêc ca³kowita rezygnacja z tego rozwi¹zania nie jest mo¿liwa. \\
+%Podczas budowy biblioteki COM, implementuja;cej interfejsy profiluja;ce %konieczne jest pos?ugiwania sie; je;zykiem C++, gdyz. funkcjonalnos'ci %biblioteki wywo?ywane sa; przez s'rodowisko uruchomieniowe w newralgicznych %momentach wykonywania, w czasie których   ta jest wywo?ywana   
+
+%Jednym z wymagañ, które s¹ stawiane ka¿dej bibliotece typu COM jest implementacja interfejsu bazowego \emph{IUnknown}, dziêki któremu mo¿liwe jest uzyskanie uchwytów do pozosta³ych interfejsów implementowanych w ramach tej biblioteki. 
+%Jêzyk C++, który zosta³ wykorzystany do utworzenia biblioteki AsProfiled, wspiera programowanie poprzez klasy czysto wirtualne, a ich implementacja przebiega w sposób standardowy.
+% Drug¹ konsekwencj¹ tego jest koniecznoœæ rejestracji takiej biblioteki w systemie.
+%Do tego celu u¿ywana jest aplikacja o nazwie regsrv32.exe, która to jest jednym z narzêdzi dostarczanych wraz z platform¹ .NET.
+%Pobiera ona identyfikator biblioteki, którym jest wartoœæ typu GUID, a nastêpnie  umieszcza w rejestrze systemu klucz sk³adaj¹cy siê z tego identyfikatora i œcie¿ki w systemie plików, okreœlaj¹cej po³o¿enie biblioteki.\\
 
 Rozpoczêcie procesu profilowania/weryfikacji aplikacji odbywa siê poprzez uruchomienie programu z linii poleceñ w odpowiednio przygotowanym œrodowisku.
-Etap ten polega na ustawieniu zmiennych œrodowiskowych, instruuj¹cych maszynê wirtualn¹ CLR, aby ta wysy³a³a powiadomienia na temat zdarzeñ zachodz¹cych wewn¹trz uruchamianej aplikacji. 
-Odbywa siê to w podany poni¿ej sposób: 
-
+Etap ten polega na ustawieniu zmiennych œrodowiskowych, instruuj¹cych maszynê wirtualn¹ CLR, aby u¿ywa³a wskazanego obiektu implementuj¹cego interfejs
+profilera, przekazuj¹c do niego powiadomienia na temat zdarzeñ zachodz¹cych wewn¹trz uruchamianej aplikacji. 
+Zmienne, których wartoœci nale¿y ustawiæ to \emph{COR\_ENABLE\_PROFILING} oraz \emph{COR\_PROFILER}, mo¿na to zrobiæ na przyk³ad poprzez u¿ycie podanego skryptu pow³oki:
 \begin{lstlisting}[label=lst:initProfiling, caption=Inicjalizacja œrodowiska]
 SET COR_ENABLE_PROFILING=1
 SET COR_PROFILER={GUID}
 \end{lstlisting} 
 
-Powy¿sze zmienne s¹ nastêpnie odczytywane przez œrodowisko uruchomieniowe .NET.
-Informuj¹ one maszynê wirtualn¹, ¿e ta powinna przesy³aæ informacje o zdarzeniach do biblioteki, której po³o¿enie okreœlanie jest przy wykorzystaniu identyfikatora GUID.\\
+Identyfikator GUID jest wykorzystywany do okreœlenia lokalizacji biblioteki. 
+
+%Wartoœci tych zmiennych s¹ nastêpnie odczytywane przez œrodowisko uruchomieniowe .NET.
+%Informuj¹ one maszynê wirtualn¹, ¿e ta powinna przesy³aæ informacje o zdarzeniach do biblioteki, której po³o¿enie okreœlanie jest przy wykorzystaniu identyfikatora GUID.\\
 
 Liczba i rodzaj wysy³anych powiadomieñ okreœlany jest wewn¹trz biblioteki profiluj¹cej. W szczegó³ach temat ten opisany jest w kolejnym rozdziale.
 
@@ -37,7 +155,7 @@ informacjê o elementach programu (np. klasach, typach wyliczeniowych, metodach) 
 
 %Ich odczyt mo¿liwy jest dziêki mechanizmowi zwanym refleksj¹.
 
-Co jest w tym kontekœcie istotne to, i¿ s¹ one pamiêtane jako meta dane danego elementu programu.
+W tym kontekœcie istotne jest to, i¿ s¹ one pamiêtane jako meta dane danego elementu programu.
 Definicja atrybutów jest jedynym elementem, wchodz¹cym bezpoœrednio w sk³ad omawianego rozwi¹zania, który musi znajdowaæ siê po stronie weryfikowanej aplikacji. \\
 
 Atrybuty okreœlaj¹ce kontrakt maj¹ postaæ: 
@@ -54,114 +172,11 @@ Metadane w kontekœcie platformy .NET, to dodatkowe informacje opisuj¹ce sk³adowe
 
 Dane te, emitowane przez kompilator, przechowywane s¹ wewn¹trz ka¿dego wykonywalnego programu w postaci binarnej.
 
-\subsection{Reprezentacja metadanych}
-W ramach systemu Windows zdefiniowany jest format plików wykonywalnych - PE (eng. Portable Executables), okreœlaj¹cy strukturê jak¹ musi posiadaæ ka¿dy program, aby móg³ byæ w nim uruchomiony.
-%%% RYSUNEK 
-Aplikacje przeznaczone na platformê .NET naturalnie równie¿ musz¹ byæ zorganizowane w sposób zgodny z tym standardem.
-Jednym z pól w ramach nag³ówka PE jest offset 
-%(RVA)
-okreœlaj¹cy po³o¿enie zbioru metadanych w ramach pliku wykonywalnego czy biblioteki. 
- 
-W sk³ad tego zbioru wchodzi piêæ rodzajów strumieni. W tym kontekœcie, przez pojêcie strumieñ, okreœlana jest sekcja w obrêbie metadanych, w której przechowywane s¹ informacje posegregowane wzglêdem ich typu.
-Te strumienie to:
-\begin{enumerate}
-\item \#Strings - zawiera listê napisów, które okreœlaj¹ nazwê programu, metod, parametrów. 
-\item \#US (User Strings) - zawiera tablicê wszystkich sta³ych ³añcuchowych definiowanych przez u¿ytkownika. 
-\item \#GUID - przechowuje listê wszystkich u¿ytych w aplikacji 128 bitowych wartoœci GUID, m.in. t¹ która jednoznacznie identyfikuje aplikacjê  
-
-\item \#~ - ten strumieñ jest tablic¹ tablic. Ka¿da tablica nadrzêdna identyfikowana przy pomocy pojedynczego bajtu o wartoœci od 0x00 do 0x29. Tablice wewnêtrzne opisuj¹ metody, pola, parametry, typy.
-\item \#Blob - zawiera ci¹gi danych binarnych, które nie mog¹ byæ przedstawione w prosty sposób jako napisy. Dane te wykorzystywane s¹ do opisywania sygnatur metod.
-\end{enumerate}
-
-Metadane przechowuj¹ informacje na temat typów definiowanych w ramach programu (klasy, struktury, interfejsy), globalnych funkcji i zmiennych. Ka¿da z tych abstrakcyjnych encji identyfikowana jest przez wartoœæ typu mdToken (metadata token). Jest ona u¿ywana przez mechanizmy odczytuj¹ce metadane do okreœlenia  po³o¿enia w pamiêci informacji na ich temat.
-
-Token metadanych ma postaæ czterobajtowej wartoœci. Najbardziej znacz¹cy bajt   okreœla typ tokenu, pozosta³e okreœlaj¹ po³o¿enie pozosta³ych informacji w tablicy metadanych.
-Dla przyk³adu, wartoœæ 1 przechowywana w MSB (most significant byte) oznacza, i¿ token jest typu mdTypeRef, który oznacza referencjê do typu, a informacje na jego temat s¹ przechowywane w tablicy TypeRef.
-
-
-Pozosta³e, mniej znacz¹ce bajty, oznaczaj¹ identyfikator rekordu (record identifier - RID) i zawieraj¹ w sobie indeks do wiersza w/w tablicy, która okreœlona jest przez wartoœæ najbardziej znacz¹cego bajtu.\\
-Przyk³adowo, token o wartoœci 0x02000007 odnosi siê do siódmego wiersza tablicy TypeRef. Podobnie, wartoœæ 0x0400001A oznacza odwo³anie do wiersza dwudziestego szóstego tabliy FieldDef.
-Wiersz zerowy ka¿dej z powy¿szych tablic nigdy nie zawiera w sobie danych, wiêc jeœli identyfikator RID jest równy zeru, to znaczy to, ¿e token jest pusty, ma wartoœæ nil. Taki token zdefiniowany jest dla ka¿dego typu encji, np. wartoœæ 0x10000000 okreœla pusty token mdTypeRefNil.
-
-
-W poni¿szej tabeli znajduj¹ siê typy tokenów wykorzystywane w ramach aplikacji, typy które opisuj¹ oraz nazwy tablic metadanych. Wszystkie tokeny s¹ pochodnymi typu bazowego - mdToken.
-
-\begin{center}
-    \begin{longtable}{ |c | c | p{4cm} |}
-    \hline
-Typ tokenu & Nazwa tablicy z metadanymi & Opis \\ \hline
-
-mdTypeDef &
-TypeDef &
-Token odnosz¹cy siê do typów referencyjnych (klasy i interfejsy) i wartoœciowych (struktury) \\ \hline
-%Type declaration: Declaration of either a runtime reference type (class or %interface) or a value type. \\ \hline
-
-
-mdMethodDef &
-MethodDef &
-Token odnosz¹cy do informacji opisuj¹cych metody bêd¹ce czêœci¹ klasy lub interfejsu \\ \hline
-
-mdParamDef &
-ParamDef &
-Typ tokenu, którego wartoœci odnosz¹ siê do informacji okreœlaj¹cych parametry metod \\ \hline
-
-mdFieldDef &
-FieldDef &
-Odniesienie do metadanych dotycz¹cych sk³adowych  wchodz¹cych w sk³ad klas, interfejsów \\ \hline
-
-mdCustomAttribute &
-CustomAttribute &
-Zawiera odniesienie do metadanych atrybutów \\ \hline
-
-
-	\end{longtable}
-\end{center}
-
-%used to encode the keyword instance in the calling convention, see §15.3
-%EXPLICITTHIS = 0x40, used to encode the keyword explicit in the calling %convention, see §15.3
-%DEFAULT = 0x0, used to encode the keyword default in the calling convention, %see §15.3
-%VARARG = 0x5, used to encode the keyword vararg in the calling convention, see %§15.3
-%used to indicate that the method has one or more generic parameters.
-%The first byte of the Signature holds bits for HASTHIS, EXPLICITTHIS and %calling convention (DEFAULT, VARARG,
-%or GENERIC). These are ORed together.
-
-%GenParamCount is the number of generic parameters for the method. This is a %compressed int32. [Note: For
-%generic methods, both MethodDef and MemberRef shall include the GENERIC calling %convention, together with
-%GenParamCount; these are significant for binding—they enable the CLI to %overload on generic methods by the
-%number of generic parameters they include. end note]
-%ParamCount is an integer that holds the number of parameters (0 or more). It %can be any number between 0
-%and 0x1FFFFFFF. The compiler compresses it too (see Partition II Metadata %Validation) – before storing into
-%the 'blob' (ParamCount counts just the method parameters – it does not include %the method’s return type)
-%The RetType item describes the type of the method’s return value (§23.2.11)
-%The Param item describes the type of each of the method’s parameters. There %shall be ParamCount instances
-%of the Param item (§23.2.10)
-
-
-
-%The value of the first byte of a Signature 'blob' indicates what kind of %Signature it is. Its lowest 4 bits hold one
-%of the following: C, DEFAULT, FASTCALL, STDCALL, THISCALL, or VARARG (whose %values are defined in §23.2.3),
-%which qualify method signatures; FIELD, which denotes a field signature (whose %value is defined in §23.2.4); or
-%PROPERTY, which denotes a property signature (whose value is defined in %§23.2.5). This subclause defines the
-%binary 'blob' format for each kind of Signature. In the syntax diagrams that %accompany many of the definitions,
-%Partition II 153
-%shading is used to combine into a single diagram what would otherwise be %multiple diagrams; the
-%accompanying text describes the use of shading.
-%Signatures are compressed before being stored into the Blob heap (described %below) by compressing the
-%integers embedded in the signature. The maximum encodable integer is 29 bits %long, 0x1FFFFFFF. The
-%compression algorithm used is as follows (bit 0 is the least significant bit):
-%• If the value lies between 0 (0x00) and 127 (0x7F), inclusive, encode as a %one-byte integer (bit 7 is
-%clear, value held in bits 6 through 0)
-%• If the value lies between 28 (0x80) and 214 – 1 (0x3FFF), inclusive, encode %as a 2-byte integer
-%with bit 15 set, bit 14 clear (value held in bits 13 through 0)
-%• Otherwise, encode as a 4-byte integer, with bit 31 set, bit 30 set, bit 29 %clear (value held in bits 28
-%through 0)
-%• A null string should be represented with the reserved single byte 0xFF, and %no following data
-
-
 \section{Odczytywanie wartoœci argumentów metod}
 
-%Kolejnym krokiem na drodze do ewaluacji kontraktów jest odczyt wartoœci %argumentów przekazywanych do metody w trakcie jej wywo³ania.
 Dziêki informacjom zawartym w metadanych, mo¿liwe jest okreœlenie liczby i typów parametrów przekazywanych do metod. S¹ to dane statyczne, w tym sensie, ¿e s¹ one sta³e w ramach raz zdefiniowanego programu. Z drugiej strony, wartoœci parametrów mog¹ byæ inne dla ka¿dego wywo³ania metody, tak wiêc nie mog¹ w ¿aden sposób stanowiæ czêœci metadanych. Musi wiêc zatem istnieæ osobny mechanizm pozwalaj¹cy na realizacjê tego zadania. \\
+
+
 Okazuje siê, ¿e w momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê \linebreak \emph{\_COR\_PRF\_FUNCTION\_ARGUMENT\_INFO}, która jest przekazywana do odbiorcy. 
 Jej definicja przedstawia siê w sposób nastêpuj¹cy:
 \begin{lstlisting}[label=CorPrfFunctionArgumentInfo]

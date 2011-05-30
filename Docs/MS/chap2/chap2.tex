@@ -1,9 +1,9 @@
-\chapter{Programowanie kontraktowe}
+\chapter{Wprowadzenie do programowania kontraktowego}
 W tym rozdziale zosta³a przybli¿ona specyfika programowania kontraktowego.
-Programowanie kontraktowe jest metodologi¹ sprawdzania poprawnoœci oprogramowania. 
-\section{Historia}
-Koncepcja ta ma korzenie w pracach nad formaln¹ weryfikacj¹ programów, formaln¹ specyfikacj¹ oraz zwi¹zanych z logik¹ Hoara.
-Wszystkie z powy¿szych d¹¿¹ do dowodzenia poprawnoœci programów komputerowych, a tym samym przyczyniaj¹ siê podnoszenia ich jakoœci.
+Programowanie kontraktowe jest jedn¹ z metodologii sprawdzania poprawnoœci oprogramowania. 
+
+Koncepcja programowania kontraktowego ma korzenie w pracach nad formaln¹ weryfikacj¹ programów, formaln¹ specyfikacj¹ oraz logik¹ Hoara.
+Wszystkie z powy¿szych s¹ przyk³adami narzêdzi wykorzystywanych do dowodzenia poprawnoœci programów komputerowych, a tym samym przyczyniaj¹ siê podnoszenia ich jakoœci.
 Nie inaczej jest w przypadku programowanie kontraktowego. 
 Po raz pierwszy w obecnej postaci wprowadzi³ je Bertrand Meyer w 1986 roku przy okazji projektu jêzyka programowania Eiffel. 
 Do dnia dzisiejszego powsta³o wiele ró¿nych implementacji tej koncepcji.
@@ -14,7 +14,7 @@ Czeœæ jêzyków programowania ma wbudowane mechanizmy pozwalaj¹ce na definiowanie 
 \item D
 \item jêzyki oparte na platformie .NET w wersji 4.0
 \end{packed_item}
-Drug¹ grupê stanowi¹ jêzyki dla których powsta³y nak³adki umo¿liwiaj¹ce ten rodzaj weryfikacji. Ta grupa jest znacznie bardziej obszerna i obejmuje wiêkszoœæ znacz¹cych jêzyków programowania, takich jak :
+Drug¹ grupê stanowi¹ jêzyki dla których powsta³y rozszerzenia umo¿liwiaj¹ce ten rodzaj weryfikacji. Ta grupa jest znacznie bardziej obszerna i obejmuje wiêkszoœæ znacz¹cych jêzyków programowania, takich jak :
 \begin{packed_item}
 \item C/C++, 
 \item C\#
@@ -24,24 +24,25 @@ Drug¹ grupê stanowi¹ jêzyki dla których powsta³y nak³adki umo¿liwiaj¹ce ten rodz
 \item Python
 \item Ruby
 \end{packed_item}
-Omawiana biblioteka nale¿y do drugiej grupy rozwi¹zañ.
-\section{Opis}
-Ten rodzaj programowania zak³ada, ¿e elementy programu powinny odnosiæ siê do siebie na zasadzie kontraktów, czyli:
+Biblioteka \emph{AsProfiled} nale¿y do drugiej grupy rozwi¹zañ. \\
+
+Metodologia programowania kontraktowego zak³ada, ¿e elementy programu powinny odnosiæ siê do siebie na zasadzie kontraktów, czyli:
 \begin{itemize}
-\item Ka¿dy element powinien zapewniaæ okreœlon¹ funkcjonalnoœæ i wymagaæ œciœle okreœlonych œrodków do wykonania polecenia.
-\item Klient mo¿e u¿yæ funkcjonalnoœci, o ile spe³ni zdefiniowane wymagania.
-\item Kontrakt opisuje wymagania stawiane obu stronom.
-\item Element zapewniaj¹cy funkcjonalnoœæ powinien przewidzieæ sytuacje wyj¹tkowe, a klient powinien je rozpatrzyæ.
+\item ka¿dy element powinien zapewniaæ okreœlon¹ funkcjonalnoœæ i wymagaæ œciœle okreœlonych œrodków do wykonania polecenia,
+\item klient mo¿e u¿yæ funkcjonalnoœci, o ile spe³ni zdefiniowane wymagania,
+\item dostawca zobowi¹zuje siê do dostarczenia us³ugi okreœlonej jakoœci,
+\item element zapewniaj¹cy funkcjonalnoœæ powinien przewidzieæ sytuacje wyj¹tkowe, a klient powinien je rozpatrzyæ.
 \end{itemize}
 
-Koncepcja ta polega na zawieraniu swego rodzaju umowy pomiêdzy dostawc¹ funkcjonalnoœci i klientami. W ogólnym przypadku poprzez dostawców rozumiemy klasy lub metody zawarte w programie, klientem zaœ jest ka¿dy kto z tych encji korzysta. \\
-Dla danej klasy kontrakt definiowany jest jako niezmiennik, to znaczy,
-warunek jaki musi byæ spe³niony przed i po wywo³aniu dowolnej publicznej metody w obrêbie tej klasy. \\
-Z kolei dla metod, kontrakt definiowany jest przy pomocy warunków pocz¹tkowego i koñcowego, gdzie ten pierwszy specyfikuje jakie za³o¿enia powinny byæ spe³nione w momencie wywo³ania metody, a drugi okreœla stan aplikacji po jej zakoñczeniu.\\ 
+Widaæ wiêc, ¿e chodzi o zawieranie swego rodzaju umowy pomiêdzy dostawc¹ funkcjonalnoœci i klientami. W ogólnym przypadku poprzez dostawców rozumiemy klasy lub metody zawarte w programie, klientem zaœ jest ka¿dy kto z nich korzysta.
 
-Rozwi¹zanie, które jest tu opisywane skupia siê na drugim rodzaju kontraktów.
-W jêzyku programowania Eiffel, sk¹d wywodzi siê ca³a idea, tego rodzaju kontrakty opisywane s¹ w sposób nastêpuj¹cy: \\
+Umowa ta, zwana dalej kontraktem jest dowoln¹ formu³a logiczna w jêzyku logiki pierwszego rzêdu, w której zmiennymi s¹ wartoœci pól obiektów, a
+symbolami funkcyjnymi - \( \eta-arne \) operacje, które s¹ tak samo
+interpretowane przez obie strony zawieraj¹ce kontrakt (np. sum(1,n), +, *).
+Kontrakt klasy (ang. class contract) definiowany jest jako niezmiennik, to znaczy, warunek jaki musi byæ spe³niony przed i po wywo³aniu dowolnej publicznej metody w obrêbie tej klasy. \\
+Z kolei kontrakt metody (ang. method contract) definiowany jest przy pomocy warunków pocz¹tkowego i koñcowego, gdzie ten pierwszy specyfikuje jakie za³o¿enia powinny byæ spe³nione w momencie wywo³ania metody, a drugi okreœla stan aplikacji po jej zakoñczeniu.\\ 
 
+W jêzyku programowania Eiffel, sk¹d wywodzi siê ca³a idea, kontrakty nak³adane na metody definiowane s¹ w nastêpuj¹cy sposób: 
 \begin{lstlisting}[label=DesignByContract, caption=Programowanie kontraktowe]
 NazwaMetody (deklaracja argumentów) is
 require
@@ -52,6 +53,10 @@ ensure
  -- warunek koñcowy
 end 
 \end{lstlisting}
+
+Warunek pocz¹tkowy oznacza kontrakt wi¹¿¹cy klienta, który musi byæ spe³niony na wejœciu, aby metoda mog³a poprawnie realizowaæ zdefiniowane wewn¹trz niej operacje.
+Warunek koñcowy to kontrakt wi¹¿¹cy dostawcê us³ugi, który na pewno bêdzie spe³niony po zakoñczeniu wykonywania metody.
+
 Dla ilustracji, poni¿ej zamieszczono definicjê klasy \emph{ACCOUNT}, reprezentuj¹cej konto u¿ytkownika w banku. W ramach konta mo¿na przeprowadziæ operacje wp³aty i wyp³aty œrodków. Dla metod odpowiadaj¹cym tym czynnoœciom, zdefiniowane zosta³y warunki pocz¹tkowe i koñcowe. Zgodnie z powy¿szym, warunki zosta³y umieszczone w ramach bloków \emph{require} i \emph{ensure}  
 
 \begin{lstlisting}[label=DesignByContractExample, caption=Kontrakty w jêzyku Eiffel]
@@ -89,11 +94,18 @@ class ACCOUNT feature
 end -- class ACCOUNT 
 \end{lstlisting}
 
-Fragment ten nie wymaga szerszego komentarza, warto jednak zwróciæ uwagê na s³owo kluczowe \emph{old} wykorzystane w warunkach koñcowych. Jego wyst¹pienie przed zmienn¹ oznacza odwo³anie do wartoœci pocz¹tkowej, czyli wartoœci na któr¹ wskazywa³a ta zmienna przed rozpoczêciem wykonywania metody. 
+Warunek pocz¹tkowy dla metody \emph{deposit} okreœla, ¿e wartoœæ, która ma zostaæ zdeponowana jest nieujemna. Warunek koñcowy mówi, i¿ wynikiem dzia³ania tej metody bêdzie zwiêkszenie stanu konta o wartoœæ do niej przekazan¹.
+
+Dla metody \emph{withdraw} zosta³ okreœlony warunek pocz¹tkowy, który nak³ada ograniczenia na argument \emph{sum}, pozwalaj¹c na operacjê wyp³aty pod warunkiem, i¿ suma jest nieujemna oraz saldo konta nie spadnie poni¿ej pewnego poziomu. Warunek koñcowy deklaruje, i¿ po zakoñczeniu metody stan konta zostanie pomniejszony o wartoœæ argumentu \emph{sum}.
+
+Warto zwróciæ uwagê na s³owo kluczowe \emph{old} wykorzystane w warunkach koñcowych. Jego wyst¹pienie przed zmienn¹ oznacza odwo³anie do wartoœci pocz¹tkowej, czyli wartoœci na któr¹ wskazywa³a ta zmienna przed rozpoczêciem wykonywania metody. 
 Fakt, i¿ s³owo to jest czêœci¹ jêzyka Eiffel, pokazuje, ¿e koncepcja programowania kontraktowego by³a wziêta pod uwagê ju¿ na etapie jego projektowania.\\
 
 Sytuacja ma odmienny charakter w przypadku platformy .NET, gdzie nie wystêpuje bezpoœrednie wsparcie dla tego typu koncepcji.
-Przy budowie prezentowanej aplikacji wykorzystano cechê szczególn¹ œrodowiska .NET, a w szczególnoœci jêzyka C\#, jak¹ jest mo¿liwoœæ dekorowania metod atrybutami. Ten element jêzyka bêdzie dok³adniej opisany w dalszej czêœci pracy, przy omawianiu funkcjonalnoœci biblioteki. W tym momencie wystarczy przyj¹æ, i¿ atrybuty te staj¹ siê czêœci¹ meta informacji o danej metodzie, co z kolei mo¿e byæ wykorzystywane przy jej inspekcji.
+Przy budowie biblioteki AsProfiled wykorzystano cechê szczególn¹ œrodowiska .NET, a w szczególnoœci jêzyka C\#, jak¹ jest mo¿liwoœæ dekorowania metod atrybutami. 
+Atrybuty staj¹ siê czêœci¹ meta danych o danej metodzie, które mog¹ byæ wykorzystywane przy jej inspekcji. Dziêki tej w³asnoœci mog³y one pos³u¿yæ jako noœnik informacji o kontraktach.
+Alternatyw¹ by³oby u¿ycie zewnêtrznych plików XML, zdecydowano siê jednak wykorzystaæ atrybuty jako elementy bêd¹ce bli¿ej weryfikowanego kodu.
+decyzj¹. 
 Dla ilustracji, poni¿ej zosta³a zademonstrowana ogólna postaæ zapisu kontraktów jako atrybuty w jêzyku C\#:
 
 \begin{lstlisting}[label=ContractDefinition, caption=Definicja kontraktu]
