@@ -1,10 +1,10 @@
 \chapter{Porównanie z innymi bibliotekami}
 W tej czêœci opisano dwa rozwi¹zania realizuj¹ce podejœcie programowania kontraktowego. Podobnie jak biblioteka AsProfiled s¹ one przeznaczone dla programów pracuj¹cych w ramach platformy .NET.
 
-\section{CodeContracts}
-Jest to kompleksowe rozwi¹zanie firmy Microsoft, pocz¹tkowe tworzone w ramach komórki badawczej Mirosoft Research. Obecnie jest ju¿ dostêpna na rynku w pe³ni funkcjonalna wersja tego zestawu narzêdzi i wchodz¹ one w sk³ad œrodowiska programistycznego Visual Studio 2010. \\
+\section{Code Contracts}
+Code Contracts to kompleksowe rozwi¹zanie firmy Microsoft, pocz¹tkowe tworzone w ramach komórki badawczej Mirosoft Research. Obecnie jest ju¿ dostêpna na rynku w pe³ni funkcjonalna wersja tego zestawu narzêdzi i wchodz¹ one w sk³ad œrodowiska programistycznego Visual Studio 2010. \\
 
-Z perspektywy implementacyjnej w ramach \emph{Code Contracts} zastosowano zgo³a inne podejœcie, od tego, które reprezentowane jest przez AsProfiled.
+Z perspektywy implementacyjnej w ramach \emph{Code Contracts} zastosowano inne podejœcie, od tego, które reprezentowane jest przez AsProfiled.
 Dla przypomnienia, AsProfiled stanowi zewnêtrzn¹ bibliotekê, do której odwo³ania wystêpuj¹ na poziomie maszyny wirtualnej .NET. Sprawdzany program nie ma œwiadomoœci istnienia tej biblioteki, a jedynym elementem zewnêtrznym jest klasa definiuj¹ca atrybuty, poprzez który reprezentowany jest kontrakt.
 W przypadku u¿ycia \emph{Code Contracts}, kontrolowany program (biblioteka) odwo³uje siê bezpoœrednio do metod zdefiniowanych w ramach przestrzeni nazw \emph{System.Diagnostics.Contracts}. 
 
@@ -61,7 +61,7 @@ public int Div(int arg1, int arg2)
 W tym przyk³adnie, poza wczeœniej wymienionymi metodami \emph{Requires} i \emph{Ensures}, znajduje siê wywo³anie metody \emph{Contract.Results \textless int\textgreater()}.
 Jest to odpowiednik elementu \emph{@returnValue} w obrêbie kontraktów AsContracts, a wiêc oznacza odwo³anie do wartoœci zwracanej z metody.\\
 
-Kolejn¹ wspóln¹ cech¹ bibliotek \emph{Code Contracts} oraz \emph{AsProfiled} jest mo¿liwoœæ odwo³ywania siê do wartoœci pocz¹tkowych argumentów metody.
+Wspóln¹ cech¹ bibliotek \emph{Code Contracts} oraz \emph{AsProfiled} jest mo¿liwoœæ odwo³ywania siê do wartoœci pocz¹tkowych argumentów metody.
 W ramach kontraktów \emph{AsContracts} odwo³anie do wartoœci pocz¹tkowych oznaczane s¹ przez \emph{\^{}nazwaArgumentu}, z kolei tutaj t¹ rolê pe³ni metoda \linebreak 
 \emph{Contracts.OldValue\textless T \textgreater(T value)}.
 Za zachowywanie tych wartoœci odpowiedzialny jest kod wygenerowany przez \emph{ccrewrite.exe}. 
@@ -102,7 +102,8 @@ private void ObjectInvariant ()
 Metoda oznaczona atrybutem \emph{[ContractInvariantMehtod]} jest wywo³ywana przez odpowiedni kod wygenerowany przez narzêdzie \emph{ccrewrite.exe} 
 \end{enumerate}
 
-Podsumowuj¹c, \emph{Code Contracts} w obecnej postaci jest dopracowanym rozwi¹zaniem, o czym œwiadczy fakt, i¿ jest czêœci¹ oficjalnej dystrybucji platformy .NET 4.0. Du¿¹ zalet¹ w stosunku do biblioteki AsProfiled, poza bogatsz¹ funkcjonalnoœci¹, jest silne typowanie wyra¿eñ okreœlaj¹cych warunki. U³atwia to ich pisanie oraz uniemo¿liwia tworzenie niepoprawnych w sensie sk³adniowym warunków. 
+Podsumowuj¹c, \emph{Code Contracts} w obecnej postaci jest dopracowanym rozwi¹zaniem, o czym œwiadczy fakt, i¿ jest czêœci¹ oficjalnej dystrybucji platformy .NET 4.0. Zasadnicz¹ ró¿nic¹ w stosunku do biblioteki AsProfiled jest œrodowisko, w którym kontrakty s¹ ewaluowane. W Code Contracts kontrakty wykonuj¹ siê jako kod zarz¹dzany, w AsProfiled s¹ one pod kontrol¹ niezarz¹dzanego kodu profilera.
+Du¿¹ zalet¹ w stosunku do biblioteki AsProfiled, poza bogatsz¹ funkcjonalnoœci¹, jest silne typowanie wyra¿eñ okreœlaj¹cych warunki. U³atwia to ich pisanie oraz uniemo¿liwia tworzenie niepoprawnych w sensie sk³adniowym warunków. 
 
 \section{LinFu.Contracts}
 LinFu.Contracts wchodzi w sk³ad bibliotek zgrupowanych w ramach projektu LinFu, stworzonego przez Philipa Laureano a udostêpnianego na zasadach wolnego oprogramowania. U podstaw tej biblioteki le¿y mechanizm generowania dynamicznych obiektów poœrednicz¹cych (ang. \emph{dynamic proxy}), które pozwalaj¹ na przechwytywanie wywo³añ metod na docelowym obiekcie. 
@@ -336,7 +337,7 @@ Warunek zawiera sprawdzenie bilans rachunku po wp³yniêciu depozytu jest równy je
 
 Podsumowuj¹c, biblioteka LinFu.Contracts spe³nia wszystkie funkcjonalnoœci niezbêdne do programowania kontraktowego. Z drugiej strony mo¿na podejrzewaæ, i¿ nie by³o to g³ównym za³o¿eniem podczas projektowania LinFu. Definiowanie kontraktów wymaga dosyæ du¿ego nak³adu pracy w porównaniu do prezentowanych wczeœniej rozwi¹zañ. \\
 
-Do zalet tego rozwi¹zania mo¿na z pewnoœci¹ zaliczyæ nieinwazyjnoœæ kontraktów w stosunku do sprawdzanego kodu. Zestaw kontraktów mo¿e byæ zawarty w osobnej bibliotece, za³¹czanej w zale¿noœci od potrzeby. Z drugiej strony wymusza definiowanie klas jako publicznych, zaœ metody które maj¹ byæ przes³oniête musz¹ byæ oznaczone jako wirtualne - wynika to ze specyfiki koncepcji tworzenia dynamicznych obiektów poœrednicz¹cych.
+Do zalet tego rozwi¹zania mo¿na zaliczyæ nieinwazyjnoœæ definicji kontraktów w stosunku do sprawdzanego kodu. Zestaw kontraktów mo¿e byæ zawarty w osobnej bibliotece, za³¹czanej w zale¿noœci od potrzeby. Z drugiej strony, wymóg konstruowania obiektów przy u¿yciu metod fabrykuj¹cych mo¿e okazaæ siê niemo¿liwy do spe³nienia w przypadku ju¿ istniej¹cego kodu, gdy¿ wi¹za³o by siê to z du¿ym nak³adem pracy. Dodatkowo, u¿ycie LinFu.Contracts wymusza definiowanie klas jako publicznych, zaœ metody które maj¹ byæ przes³oniête musz¹ byæ oznaczone jako wirtualne - wynika to ze specyfiki koncepcji tworzenia dynamicznych obiektów poœrednicz¹cych.
 
 \section{Porównanie funkcjonalnoœci opisywanych bibliotek}
 W tym miejscu prezentowane jest podsumowanie funkcjonalnoœci przedstawionych bibliotek.

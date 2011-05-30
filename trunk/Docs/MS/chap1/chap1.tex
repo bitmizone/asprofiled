@@ -5,22 +5,42 @@ W niniejszej pracy opisano budowê oraz zasadê dzia³ania biblioteki AsProfiled um
 Poprawnoœæ ta badana jest poprzez weryfikacjê kontraktów na³o¿onych na poszczególne czêœci programów, w tym wypadku, funkcji (metod).
 Ten rodzaj weryfikacji nazywany jest programowaniem kontraktowym.  \\
 
-Przedstawiona biblioteka zosta³a napisana w jêzyku C++ przy wykorzystaniu mechanizmów zwi¹zanych z technologi¹ COM. 
-Nale¿y wspomnieæ, i¿ w kontekœcie programowania kontraktowego jest to rozwi¹zanie, jak do tej pory, unikalne.
+Pomimo tego, ¿e pocz¹tki tego paradygmatu siêgaj¹ roku 1986, to na obecn¹ chwilê nie mo¿na powiedzieæ, i¿ takie podejœcie do programowania jest powszechnie stosowane. Z drugiej strony, dla ka¿dego ze stosowanych dzisiaj jêzyków programowania powsta³y odpowiednie rozwi¹zania realizuj¹ce t¹ koncepcjê. Istnieje kilka ró¿nych podejœæ przy jej implementacji, s¹ to m.in.:
+\begin{itemize}
+\item zewnêtrzne biblioteki, wykorzystuj¹ce mechanizmy refleksji w celu odczytywania stanu programu - LinFu.Contracts
+\item odpowiednio zdefiniowane zestawy makr, wykorzystywanych przez program interpretuj¹cy - DBC for C preprocessor
+\item narzêdzia przepisuj¹ce kod poœredni programu - Code.Contracts, AspectJ
+\item mechanizmy wbudowane w jêzyk - Eiffel
+\end{itemize}
+
+Nale¿y tu wyró¿niæ zestaw narzêdzi \emph{Code.Contracts}, które sta³y siê czêœci¹ najnowszej dystrybucji œrodowiska programistycznego .NET oznaczonej numerem 4.0. Mo¿na to odczytaæ jako krok w kierunku upowszechnienia paradygmatu programowania kontraktowego. \\
+
+Pomimo szerokiego wachlarza dostêpnych rozwi¹zañ, okazuje siê, ¿e jest mo¿liwe utworzenie rozwi¹zania nie bazuj¹cego na ¿adnym z wy¿ej wymienionych podejœæ.
+Polega ono na wykorzystaniu specyficznych dla technologii .NET w³asnoœci, które pozwalaj¹ na komunikacjê maszyny wirtualnej z zewnêtrzn¹ bibliotek¹ w celu przekazywania informacji na temat zdarzeñ zachodz¹cych w programie.
+Ta cecha zosta³a wykorzystana przy budowie biblioteki \emph{AsProfiled}, której proces tworzenia zosta³ przedstawiony w tej pracy.
+Nale¿y wspomnieæ, i¿ w kontekœcie programowania kontraktowego jest to 
+rozwi¹zanie, jak do tej pory, unikalne.
+Aplikacja zosta³a napisana w jêzyku C++ przy wykorzystaniu mechanizmów zwi¹zanych z technologi¹ COM.
+Kod Ÿród³owy biblioteki wraz z dokumentacj¹ znajduje siê pod adresem https://code.google.com/p/asprofiled/.
 
 \section{Platforma .NET i CLR}
 \label{sec:chapter1:section2}
-Zasada dzia³ania opisywanego rozwi¹zania mocno opiera siê na mechanizmach s³u¿¹cych do profilowania aplikacji. 
-Jak ka¿de podobne rozwi¹zanie tak i to jest silnie zwi¹zane ze œrodowiskiem uruchomieniowym. W tym przypadku jest to platforma .NET stworzona przez firmê Microsoft i przeznaczona dla systemów z rodziny Windows. \\
-Technologia ta nie jest zwi¹zana z ¿adnym konkretnym jêzykiem programowania, aczkolwiek jêzyk C\# jest uwa¿any za flagowe rozwi¹zanie s³u¿¹ce do tworzenia aplikacji pod t¹ platformê.  Z drugiej strony, do tej pory powsta³o wiele innych rozwi¹zañ, czêœæ z nich zosta³a zbudowana bezpoœrednio przez firmê Microsoft, inne powsta³y jako niezale¿ne projekty.Do tej pierwszej grupy, poza wspomnianym C\#, zaliczaj¹ siê takie jêzyki jak C++/CLI, J\#, F\#, Delphi 8 dla .NET, Visual Basic .NET. W drugiej grupie znajduj¹ siê m.in. Scala, IronPython, IronRuby, Nemerle.
-Z ka¿dym z tych jêzyków zwi¹zany jest odpowiedni kompilator, którego zadaniem jest translacja programów na jêzyk poœredni CIL (wczeœniej MSIL). Dopiero tak przygotowane programy mog¹ byæ wykonane na maszynie wirtualnej CLR, która to jest œrodowiskiem uruchomieniowym platformy .NET. \\
+Zasada dzia³ania opisywanego rozwi¹zania ca³kowicie opiera siê na mechanizmach wykorzystywanych do profilowania aplikacji, dziêki którym mo¿liwe jest odczytywanie stanu i zdarzeñ zachodz¹cych wewn¹trz dzia³aj¹cego programu.
 
-Taka konstrukcja pozwoli³a rozszerzyæ zakres dzia³ania utworzonego rozwi¹zania na wszystkie jêzyki programowania w obrêbie tej platformy, pod warunkiem, ¿e dany jêzyk wspiera konstrukcje programowe zwane atrybutami. W niniejszej pracy wszystkie przyk³ady opieraj¹ siê na programach napisanych w jêzyku C\#.
+Implementacja, o której traktuje ta praca jest œciœle
+zwi¹zana z oficjaln¹ wersj¹ œrodowiska .NET, a konkretnie
+Microsoft .NET Framework. Rozszerzenia mechanizmów profilowania dla
+innych dystrybucji .NET, takich jak \emph{Mono} czy te¿ \emph{DotGNU Portable.NET}, nie by³y przedmiotem tej pracy.\\
+
+Technologia ta nie jest zwi¹zana z ¿adnym konkretnym jêzykiem programowania, aczkolwiek jêzyk C\# jest uwa¿any za flagowe rozwi¹zanie s³u¿¹ce do tworzenia aplikacji pod t¹ platformê. Z drugiej strony, do tej pory powsta³o wiele innych jêzyków, czêœæ z nich zosta³a zbudowana bezpoœrednio przez firmê Microsoft, inne powsta³y jako niezale¿ne projekty. Do tej pierwszej grupy, poza wspomnianym C\#, zaliczaj¹ siê takie jêzyki jak C++/CLI, J\#, F\#, Delphi 8 dla .NET, Visual Basic .NET. W drugiej grupie znajduj¹ siê m.in. Scala, IronPython, IronRuby, Nemerle.
+Z ka¿dym z nich zwi¹zany jest odpowiedni kompilator, którego zadaniem jest translacja programów na jêzyk poœredni CIL (wczeœniej MSIL). Dopiero tak przygotowane programy mog¹ byæ wykonane na maszynie wirtualnej CLR, która to jest œrodowiskiem uruchomieniowym platformy .NET. \\
+
+Taka konstrukcja pozwoli³a rozszerzyæ zakres dzia³ania zaimplementowanego rozwi¹zania na wszystkie jêzyki programowania w obrêbie tej platformy, pod warunkiem, ¿e dany jêzyk wspiera konstrukcje programowe zwane atrybutami. W niniejszej pracy wszystkie przyk³ady opieraj¹ siê na programach napisanych w jêzyku C\#.
 
 
 \section{Za³o¿enia}
 \label{sec:chapter1:section3}
-W celu zapewnienia jak najwiêkszej u¿ytecznoœci, zosta³y przyjête pewien zbiór za³o¿eñ funkcjonalnoœci jakie musz¹ byæ zawarte w bibliotece.
+W celu zapewnienia jak najwiêkszej u¿ytecznoœci, przyjêto pewien zbiór za³o¿eñ funkcjonalnoœci jakie musz¹ byæ zawarte w bibliotece.
 Wszystkie z nich zosta³y szczegó³owo opisane w rozdziale czwartym, jednak wprowadzamy je ju¿ teraz, aby w dalszej uzasadniæ decyzje podjête przy konstrukcji kolejnych etapów aplikacji.\\
 \begin{packed_item}
 \item biblioteka musi œledziæ proces wykonywania programu po jego uruchomieniu
