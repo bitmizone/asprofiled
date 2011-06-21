@@ -2,7 +2,7 @@
 W tym rozdziale zosta³a przybli¿ona specyfika programowania kontraktowego.
 Programowanie kontraktowe jest jedn¹ z metodologii sprawdzania poprawnoœci oprogramowania. 
 
-Koncepcja programowania kontraktowego ma korzenie w pracach nad formaln¹ weryfikacj¹ programów, formaln¹ specyfikacj¹ oraz logik¹ Hoara.
+Koncepcja programowania kontraktowego ma korzenie w pracach nad formaln¹ weryfikacj¹ programów, formaln¹ specyfikacj¹ oraz logik¹ Hoare'a.
 Wszystkie z powy¿szych s¹ przyk³adami narzêdzi wykorzystywanych do dowodzenia poprawnoœci programów komputerowych, a tym samym przyczyniaj¹ siê podnoszenia ich jakoœci.
 Nie inaczej jest w przypadku programowanie kontraktowego. 
 Po raz pierwszy w obecnej postaci wprowadzi³ je Bertrand Meyer w 1986 roku przy okazji projektu jêzyka programowania Eiffel. 
@@ -26,7 +26,7 @@ Drug¹ grupê stanowi¹ jêzyki dla których powsta³y rozszerzenia umo¿liwiaj¹ce ten 
 \end{packed_item}
 Biblioteka \emph{AsProfiled} nale¿y do drugiej grupy rozwi¹zañ. \\
 
-Metodologia programowania kontraktowego zak³ada, ¿e elementy programu powinny odnosiæ siê do siebie na zasadzie kontraktów, czyli:
+Metodologia programowania kontraktowego zak³ada, ¿e elementy programu powinny odnosiæ siê do siebie na zasadzie kontraktów, tzn.:
 \begin{itemize}
 \item ka¿dy element powinien zapewniaæ okreœlon¹ funkcjonalnoœæ i wymagaæ œciœle okreœlonych œrodków do wykonania polecenia,
 \item klient mo¿e u¿yæ funkcjonalnoœci, o ile spe³ni zdefiniowane wymagania,
@@ -38,7 +38,7 @@ Widaæ wiêc, ¿e chodzi o zawieranie swego rodzaju umowy pomiêdzy dostawc¹ funkcjo
 
 Umowa ta, zwana dalej kontraktem jest dowoln¹ formu³a logiczna w jêzyku logiki pierwszego rzêdu, w której zmiennymi s¹ wartoœci pól obiektów, a
 symbolami funkcyjnymi - \( \eta-arne \) operacje, które s¹ tak samo
-interpretowane przez obie strony zawieraj¹ce kontrakt (np. sum(1,n), +, *).
+interpretowane przez obie strony zawieraj¹ce kontrakt (np. sum(1,n), +, *).\\
 Kontrakt klasy (ang. class contract) definiowany jest jako niezmiennik, to znaczy, warunek jaki musi byæ spe³niony przed i po wywo³aniu dowolnej publicznej metody w obrêbie tej klasy. \\
 Z kolei kontrakt metody (ang. method contract) definiowany jest przy pomocy warunków pocz¹tkowego i koñcowego, gdzie ten pierwszy specyfikuje jakie za³o¿enia powinny byæ spe³nione w momencie wywo³ania metody, a drugi okreœla stan aplikacji po jej zakoñczeniu.\\ 
 
@@ -59,7 +59,7 @@ Warunek koñcowy to kontrakt wi¹¿¹cy dostawcê us³ugi, który na pewno bêdzie spe³n
 
 Dla ilustracji, poni¿ej zamieszczono definicjê klasy \emph{ACCOUNT}, reprezentuj¹cej konto u¿ytkownika w banku. W ramach konta mo¿na przeprowadziæ operacje wp³aty i wyp³aty œrodków. Dla metod odpowiadaj¹cym tym czynnoœciom, zdefiniowane zosta³y warunki pocz¹tkowe i koñcowe. Zgodnie z powy¿szym, warunki zosta³y umieszczone w ramach bloków \emph{require} i \emph{ensure}  
 
-\begin{lstlisting}[label=DesignByContractExample, caption=Kontrakty w jêzyku Eiffel]
+\begin{lstlisting}[label=lst:DesignByContractExample, caption=Kontrakty w jêzyku Eiffel]
 class ACCOUNT feature
  balance: INTEGER
  minimum_balance: INTEGER is 1000
@@ -102,10 +102,9 @@ Warto zwróciæ uwagê na s³owo kluczowe \emph{old} wykorzystane w warunkach koñcow
 Fakt, i¿ s³owo to jest czêœci¹ jêzyka Eiffel, pokazuje, ¿e koncepcja programowania kontraktowego by³a wziêta pod uwagê ju¿ na etapie jego projektowania.\\
 
 Sytuacja ma odmienny charakter w przypadku platformy .NET, gdzie nie wystêpuje bezpoœrednie wsparcie dla tego typu koncepcji.
-Przy budowie biblioteki AsProfiled wykorzystano cechê szczególn¹ œrodowiska .NET, a w szczególnoœci jêzyka C\#, jak¹ jest mo¿liwoœæ dekorowania metod atrybutami. 
-Atrybuty staj¹ siê czêœci¹ meta danych o danej metodzie, które mog¹ byæ wykorzystywane przy jej inspekcji. Dziêki tej w³asnoœci mog³y one pos³u¿yæ jako noœnik informacji o kontraktach.
+Przy budowie biblioteki \emph{AsProfiled} wykorzystano cechê szczególn¹ œrodowiska .NET, a w szczególnoœci jêzyka C\#, jak¹ jest mo¿liwoœæ dekorowania metod atrybutami. 
+Atrybuty staj¹ siê czêœci¹ metadanych o danej metodzie, które mog¹ byæ wykorzystywane przy jej inspekcji. Dziêki tej w³asnoœci mog³y one pos³u¿yæ jako noœnik informacji o kontraktach.
 Alternatyw¹ by³oby u¿ycie zewnêtrznych plików XML, zdecydowano siê jednak wykorzystaæ atrybuty jako elementy bêd¹ce bli¿ej weryfikowanego kodu.
-decyzj¹. 
 Dla ilustracji, poni¿ej zosta³a zademonstrowana ogólna postaæ zapisu kontraktów jako atrybuty w jêzyku C\#:
 
 \begin{lstlisting}[label=ContractDefinition, caption=Definicja kontraktu]
@@ -115,3 +114,40 @@ NazwaMetody( deklaracja argumentów )
   -- definicja metody
 }
 \end{lstlisting}
+
+Poni¿szy przyk³ad ilustruje wykorzystanie atrybutów jako noœnika kontraktu nak³adanego na metodê w ramach klasy \emph{AccountManager}, która definiuje operacje na obiektach typu \emph{Account} reprezentuj¹cych konta bankowe.
+
+\begin{lstlisting}[label=lst:AccountTest, caption=Kontrakty w AsProfiled]
+// Klasa reprezentuj¹ca konto bankowe
+class Account
+{
+  // Identyfikator konta
+ public long AccountId;
+ // Stan œrodków na koncie
+ public int Balance;
+ // Nazwisko posiadacza
+ public string OwnerName;
+}
+
+// Klasa definij¹ca zestaw operacji na kontach bankowych
+class AccountManager
+{
+ // Kontrakt nak³adaj¹cy warunki na wejœciowe i wyjœciowe dane
+ [AsContract("source.Balance > amount",
+ "@returnValue == true && ^source.Balance + ^destination.Balance == 
+ source.Balance + destination.Balance")]
+
+ // Realizacja przelewu pewnej kwoty pomiêdzy dwoma kontami
+ public bool Transfer(Account source, Account destination, int amount) 
+ {
+  if (amount < 0)
+   return false;
+  source.Balance -= amount;
+  destination.Balance += amount;
+  return true;
+ }
+}
+\end{lstlisting}
+
+Widoczn¹ ró¿nic¹ w stosunku do kontraktów w jêzyku Eiffel jest miejsce oraz sposób ich definicji. W programach w jêzyku Eiffel kontrakty s¹ czêœci¹ implementacji metody i tak te¿ s¹ traktowane. Z kolei przy wykorzystaniu biblioteki \emph{AsProfiled} s¹ one umieszczone poza cia³em metody, zaœ definiowane s¹ przy pomocy napisów, co poci¹ga za sob¹ koniecznoœæ ich parsowania.
+Znaczenie poszczególnych elementów wyra¿enia definiuj¹cego kontrakt zosta³y opisane w nastêpnym rozdziale przy okazji przedstawiania funkcjonalnoœci biblioteki.

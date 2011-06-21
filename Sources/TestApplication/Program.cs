@@ -13,13 +13,19 @@ namespace TestApplication
     {
         static void Main(string[] args)
         {
-            AccountAP acc1 = new AccountAP();
+            Calculator.Calculator c = new Calculator.Calculator();
+            int i = 5, j = 6;
+            c.Swap(ref i, ref j);
+
+            Console.WriteLine(i + " " + j);
+            Console.Read();
+            Account acc1 = new Account();
             acc1.Balance = 500;
-            AccountAP acc2 = new AccountAP();
+            Account acc2 = new Account();
             acc2.Balance = 300;
             AccountManager manager = new AccountManager();
-
             manager.Transfer(acc1, acc2, 100);
+
             /*
             Calculator.Calculator calculatorInstance = new TestApplication.Calculator.Calculator();
             calculatorInstance.Div(false, 2, 4096, "baba", "3", new Calculator.Calculator());

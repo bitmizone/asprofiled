@@ -13,7 +13,7 @@ namespace TestApplication.Calculator
     {
         private Test test = new Test();
 
-        [AsContract("c.test.member == 31 && divided > 1 || val == \"test\"", "divided / divisor > 0 && @returnValue == 0 || val == \"test\"",null)]
+        [AsContract("c.test.member == 31 && divided > 1 || val == \"test\"", "divided / divisor > 0 && @returnValue == 0 || val == \"test\"")]
         public int Div(bool t, int divided, int divisor, string val, string delta, Calculator c)
         {
             if (divided > 0) 
@@ -23,38 +23,46 @@ namespace TestApplication.Calculator
             return 0;
         }
 
-        [AsContract("", "@returnValue.abba.baba == 31 && @returnValue.aa == 2",null)]
+        [AsContract("", "@returnValue.abba.baba == 31 && @returnValue.aa == 2")]
         public Calculator TestMe()
         {
             Calculator c = new Calculator();
             c.test.member = 10;
             return c;
         }
-    }
 
-
-    class AccountAP
-    {
-        public int Balance;
-    }
-
-    class AccountManager
-    {
-        [AsContract("source.Balance > amount",
-             "@returnValue == amount && ^source.Balance + 1 == source.Balance + amount + 1", null)] //"
-        public int Transfer(AccountAP source, AccountAP destination, int amount) 
+        [AsContract("", "i == ^j && ^i == j")]
+        public void Swap(ref int i, ref int j)
         {
-            source.Balance -= amount;
-            destination.Balance += amount;
-            //int transferredAmount = Math.Abs(source.Balance - destination.Balance);
-            return amount;
+            int tmp = i;
+            i = j;
+            j = tmp;
         }
-
     }
+
+
+class Account
+{
+ public int Balance;
+}
+
+class AccountManager
+{
+ [AsContract("source.Balance > amount",
+ "@returnValue == true && ^source.Balance + ^destination.Balance == source.Balance + destination.Balance")]
+ public bool Transfer(Account source, Account destination, int amount) 
+ {
+ if (amount < 0)
+  return false;
+ source.Balance -= amount;
+ destination.Balance += amount;
+ return true;
+ }
+}
 
     class MsContractsCalculator
     {
-        [AsContract("arg2 != 0", null, null)]
+        [AsContract("arg2 != 0", null)]
         public int Div(int arg1, int arg2)
         {
             Contract.Requires(arg2 != 0);
@@ -207,7 +215,7 @@ namespace TestApplication.Calculator
         public int member = 31;
     }
 
-    public class Account
+    public class AccountLF
     {
         public int Balance;
 
@@ -221,7 +229,7 @@ namespace TestApplication.Calculator
     public class AsContractAttribute : Attribute
     {
 
-        public AsContractAttribute(string preCondition, string postCondition,string t)
+        public AsContractAttribute(string preCondition, string postCondition)
         {
 
         }

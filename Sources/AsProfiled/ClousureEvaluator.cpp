@@ -101,7 +101,7 @@ void CClousureEvaluator::PrintReductionTree(Symbol* reductionTree) {
 		}
 	}else {
 		Terminal* terminal = (Terminal*) reductionTree;
-		// LOG4CXX_INFO(clousureEvaluatorLogger, terminal->image.c_str());
+		LOG4CXX_INFO(clousureEvaluatorLogger, terminal->image.c_str());
 		
 	}
 }

@@ -51,7 +51,8 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	
 	HRESULT hr = GetFullMethodName(*methodInfo, szMethodName);
 	static bool mainOccured = false;
-	if (std::wstring(szMethodName).find(L"Main") != std::string::npos)
+	std::wstring methodName(szMethodName);
+	if (methodName.find(L"Main") != std::string::npos)
 		mainOccured = true;
 	
 	if (mainOccured == true)
@@ -79,21 +80,22 @@ void CProfiler::FunctionEnter(FunctionID functionID, UINT_PTR clientData, COR_PR
 	
 	this->attributeReader->Initialize(methodInfo->GetMethodToken(), methodInfo->GetMetaDataImport());
 	
-	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 3);
+	CAttributeInfo* attributeInfo =  this->attributeReader->GetAttribute(L"AsContractAttribute", 2);
 	
 	if (attributeInfo == NULL) {
 		LOG4CXX_TRACE(myMainLogger, "attribute not found");
 	}else{
 		methodInfo->ReadArgumentsValues(argumentInfo);
 		CClousureEvaluator* evaluator = new CClousureEvaluator(methodInfo, attributeInfo, _ICorProfilerInfo2, argumentInfo);
+		
 		functionsMap->insert(pair<FunctionID, CClousureEvaluator*>( functionID, evaluator));
-		LOG4CXX_INFO(myMainLogger, attributeInfo->typeName);
+		LOG4CXX_INFO(myMainLogger, szMethodName); 
+		LOG4CXX_INFO(myMainLogger, attributeInfo->arguments->at(0)->argumentValue);
 		bool result = evaluator->EvalPreCondition();
 		if (result == true) {
-			LOG4CXX_INFO(myMainLogger, "TRUE !!!");
+			LOG4CXX_INFO(myMainLogger, "Precondition:TRUE");
 		}else{
-			LOG4CXX_WARN(myMainLogger, "FALSE !!!");
-			LOG4CXX_WARN(myMainLogger, methodInfo->GetMethodName());
+			LOG4CXX_WARN(myMainLogger, "Precondition:FALSE");
 			exit(-1);
 		}
 	}
@@ -108,13 +110,18 @@ void CProfiler::FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PR
 		return;
 	}
 	CClousureEvaluator* evaluator = iter->second;
+	WCHAR szMethodName[NAME_BUFFER_SIZE];
+	// Read method's full qualified name
 	
+	HRESULT hr = GetFullMethodName(*evaluator->GetMethodInfo(), szMethodName);
+	LOG4CXX_INFO(myMainLogger, szMethodName);
+	LOG4CXX_INFO(myMainLogger, evaluator->GetAttributeInfo()->arguments->at(1)->argumentValue);
+	ASSERT(false);
 	bool result = evaluator->EvalPostCondition(retvalRange);
 	if (result == true) {
-		LOG4CXX_WARN(myMainLogger, "TRUE !!!");
+		LOG4CXX_INFO(myMainLogger, "Postcondition:TRUE");
 	}else{
-		LOG4CXX_WARN(myMainLogger, "FALSE !!!");
-		LOG4CXX_WARN(myMainLogger, evaluator->GetMethodInfo()->GetMethodName());	
+		LOG4CXX_WARN(myMainLogger, "Postcondition:FALSE");
 		exit(-1);
 	}	
 	
@@ -161,9 +168,6 @@ void CProfiler::PrintMethodInfo(CMethodInfo& methodInfo) {
 	std::vector<CParam*>* arguments = methodInfo.GetArguments();
 	for (vector<CParam*>::iterator iter = arguments->begin(); iter != arguments->end(); iter++) {
 		LOG4CXX_DEBUG(myMainLogger, (*iter)->paramTypeAsString);
-		// should match with CorElementType enum
-		//LOG4CXX_DEBUG(myMainLogger, static_cast<int>((*iter)->elementType));
-		//cout << hex << static_cast<int>((*iter)->elementType) << endl; 
 		LOG4CXX_DEBUG(myMainLogger, (*iter)->paramName);
 	}	
 }

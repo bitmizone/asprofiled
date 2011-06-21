@@ -1,9 +1,12 @@
 \chapter{Podsumowanie}
 Celem tej pracy by³a prezentacja rozwi¹zania zadania weryfikacji kontraktów, którego wyró¿niaj¹cym siê elementem jest wykorzystanie podejœcia stosowanego przy budowie aplikacji profiluj¹cych. Okazuje siê, ¿e jest to pierwsza tego typu implementacja. Z pewnoœci¹ zalet¹ takiego podejœcia jest nieinwazyjnoœæ w kod wynikowy docelowej aplikacji. 
-
-Mo¿liwym rozwiniêciem funkcjonalnoœci biblioteki by³oby uwzglêdnienie czasów wykonywania metody w ramach kontraktów, dodatkowo uzale¿niaj¹c je od aktualnych wartoœci przekazywanych do metod. Przyk³adowo, mo¿liwe by by³o na³o¿enie warunku koñcowego mówi¹cego, ¿e dla jakiœ wartoœci argumentu czas wykonania metody musi mieœciæ siê w okreœlonych ramach. Dodatkowo, w bardzo prosty sposób, mierz¹c czasy wykonywania metod, mo¿liwe jest uzyskanie w pe³ni funkcjonalnej aplikacji profiluj¹cej, co razem z mo¿liwoœci¹ weryfikacji kontraktów daje u¿yteczne narzêdzie pozwalaj¹ce na poprawê jakoœci aplikacji docelowej. \\
-
 Z drugiej strony wykorzystane mechanizmy nie udostêpniaj¹ w prosty sposób funkcjonalnoœci wykonywania metod w ramach weryfikowanego programu, co w pewien sposób ogranicza si³ê wyra¿eñ zawartych w kontraktach, np. w obecnej postaci nie jest mo¿liwe odwo³ywanie siê do propercji (ang. properties) obiektów.
 Inn¹ istotn¹ spraw¹ jest pewna trudnoœæ, która wystêpuje przy pracy z niskopoziomowymi interfejsami rodzaju \emph{ICorProfileInfo}, \emph{IMetaDataImport}, która powodowana jest brakiem obszerniejszej dokumentacji na ich temat. \\
+
+Mo¿liwe kierunki dalszego rozwoju biblioteki \emph{AsProfiled} obejmuj¹:
+\begin{enumerate}
+\item Uwzglêdnienie czasów wykonywania metody w ramach kontraktów, dodatkowo uzale¿niaj¹c je od aktualnych wartoœci przekazywanych do metod. Przyk³adowo, mo¿liwe by by³o na³o¿enie warunku koñcowego mówi¹cego, ¿e dla jakiœ wartoœci argumentu czas wykonania metody musi mieœciæ siê w okreœlonych ramach. 
+\item W prosty do realizacji sposób, mierz¹c czasy wykonywania metod, mo¿liwe jest uzyskanie w pe³ni funkcjonalnej aplikacji profiluj¹cej, co razem z mo¿liwoœci¹ weryfikacji kontraktów daje u¿yteczne narzêdzie pozwalaj¹ce na poprawê jakoœci aplikacji docelowej.
+\end{enumerate}
 
 Podsumowuj¹c, podczas realizacji biblioteki \emph{AsProfiled} uda³o siê wykonaæ postawione cele, tym samym wype³niaj¹c najwa¿niejsze za³o¿enia programowania kontraktowego. Implementacja sama w sobie jest obszernym Ÿród³em wiedzy na temat niskopoziomowej struktury programów na platformê .NET, ich reprezentacji w pamiêci oraz mo¿liwoœci komunikacji z maszyn¹ .NET.
