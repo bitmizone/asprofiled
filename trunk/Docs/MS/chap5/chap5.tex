@@ -1,13 +1,17 @@
 %*********** Rodzial 4 ************
 \chapter{Szczegó³y implementacji}
 W tym rozdziale opisano szczegó³y dotycz¹ce implementacyjne biblioteki.
-Poni¿szy diagram ilustruje proces przetwarzania jakiemu poddawany jest kontrakt w celu oceny jego prawdziwoœci. Poszczególne elementy opisane s¹ w odpowiadaj¹cych im podrozdzia³ach.
+Poni¿szy diagram ilustruje proces przetwarzania jakiemu poddawany jest kontrakt w celu oceny jego prawdziwoœci.
 \begin{figure}[h]
 \centering
 \includegraphics[width=5in]{evalflow}
 \caption{Schemat przedstawiaj¹cy proces ewaluacji kontraktów}
 \label{fig:EvalFlowDiagram}
 \end{figure}
+\clearpage
+Proces ewaluacji warunku pocz¹tkowego/koñcowego inicjowany jest poprzez otrzymanie powiadomienia oznaczaj¹cego rozpoczêcie lub zakoñczenie przetwarzania metody (punkt 1 i 2 na diagramie). Elementy 3 oraz 4 reprezentuj¹ poszczególne kroki przetwarzania metadanych przypisanych do aktualnie wykonywanej metody. W ich ramach odczytywane jest wyra¿enie opisuj¹ce kontrakt, które jest nastêpnie parsowane (punkt 5) oraz sygnatura metody zawieraj¹ca m.in. informacje o typach argumentów. Dziêki temu mo¿liwa jest poprawna interpretacja danych binarnych, reprezentuj¹cych wartoœci parametrów metody (punkt 6).
+Kolejnym etapem, zale¿nym od rodzaju otrzymanego powiadomienia (punkt 1,2)  jest odczyt wartoœci zwracanej lub zachowanie pocz¹tkowych wartoœci argumentów.
+Maj¹c do dyspozycji wszelkie niezbêdne dane, mo¿liwa jest ewaluacja drzewa rozbioru otrzymanego w wyniku operacji z punktu pi¹tego.
 \clearpage
 \section{Atrybuty jako kontrakty}
 Kontrakty definiowane s¹ jako atrybuty, którymi dekorowane s¹ metody.
@@ -32,7 +36,7 @@ Wyra¿enia opisuj¹ce kontrakty muszê byæ obliczalne do jednej z dwóch wartoœci: p
 
 \section{Gramatyka kontraktów}
 Mo¿liwy zbiór wyra¿eñ, wyra¿alnych poprzez kontrakty, definiowany jest przez gramatykê bezkontekstow¹.
-Gramatyka ta zosta³a wykorzystana w aplikacji GOLD Parsing System, która na jej podstawie generuje tablicê stanów dla deterministycznego automatu skoñczonego. Poni¿ej znajduje siê jej definicja :
+Gramatyka ta zosta³a wykorzystana w aplikacji GOLD Parsing System \cite{website:gold-parser}, która na jej podstawie generuje tablicê stanów dla deterministycznego automatu skoñczonego. Poni¿ej znajduje siê jej definicja :
 
 \begin{lstlisting}[label=lst:Grammar, caption=Gramatyka kontraktów]
 
@@ -110,7 +114,7 @@ str == "napis" || @returnValue == 0 && !false
 Wyra¿enia te nabieraj¹ sensu w momencie kiedy mo¿liwe jest podstawienie wartoœci w miejsce identyfikatorów.
 
 \section{Omówienie i implementacja interfejsów}
-Wszystkie interfejsy przedstawione w tym i kolejnych rozdzia³ach zdefiniowane s¹ w bibliotekach, wchodz¹cy w sk³ad SDK platformy .NET. 
+Wszystkie interfejsy przedstawione w tym i kolejnych rozdzia³ach zdefiniowane s¹ w bibliotekach, wchodz¹cy w sk³ad SDK platformy .NET. Pe³na dokumentacja wykorzystanych interfejsów programistycznych znajduje siê na stronach MSDN \cite{website:metadataapi, website:profilingapi}.
 W tabeli zaprezentowano wykorzystywane nag³ówki wraz z opisem ich zawartoœci :
 \begin{center}
 \begin{longtable}{ |c | p{6cm} |} \hline
@@ -120,8 +124,10 @@ corprof.h & Interfejsy profiluj¹ce \\ \hline
 \end{longtable}
 \end{center}
 
-AsProfiled jak ka¿da biblioteka typu COM udostêpnia swoj¹ funkcjonalnoœæ poprzez interfejsy. Niezale¿nie od przeznaczenia biblioteki musi ona przynajmniej implementowaæ interfejs IUnknown, dziêki któremu mo¿liwe jest uzyskanie uchwytu do innych obiektów implementuj¹cych bardziej szczegó³owe interfejsy.
-W tym przypadku konieczne jest uzyskanie uchwytu do obiektu implementuj¹cego interfejs ICorProfilerCallback2. To poprzez niego odbywa ca³a komunikacja pomiêdzy maszyn¹ CLR a bibliotek¹ AsProfiled. Interfejs ten zawiera kilkadziesi¹t metod, poprzez które maszyna wirtualna mo¿e powiadomiæ odbiorcê o zdarzeniach zachodz¹cych w obrêbie profilowanego programu.
+\emph{AsProfiled} jak ka¿da biblioteka typu COM udostêpnia swoj¹ funkcjonalnoœæ poprzez interfejsy. Niezale¿nie od przeznaczenia biblioteki musi ona przynajmniej implementowaæ interfejs IUnknown, dziêki któremu mo¿liwe jest uzyskanie uchwytu do innych obiektów implementuj¹cych bardziej szczegó³owe interfejsy.
+W tym przypadku konieczne jest uzyskanie uchwytu do obiektu implementuj¹cego interfejs ICorProfilerCallback2. 
+%\footnote[1]{Pe³na dokumentacja znajduje siê na stronie http://msdn.microsoft.com/en-us/library/ms230825.aspx}. 
+To poprzez niego odbywa ca³a komunikacja pomiêdzy maszyn¹ CLR a bibliotek¹ \emph{AsProfiled}. Interfejs ten zawiera kilkadziesi¹t metod, poprzez które maszyna wirtualna mo¿e powiadomiæ odbiorcê o zdarzeniach zachodz¹cych w obrêbie profilowanego programu.
 %Pe³na jego definicja znajduje siê w za³¹czniku (A).
 Na potrzeby tej pracy wystarczaj¹ce jest omówienie dwóch z nich, mianowicie :
 
@@ -138,6 +144,7 @@ Przeciwnie do niej, w metodzie Initialize() tworzone s¹ obiekty, do których dost
 W tym miejscu nastêpuje te¿ pozyskanie uchwytu do obiektu typu ICorProfilerInfo2, który to udostêpnia zestaw metod pozwalaj¹cych na komunikacjê ze œrodowiskiem CLR, umo¿liwiaj¹cych monitorowanie i uzyskiwanie dodatkowych informacji o programie.\\
 
 Kolejnym krokiem jest zarejestrowanie tego obiektu jako odbiorcy podzbioru zdarzeñ okreœlonych poni¿ej.
+\clearpage
  
 \begin{lstlisting}[label=Events, caption=Zdarzenia]
 COR_PRF_MONITOR_NONE	= 0,
@@ -187,7 +194,7 @@ Pozwala to na otrzymywanie komunikatów na temat wejœcia/wyjœcia do/z metody wraz
 Kolejnym wykorzystywanym interfejsem jest \emph{IMetaDataImport}. Spe³nia kluczow¹ rolê w procesie uzyskiwania informacji na temat typów zdefiniowanych w ramach aplikacji przeznaczonych na platformê .NET.  \emph{IMetaDataImport} zawiera ca³y szereg metod, dziêki którym mo¿liwe jest odszukanie i odczytanie wartoœci metadanych. 
 Metody dziel¹ siê na trzy g³ówne kategorie :
 \begin{itemize}
-\item iteruj¹ce po kolekcjach elementów zawieraj¹cych metadane na temat elementów powi¹zanych z dan¹ klas¹, metod¹, interfejsem, itp.,
+\item iteruj¹ce po kolekcjach zawieraj¹cych metadane na temat elementów powi¹zanych z dan¹ klas¹, metod¹, interfejsem, itp.,
 %Enumerating collections of items in the metadata scope.
 \item odszukuj¹ce okreœlony element programu na podstawie zadanych kryteriów,
 %Finding an item that has a specific set of characteristics.
@@ -233,14 +240,17 @@ FunctionLeave(FunctionID functionID, UINT_PTR clientData, COR_PRF_FRAME_INFO fun
 Te funkcje maj¹ bezpoœrednie prze³o¿enie na zadanie ewaluacji kontraktów. W ramach funkcji FunctionEnter odbywa siê sprawdzenie warunków pocz¹tkowych, a implementacja FunctionLeave zawiera w sobie sprawdzenie warunków koñcowych.
 
 \section{Odczyt metadanych}
-W tym podrozdziale opisano kolejny krok na drodze do ewaluacji kontraktu, jakim jest interpretacja metadanych w celu uzyskania informacji o wywo³ywanych metodach i jej argumentach.
+Metadane w kontekœcie platformy .NET, to dodatkowe informacje opisuj¹ce sk³adowe programu. S¹ usystematyzowanym sposobem reprezentowania wszystkich informacji, których CLI u¿ywa do lokalizowania i ³adowania klas, u³o¿enia obiektów w pamiêci, wywo³ywania metod, translacji jêzyka MSIL do kodu natywnego.
+
+Dane te, emitowane przez kompilator, przechowywane s¹ wewn¹trz ka¿dego wykonywalnego programu w postaci binarnej. 
+
+W tym podrozdziale opisano kolejny krok na drodze do ewaluacji kontraktu, jakim jest interpretacja metadanych w celu uzyskania informacji o wywo³ywanych metodach i jej argumentach. Wszelkie informacje na temat metadanych pochodz¹ z specyfikacji Standard ECMA-335 \cite{book:ECMA-335}.
 
 \subsection{Reprezentacja metadanych}
 W ramach systemu Windows zdefiniowany jest format plików wykonywalnych - PE (eng. Portable Executables), okreœlaj¹cy strukturê jak¹ musi posiadaæ ka¿dy program, aby móg³ byæ w nim uruchomiony.
 %%% RYSUNEK 
 Aplikacje przeznaczone na platformê .NET naturalnie równie¿ musz¹ byæ zorganizowane w sposób zgodny z tym standardem.
 Jednym z pól w ramach nag³ówka PE jest offset 
-%(RVA)
 okreœlaj¹cy po³o¿enie zbioru metadanych w ramach pliku wykonywalnego czy biblioteki. 
  
 W sk³ad tego zbioru wchodzi piêæ rodzajów strumieni. W tym kontekœcie, przez pojêcie strumieñ, okreœlana jest sekcja w obrêbie metadanych, w której przechowywane s¹ informacje posegregowane wzglêdem ich typu.
@@ -250,7 +260,7 @@ Te strumienie to:
 \item \#US (User Strings) - zawiera tablicê wszystkich sta³ych ³añcuchowych definiowanych przez u¿ytkownika. 
 \item \#GUID - przechowuje listê wszystkich u¿ytych w aplikacji 128 bitowych wartoœci GUID, m.in. t¹ która jednoznacznie identyfikuje aplikacjê  
 
-\item \#~ - ten strumieñ jest tablic¹ tablic. Ka¿da tablica nadrzêdna identyfikowana przy pomocy pojedynczego bajtu o wartoœci od 0x00 do 0x29. Tablice wewnêtrzne opisuj¹ metody, pola, parametry, typy.
+\item \#\textasciitilde - ten strumieñ jest tablic¹ tablic. Ka¿da tablica nadrzêdna identyfikowana przy pomocy pojedynczego bajtu o wartoœci od 0x00 do 0x29. Tablice wewnêtrzne opisuj¹ metody, pola, parametry, typy.
 \item \#Blob - zawiera ci¹gi danych binarnych, które nie mog¹ byæ przedstawione w prosty sposób jako napisy. Dane te wykorzystywane s¹ do opisywania sygnatur metod.
 \end{enumerate}
 
@@ -358,7 +368,7 @@ Niezale¿nie od opisywanego elementu jêzyka, sygnatura przechowywana jest jako ta
 \end{itemize}
 
 W przypadku biblioteki \emph{AsProfiled} konieczne jest odczytywanie informacji na temat metod, w tym celu konieczna jest funkcjonalnoœæ sygnatur typu MethodDefSig.
-
+\clearpage
 Poni¿ej przedstawiono strukturê tej sygnatury:
 
 \begin{figure}[h]
@@ -367,6 +377,7 @@ Poni¿ej przedstawiono strukturê tej sygnatury:
 \caption{Struktura sygnatury metadanych opisuj¹cych metodê}
 \label{fig:MethodDefSigDiagram}
 \end{figure}
+
 Legenda:
 \begin{itemize}
 \item HASTHIS = 0x20, EXPLICITTHIS = 0x40, DEFAULT = 0x0, VARARG = 0x5 - konwencja w jakiej wywo³ywana jest metoda
@@ -376,7 +387,7 @@ Legenda:
 \item RetType - niesie informacjê o typie wartoœci zwracanej
 \item Param - opisuje typ ka¿dego parametru metody, w ramach sygnatury element ten powinien wystêpowaæ ParamCount razy
 \end{itemize}
-
+\clearpage
 Poni¿ej zamieszczono schematy ilustruj¹ce strukturê parametrów metody oraz jej wartoœæ zwracan¹.
 
 \begin{figure}[h]
@@ -420,7 +431,7 @@ Innym wa¿nym elementem istotnym z punktu widzenia biblioteki \emph{AsProfiled} j
 \label{fig:CustomAttribDiag}
 \end{figure}
 
-Interpretacja tych sygnatur jest podstawowym elementem, który nale¿y wzi¹æ pod uwagê w zadaniu ewaluacji kontraktów.
+Interpretacja tych sygnatur jest podstawowym elementem, który trzeba wzi¹æ pod uwagê w zadaniu ewaluacji kontraktów.
 Dziêki tym informacjom mo¿na okreœliæ typ obiektu, w szczególnoœci argumentów funkcji, co z kolei umo¿liwia odczytanie ich aktualnych wartoœci w momencie wywo³ania funkcji. 
 
 Proces ten rozpoczyna siê od pobrania wartoœci tokenu, którego typ jest jednym z przedstawionych w tabeli \ref{mdTokenTypes}.
@@ -455,7 +466,7 @@ std::vector<CParam*>* GetArguments(); // Pobieranie informacji o argumentach fun
 
 
 \section{Parsowanie wyra¿eñ zawartych w kontraktach}
-Wyra¿enia okreœlaj¹ce kontrakt musz¹ byæ zbudowane zgodnie z regu³ami gramatyki przedstawionej w \ref{lst:Grammar} . Pierwszym krokiem na drodze do ich ewaluacji jest proces analizy leksykalnej. W tym celu wykorzystano silnik Astudillo Visual C++, który u¿ywa tablicy stanów wygenerowanych przez aplikacjê GOLD na podstawie zadanej gramatyki.
+Wyra¿enia okreœlaj¹ce kontrakt musz¹ byæ zbudowane zgodnie z regu³ami gramatyki przedstawionej w \ref{lst:Grammar} . Pierwszym krokiem na drodze do ich ewaluacji jest proces analizy leksykalnej. W tym celu wykorzystano silnik Astudillo Visual C++ \cite{website:astudillo}, który u¿ywa tablicy stanów wygenerowanych przez aplikacjê GOLD na podstawie zadanej gramatyki.
 Biblioteka maj¹c zadane wyra¿enie rozk³ada ja na tokeny zdefiniowane w ramach gramatyki, a nastêpnie tworzy drzewo rozbioru wyra¿enia.
 Poni¿ej prezentowany jest efekt rozbioru kilku przyk³adowych wyra¿eñ:
 
@@ -587,12 +598,46 @@ ELEMENT\_TYPE\_CLASS & 0x12 & Typ referencyjny \\ \hline
 \end{longtable}
 \end{center}
 
+W zale¿noœci od typu aktualnie przetwarzanego obiektu, zmienia siê sposób interpretacji jego wartoœci. Poszczególne przypadki zostan¹ omówione w kolejnych podrozdzia³ach. \\
+
+Oprócz informacji o typie argumentu potrzebne jest pobranie informacji na temat po³o¿enia danych reprezentuj¹cych ich wartoœci. W momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê \\ 
+\emph{\_COR\_PRF\_FUNCTION\_ARGUMENT\_INFO}, która jest przekazywana do odbiorcy. 
+Jej definicja przedstawia siê w sposób nastêpuj¹cy:
+\begin{lstlisting}[label=CorPrfFunctionArgumentInfo]
+typedef struct _COR_PRF_FUNCTION_ARGUMENT_INFO {
+    ULONG numRanges;
+    ULONG totalArgumentSize;
+    COR_PRF_FUNCTION_ARGUMENT_RANGE ranges[1];
+} COR_PRF_FUNCTION_ARGUMENT_INFO;
+\end{lstlisting}
+Objaœnienia:
+\begin{itemize}
+\item \emph{numRanges} - Liczba bloków pamiêci, wewn¹trz których znajduj¹ siê wartoœci argumentów. Okreœla liczbê elementów tablicy typu \\ \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}
+\item \emph{totalArgumentSize} - Ca³kowita d³ugoœæ wszystkich argumentów wyra¿ona w bajtach.
+\item \emph{ranges} Tablica obiektów typu \\ \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, z których ka¿da reprezentuje jeden blok pamiêci, gdzie zawarte s¹ wartoœci argumentów metody
+\end{itemize}
+Struktura ta reprezentuje wartoœci argumentów metody, zgodnie z porz¹dkiem od lewej do prawej.
+Typ \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE }u¿yty w ramach tej struktury okreœlony jest jak nastêpuje:
+\begin{lstlisting}[label=lst:CorPrfFunctionArgumentRange]
+typedef struct _COR_PRF_FUNCTION_ARGUMENT_RANGE {
+    UINT_PTR startAddress;
+    ULONG length;
+} COR_PRF_FUNCTION_ARGUMENT_RANGE;
+\end{lstlisting}
+,gdzie\\
+\begin{itemize}
+\item startAddress - Adres pocz¹tku bloku.
+\item length - Wielkoœæ bloku pamiêci.
+\end{itemize}
+
+Te dane w po³¹czeniu z informacj¹ o typie argumentu pozwalaj¹ na poprawny odczyt argumentów metody. 
 
 \subsection{Typy wbudowane}
 W ramach platformy .NET zdefiniowany jest pewien, ograniczony zestaw typów wbudowanych.
-W kontekœcie tabeli \ref{tab:CorElementType} s¹ to typy o wartoœciach mniejszych od 0x11. Poza typem \emph{String}, który reprezentowany jest jako \emph{ELEMENT\_TYPE\_STRING} wszystkie s¹ typami wartoœciowymi. Fakt ten ma  znaczenie w momencie odczytu wartoœci obiektów o takim typie.\\
-Dla przypomnienia, w momencie wywo³ania metody po stronie weryfikowanego programu biblioteka AsProfiled otrzymuje powiadomienie o tym zdarzeniu. Wraz z nim przekazywana jest struktura \linebreak \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE} (zob. \ref{lst:CorPrfFunctionArgumentRange}), która zawiera adres do aktualnej wartoœci parametru. Dla typów wartoœciowych proces odczytania tej wartoœci polega na bezpoœredniej interpretacji bajtów, których liczba okreœlona jest przez pole \emph{length} struktury \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE} znajduj¹cych siê pod adresem wskazywanym przez \emph{startAddress}.
-W bibliotece AsProfiled zdefiniowana zosta³a klasa \emph{ValueReader}, której odpowiedzialnoœci¹ jest interpretowanie tych danych.
+W kontekœcie tabeli \ref{tab:CorElementType} s¹ to typy o wartoœciach mniejszych od 0x11. Poza typem \emph{String}, który reprezentowany jest jako\\ \emph{ELEMENT\_TYPE\_STRING} wszystkie s¹ typami wartoœciowymi. Fakt ten ma  znaczenie w momencie odczytu wartoœci obiektów o takim typie.\\
+Dla przypomnienia, w momencie wywo³ania metody po stronie weryfikowanego programu biblioteka AsProfiled otrzymuje powiadomienie o tym zdarzeniu. Wraz z nim przekazywana jest struktura \\
+ \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE} (zob. \ref{lst:CorPrfFunctionArgumentRange}), która zawiera adres do aktualnej wartoœci parametru. Dla typów wartoœciowych proces odczytania tej wartoœci polega na bezpoœredniej interpretacji bajtów, których liczba okreœlona jest przez pole \emph{length} struktury \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE} znajduj¹cych siê pod adresem wskazywanym przez \emph{startAddress}.
+W bibliotece \emph{AsProfiled} zdefiniowana zosta³a klasa \emph{ValueReader}, której odpowiedzialnoœci¹ jest interpretowanie tych danych.
 Wszystkie metody, których zadaniem jest odczytanie wartoœci parametrów o typach prostych maj¹ podobn¹ konstrukcjê. 
 Przyk³ad:
 \begin{lstlisting}[label=TraceInt, caption=Odczytywanie wartoœci typu int]
@@ -622,11 +667,11 @@ W wyniku wywo³ania tej metody, pod przekazane wskaŸniki, przypisywane s¹ nastêpu
 \end{itemize}
 Wszystkie przesuniêcia okreœlaj¹ przesuniêcie adresu pamiêci w obrêbie obiektu. 
 Adres do miejsca w pamiêci obiektu okreœlony jest przez wartoœæ elementu \emph{startAddress} struktury \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}.
-Maj¹c te dane do dyspozycji, biblioteka AsProfiled jest w stanie odczytaæ wartoœæ parametrów typu \emph{string}.
+Maj¹c te dane do dyspozycji, biblioteka \emph{AsProfiled} jest w stanie odczytaæ wartoœæ parametrów typu \emph{string}.
 
 
 \subsection{Odwo³ania do wartoœci sk³adowych obiektów z³o¿onych}
-Biblioteka AsProfiled pozwala definiowaæ kontrakty, wewn¹trz których znajduj¹ siê odwo³ania do pól z³o¿onych struktur czy klas.
+Biblioteka \emph{AsProfiled} pozwala definiowaæ kontrakty, wewn¹trz których znajduj¹ siê odwo³ania do pól z³o¿onych struktur czy klas.
 Kontrakt zdefiniowany we fragmencie kodu \ref{lst:MethodDef} przedstawia przyk³adowe wyra¿enie, w którym warunek odnosi siê do pola \emph{member}, które jest sk³adow¹ klasy \emph{Test}, a z kolei obiekt tego typu jest czêœci¹ klasy \emph{other}. Ostatecznie, \emph{member} jest typu prostego \emph{int}, którego wartoœæ odczytywana jest zgodnie z tym co zosta³o przedstawione w poprzednim punkcie. Pozostaje kwestia okreœlenia miejsca w pamiêci, w którym przechowywana jest ta wartoœæ. W tym celu, biblioteka AsProfiled implementuje funkcjonalnoœæ inspekcji obiektów dowolnego typu, pod k¹tem zawierania sk³adowych.\\
 
 Niech wyra¿enie jest postaci jak poprzednio \emph{other.test.member $>$ 31}
@@ -657,8 +702,11 @@ Pierwsza z metod ewaluuje warunek pocz¹tkowy, druga warunek koñcowy. Do sprawdze
 \end{packed_enum}
 
 \subsection{Zachowywanie wartoœci pocz¹tkowych}
-W ramach wyra¿eñ opisuj¹cych kontrakty mo¿liwe s¹ odwo³ania do wartoœci parametrów pocz¹tkowych, które zosta³y przekazane do metody w momencie jej wywo³ania. Wartoœci parametrów mog¹ ulec zmianie w czasie wykonywania metody, dlatego potrzebne jest traktowanie takich odwo³añ w specjalny sposób. Nale¿y zauwa¿yæ, ¿e takie odwo³ania maj¹ tylko sens w przypadku wyra¿eñ okreœlaj¹cych warunek koñcowy. Zgodnie z tym co zosta³o powiedziane wczeœniej warunek ten ewaluowany jest po otrzymaniu powiadomienia o opuszczeniu metody, jednak wtedy nie jest ju¿ mo¿liwe uzyskanie wartoœci pocz¹tkowych parametrów, gdy¿ mog³y one zostaæ zmienione w wyniku dzia³añ wewn¹trz metody. Z tego wzglêdu konieczne jest ich skopiowanie w inny obszar pamiêci, sk¹d bêdzie mo¿liwe ich pobranie w dowolnym, póŸniejszym momencie. 
-Odpowiednim momentem na przeprowadzenie tej operacji jest chwila, w której przychodzi powiadomienie o rozpoczêciu wykonywania kontrolowanej metody.
+W ramach wyra¿eñ opisuj¹cych kontrakty mo¿liwe s¹ odwo³ania do wartoœci parametrów pocz¹tkowych, które zosta³y przekazane do metody w momencie jej wywo³ania. Wartoœci parametrów mog¹ ulec zmianie w czasie wykonywania metody, dlatego potrzebne jest traktowanie takich odwo³añ w specjalny sposób. Takie odwo³ania maj¹ tylko sens w przypadku wyra¿eñ okreœlaj¹cych warunek koñcowy. Zgodnie z tym co zosta³o powiedziane wczeœniej warunek ten ewaluowany jest po otrzymaniu powiadomienia o opuszczeniu metody, jednak wtedy nie jest ju¿ mo¿liwe uzyskanie wartoœci pocz¹tkowych parametrów, gdy¿ mog³y one zostaæ zmienione w wyniku dzia³añ wewn¹trz metody. Z tego wzglêdu konieczne jest ich skopiowanie w inny obszar pamiêci, sk¹d bêdzie mo¿liwe ich pobranie w dowolnym, póŸniejszym momencie. Dodatkowo, nie wystarczy zachowanie referencji do obiektu. Wynika to z faktu, i¿ pomimo tego, ¿e przekazywanie argumentów do metody odbywa siê poprzez kopiowanie, to kopiowana jest tylko referencja do obiektu, a nie sam obiekt. Oczywiœcie, kopia referencji dalej wskazuje na ten sam obiekt, wiêc zmieniaj¹c stan obiektu przy jej u¿yciu, zmieniany jest oryginalny obiekt.
+Z tego powodu niezbêdne jest kopiowanie poszczególnych wartoœci, do których wystêpuje odwo³anie w warunkach koñcowych.
+Konieczne jest wiêc przeprowadzanie przetwarzania wstêpnego, tzn. w chwili otrzymania powiadomienia o wywo³aniu metody przeprowadzona zostaje analiza zarówno warunków pocz¹tkowych i warunków koñcowych kontraktu. W czasie tej analizy warunek koñcowy sprawdzany jest pod k¹tem wystêpowania elementów odnosz¹cych siê do stanu pocz¹tkowego argumentów funkcji. Nastêpnie argumenty, do których takie odwo³ania wystêpuj¹ poddawane s¹ inspekcji i wy³uskiwana jest wartoœæ sk³adowej obiektu, do którego odniesienie znajduje siê w warunku koñcowym. Ta wartoœæ zapisywana jest w pamiêci podrêcznej aplikacji, do której dostêp jest mo¿liwy w momencie otrzymania powiadomienia o zakoñczeniu wykonywania weryfikowanej metody, kiedy to mo¿e zostaæ u¿yta do weryfikacji warunku koñcowego.\\
+
+Odpowiednim momentem na zachowanie wartoœci pocz¹tkowych jest chwila, w której przychodzi powiadomienie o rozpoczêciu wykonywania kontrolowanej metody.
 T¹ odpowiedzialnoœæ przejmuje obiekt typu \emph{ContractEvaluator}, dziêki informacjom przekazywanym do konstruktora klasy.
 \begin{lstlisting}[label=lst:ContractEvaluator, caption=Konstruktor klasy ContractEvaluator]
 CContractEvaluator::ContractEvaluator(
@@ -673,10 +721,9 @@ public void Deposit(Account account, int sum)
 {
  account.balance += sum;
 }
-W ramach warunku koñcowego wystêpuje odwo³anie do wartoœci pocz¹tkowej (oznaczanej przez dodanie przedrostka \textasciicircum) pola \emph{balance} obiektu \emph{account}. Fakt ten, zostanie zauwa¿ony podczas przetwarzania wstêpnego kontraktu przez obiekt typu \emph{ContractEvaluator}, a w konsekwencji wartoœæ pocz¹tkowa zostanie zapamiêtana do momentu, w którym metoda bêdzie koñczy³a swoje dzia³anie.
-
 \end{lstlisting}
 
+W ramach warunku koñcowego wystêpuje odwo³anie do wartoœci pocz¹tkowej (oznaczanej przez dodanie przedrostka \textasciicircum) pola \emph{balance} obiektu \emph{account}. Fakt ten, zostanie zauwa¿ony podczas przetwarzania wstêpnego kontraktu przez obiekt typu \emph{ContractEvaluator}, a w konsekwencji wartoœæ pocz¹tkowa zostanie zapamiêtana do momentu, w którym metoda bêdzie koñczy³a swoje dzia³anie.
 
 \subsection{Wartoœci zwracane}
 Ostatnim elementem, które jest potrzebny do uzyskania w pe³ni funkcjonalnego mechanizmu ewaluacji kontraktów, a w szczególnoœci warunków koñcowych, jest mechanizm pozwalaj¹cy na uwzglêdnianie i obs³ugê wartoœci zwracanych z metody.

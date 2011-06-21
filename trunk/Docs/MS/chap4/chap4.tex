@@ -1,6 +1,5 @@
 %*********** Rodzia³ 3 ************
 \chapter{Omówienie funkcjonalnoœci biblioteki}
-W tym rozdziale opisane zosta³y funkcjonalnoœci jakie udostêpnia biblioteka AsProfiled.
 \section{Ogólny schemat architektury biblioteki AsProfiled}
 Poni¿ej przedstawiony jest ogólny schemat dzia³ania biblioteki AsProfiled.
 \begin{figure}[h]
@@ -11,7 +10,7 @@ Poni¿ej przedstawiony jest ogólny schemat dzia³ania biblioteki AsProfiled.
 \end{figure}
 \clearpage
 Na rysunku \ref{fig:generalFlowDiagram} wyszczególniono kolejne kroki w procesie weryfikacji kontraktów. 
-Biblioteka AsProfiled zaczyna swoje dzia³anie w momencie uruchomienia programu na maszynie wirtualnej .NET w odpowiednio przygotowanym œrodowisku. Œrodowisko uruchomieniowe CLR ³aduje bibliotekê do pamiêci, po czym nastêpuje proces inicjalizacji biblioteki. Uruchamianie poszczególnych funkcji biblioteki jest konsekwencj¹ odebrania jednego zdefiniowanych wczeœniej zdarzeñ zachodz¹cych wewn¹trz programu, którego poprawnoœæ jest sprawdzana. Biblioteka obs³uguje nastêpuj¹ce zdarzenia:
+Biblioteka \emph{AsProfiled} zaczyna swoje dzia³anie w momencie uruchomienia programu na maszynie wirtualnej .NET w odpowiednio przygotowanym œrodowisku. Œrodowisko uruchomieniowe CLR ³aduje bibliotekê do pamiêci, po czym nastêpuje proces inicjalizacji biblioteki. Uruchamianie poszczególnych funkcji biblioteki jest konsekwencj¹ odebrania jednego ze zdarzeñ zachodz¹cych wewn¹trz programu, którego poprawnoœæ jest sprawdzana. Biblioteka obs³uguje nastêpuj¹ce zdarzenia:
 \begin{enumerate}
 \item Rozpoczêcie wykonywania metody.
 \item Zakoñczenie wykonywania metody.
@@ -20,36 +19,9 @@ Biblioteka AsProfiled zaczyna swoje dzia³anie w momencie uruchomienia programu n
 Reakcj¹ na pierwsze dwa zdarzenia jest ewaluacja kontraktu metody, jeœli takowy zosta³ dla niej zdefiniowany. Cykl ten trwa do momentu, w którym badany program koñczy dzia³anie lub w przypadku, gdy któryœ z warunków pocz¹tkowych lub koñcowych nie zosta³ spe³niony.
 
 \section{Przyk³ad wykorzystania biblioteki AsProfiled}
-W celu demonstracji u¿ycia biblioteki \emph{AsProfiled} niech dany bêdzie przyk³adowy zestaw klas.
-\begin{lstlisting}[label=AccountTest, caption=Definicja klas]
-// Prosta klasa reprezentuj¹ca konto bankowe
-class Account
-{
- public int Balance;
-}
-
-// Klasa definij¹ca zestaw operacji na kontach bankowych
-class AccountManager
-{
- // Kontrakt nak³adaj¹cy warunki na wejœciowe i wyjœciowe dane
- [AsContract("source.Balance > amount",
- "@returnValue == true && ^source.Balance + ^destination.Balance == 
-source.Balance + destination.Balance")]
- // Realizacja przelewu pewnej kwoty pomiêdzy dwoma kontami
- public bool Transfer(Account source, Account destination, int amount) 
- {
- if (amount < 0)
-  return false;
- source.Balance -= amount;
- destination.Balance += amount;
- return true;
- }
-}
-\end{lstlisting}
-
-W tym przyk³adzie na³o¿ono kontrakt, wyra¿ony przy pomocy atrybutu \emph{AsContract}, na metodê \emph{Transfer}.
+W przyk³adzie \ref{lst:AccountTest} na³o¿ono kontrakt, wyra¿ony przy pomocy atrybutu \emph{AsContract}, na metodê \emph{Transfer}.
 Okreœla on warunek pocz¹tkowy, nak³adaj¹cy wiêzy na dane wejœciowe metody i oznacza tyle, ¿e kwota przelewu nie mo¿e byæ wiêksza ni¿ stan konta Ÿród³owego.
-Warunek koñcowy, zdefiniowany przy pomocy drugiego argumentu atrybutu, mówi i¿ metoda powinna zwróciæ wyniki \emph{true} i suma pocz¹tkowych stanów kont jest równa ich sumie po zakoñczeniu wykonywania metody. \\
+Warunek koñcowy, zdefiniowany przy pomocy drugiego argumentu atrybutu, mówi i¿ metoda powinna zwróciæ wyniki \emph{true}, oznaczaj¹cy poprawne zakoñczenie operacji i suma pocz¹tkowych stanów kont jest równa ich sumie po zakoñczeniu wykonywania metody. \\
 
 Niech dany bêdzie kod wykonuj¹cy t¹ metodê.
 \begin{lstlisting}[label=TestRun, caption=Wykonanie przelewu]
@@ -61,7 +33,7 @@ AccountManager manager = new AccountManager();
 manager.Transfer(acc1, acc2, 100);
 \end{lstlisting}
 
-Nie jest trudno sprawdziæ, ¿e w tym wypadku kontrakt jest spe³niony. Potwierdza to uruchomienie tego przyk³adu z w³¹czon¹ opcj¹ weryfikacji kontraktów przez \emph{AsProfiled}. Dla tego przypadku wynik jej dzia³ania jest nastêpuj¹cy.
+Nie jest trudno sprawdziæ, ¿e w tym wypadku kontrakt jest spe³niony. Potwierdza to uruchomienie tego przyk³adu z w³¹czon¹ opcj¹ weryfikacji kontraktów przez \emph{AsProfiled}. Dla tego przypadku wynik jej dzia³ania jest nastêpuj¹cy:
 
 \lstset{
 morecomment=[n][\textbf]{TRUE}
@@ -77,7 +49,9 @@ Program
    >:>
   Value
    Identifier:amount
+
 Precondition:TRUE
+
 TestApplication.Calculator.AccountManager.Transfer
 @returnValue == true && ^source.Balance + 
  ^destination.Balance == source.Balance + destination.Balance
@@ -109,20 +83,21 @@ Program
      +:+
     Value
      Identifier:destination.Balance
+
 Postcondition:TRUE
 \end{lstlisting}
-Oczywiœcie, s¹ to tylko komunikaty diagnostyczne, ukazuje jednak cykl pracy aplikacji. Wypisywane s¹ nazwy metod z przypisanym atrybutem \emph{AsContract},
-odczytywane jest wyra¿enie opisuj¹ce warunek pocz¹tkowy lub koñcowy, nastêpnie  jest tworzone jego drzewo rozbioru, w koñcu nastêpuje jego ewaluacja i wypisanie wartoœci oznaczaj¹cej czy kontrakt zosta³ spe³niony czy te¿ nie. Naturalnie, jeœli, któryœ z warunków nie by³by spe³niony to zgodnie z zasad¹ programowania kontraktowego nastêpuje przerwanie wykonywania dalszych instrukcji programu.
+Oczywiœcie, s¹ to g³ównie komunikaty diagnostyczne. Ukazuj¹ one jednak cykl pracy aplikacji. Wypisywane s¹ nazwy metod z przypisanym atrybutem \emph{AsContract},
+odczytywane jest wyra¿enie opisuj¹ce warunek pocz¹tkowy lub koñcowy, z którego   tworzone jest drzewo rozbioru. W koñcu nastêpuje jego ewaluacja i wypisanie wartoœci oznaczaj¹cej czy kontrakt zosta³ spe³niony czy te¿ nie. Naturalnie, jeœli któryœ z warunków nie by³by spe³niony to zgodnie z zasad¹ programowania kontraktowego nastêpuje przerwanie wykonywania dalszych instrukcji programu.
 Jak widaæ na listingu \ref{lst:AsProfiledOutput} zarówno warunek
 wejœcia jak i warunek wyjœcia by³y spe³nione w momencie ich
 ewaluacji. \\
 
-Tak pogl¹dowo przedstawia siê sposób dzia³ania biblioteki \emph{AsProfiled}. W dalszej czêœci poszczególne elementy zosta³y opisane w szczegó³owy sposób.
+%Tak pogl¹dowo przedstawia siê sposób dzia³ania biblioteki \emph{AsProfiled}. W %dalszej czêœci poszczególne elementy zosta³y opisane w szczegó³owy sposób.
 
 
 \section{Inspekcja nadzorowanego programu}
 
-W obrêbie œrodowiska Microsoft .NET jedyny sposób rozszerzenia mechanizmu profilowania o w³asn¹ funkcjonalnoœæ polega na zaimplementowania odpowiednich interfejsów profilera. Dodatkowo, biblioteka implementuj¹ca te interfejsy musi byæ utworzona w technologii COM (ang. \textbf C\textnormal omponent \textbf O\textnormal bject \textbf M\textnormal odel). Jest to standard definiowania i tworzenia interfejsów programistycznych na poziomie binarnym, niezale¿nym od konkretnego jêzyka programowania, dla komponentów oprogramowania wprowadzony przez firmê Microsoft. Obecnie czynione s¹ starania, aby odejœæ od tego standardu, w³aœnie poprzez upowszechnianie platformy .NET. Nale¿y jednak dodaæ, ¿e czêœæ tej platformy ma postaæ bibliotek COM, wiêc ca³kowita rezygnacja z tego rozwi¹zania nie jest mo¿liwa. \\
+W obrêbie œrodowiska Microsoft .NET jedyny sposób rozszerzenia mechanizmu profilowania o w³asn¹ funkcjonalnoœæ polega na zaimplementowania odpowiednich interfejsów profilera. Dodatkowo, biblioteka implementuj¹ca te interfejsy musi byæ utworzona w technologii COM (ang. \textbf C\textnormal omponent \textbf O\textnormal bject \textbf M\textnormal odel) \cite{website:com}. Jest to standard definiowania i tworzenia interfejsów programistycznych na poziomie binarnym, niezale¿nym od konkretnego jêzyka programowania, dla komponentów oprogramowania wprowadzony przez firmê Microsoft. Obecnie czynione s¹ starania, aby odejœæ od tego standardu, w³aœnie poprzez upowszechnianie platformy .NET. Z drugiej strony, czêœæ platformy ma postaæ bibliotek COM, wiêc ca³kowita rezygnacja z tego rozwi¹zania nie jest na t¹ chwilê mo¿liwa. \\
 %Podczas budowy biblioteki COM, implementuja;cej interfejsy profiluja;ce %konieczne jest pos?ugiwania sie; je;zykiem C++, gdyz. funkcjonalnos'ci %biblioteki wywo?ywane sa; przez s'rodowisko uruchomieniowe w newralgicznych %momentach wykonywania, w czasie których   ta jest wywo?ywana   
 
 %Jednym z wymagañ, które s¹ stawiane ka¿dej bibliotece typu COM jest implementacja interfejsu bazowego \emph{IUnknown}, dziêki któremu mo¿liwe jest uzyskanie uchwytów do pozosta³ych interfejsów implementowanych w ramach tej biblioteki. 
@@ -134,16 +109,13 @@ W obrêbie œrodowiska Microsoft .NET jedyny sposób rozszerzenia mechanizmu profil
 Rozpoczêcie procesu profilowania/weryfikacji aplikacji odbywa siê poprzez uruchomienie programu z linii poleceñ w odpowiednio przygotowanym œrodowisku.
 Etap ten polega na ustawieniu zmiennych œrodowiskowych, instruuj¹cych maszynê wirtualn¹ CLR, aby u¿ywa³a wskazanego obiektu implementuj¹cego interfejs
 profilera, przekazuj¹c do niego powiadomienia na temat zdarzeñ zachodz¹cych wewn¹trz uruchamianej aplikacji. 
-Zmienne, których wartoœci nale¿y ustawiæ to \emph{COR\_ENABLE\_PROFILING} oraz \emph{COR\_PROFILER}, mo¿na to zrobiæ na przyk³ad poprzez u¿ycie podanego skryptu pow³oki:
+Zmienne, których wartoœci nale¿y ustawiæ to \emph{COR\_ENABLE\_PROFILING} oraz \emph{COR\_PROFILER}. Mo¿na to zrobiæ, na przyk³ad, poprzez u¿ycie podanego skryptu pow³oki:
 \begin{lstlisting}[label=lst:initProfiling, caption=Inicjalizacja œrodowiska]
 SET COR_ENABLE_PROFILING=1
 SET COR_PROFILER={GUID}
 \end{lstlisting} 
 
-Identyfikator GUID jest wykorzystywany do okreœlenia lokalizacji biblioteki. 
-
-%Wartoœci tych zmiennych s¹ nastêpnie odczytywane przez œrodowisko uruchomieniowe .NET.
-%Informuj¹ one maszynê wirtualn¹, ¿e ta powinna przesy³aæ informacje o zdarzeniach do biblioteki, której po³o¿enie okreœlanie jest przy wykorzystaniu identyfikatora GUID.\\
+Identyfikator GUID jest wykorzystywany do okreœlenia lokalizacji biblioteki. \\
 
 Liczba i rodzaj wysy³anych powiadomieñ okreœlany jest wewn¹trz biblioteki profiluj¹cej. W szczegó³ach temat ten opisany jest w kolejnym rozdziale.
 
@@ -152,9 +124,6 @@ Podstawowym elementem, dziêki któremu mo¿liwa jest weryfikacja metod, jest  mo¿l
 
 Atrybuty s¹ to znaczniki o charakterze deklaracyjnym zawieraj¹ce
 informacjê o elementach programu (np. klasach, typach wyliczeniowych, metodach) przeznaczon¹ do wykorzystania w trakcie dzia³ania programu.
-
-%Ich odczyt mo¿liwy jest dziêki mechanizmowi zwanym refleksj¹.
-
 W tym kontekœcie istotne jest to, i¿ s¹ one pamiêtane jako meta dane danego elementu programu.
 Definicja atrybutów jest jedynym elementem, wchodz¹cym bezpoœrednio w sk³ad omawianego rozwi¹zania, który musi znajdowaæ siê po stronie weryfikowanej aplikacji. \\
 
@@ -163,113 +132,31 @@ Atrybuty okreœlaj¹ce kontrakt maj¹ postaæ:
 AsContract(Warunek pocz¹tkowy, Warunek koñcowy)
 \end{lstlisting}
 Oba warunki zdefiniowane s¹ poprzez pewne, okreœlone przez u¿ytkownika wyra¿enie. Te z kolei maj¹ postaæ okreœlon¹ przez zadan¹ gramatykê, której definicjê przedstawiono w nastêpnym rozdziale dotycz¹cym implementacji.
-Nale¿y tu jednak wspomnieæ, i¿ oba warunki zapisywane s¹ jako ³añcuchy znakowe.
-Oznacza to, i¿ przed ewaluacj¹ takiego wyra¿enia musi byæ zaimplementowany mechanizm pozwalaj¹cy na jego analizê sk³adniow¹.
-W jej wyniku otrzymywane jest drzewo rozbioru, które nastêpnie poddawane jest ewaluacji. Ostatecznie, otrzymywana jest wartoœæ okreœlaj¹ca czy udekorowana metoda spe³nia za³o¿ony na ni¹ kontrakt w kontekœcie danego wywo³ania.
-
-\section{Metadane}
-Metadane w kontekœcie platformy .NET, to dodatkowe informacje opisuj¹ce sk³adowe programu. S¹ usystematyzowanym sposobem reprezentowania wszystkich informacji, których CLI u¿ywa do lokalizowania i ³adowania klas, u³o¿enia obiektów w pamiêci, wywo³ywania metod, translacji jêzyka MSIL do kodu natywnego.
-
-Dane te, emitowane przez kompilator, przechowywane s¹ wewn¹trz ka¿dego wykonywalnego programu w postaci binarnej.
-
-\section{Odczytywanie wartoœci argumentów metod}
-
-Dziêki informacjom zawartym w metadanych, mo¿liwe jest okreœlenie liczby i typów parametrów przekazywanych do metod. S¹ to dane statyczne, w tym sensie, ¿e s¹ one sta³e w ramach raz zdefiniowanego programu. Z drugiej strony, wartoœci parametrów mog¹ byæ inne dla ka¿dego wywo³ania metody, tak wiêc nie mog¹ w ¿aden sposób stanowiæ czêœci metadanych. Musi wiêc zatem istnieæ osobny mechanizm pozwalaj¹cy na realizacjê tego zadania. \\
+Warunki kontraktu definiowane s¹ w ramach ³añcuchów znakowych. Poci¹ga to za sob¹ koniecznoœæ przeprowadzenia analizy sk³adniowej, której wynikiem jest
+drzewo rozbioru wyra¿eñ. W rezultacie jego ewaluacji otrzymywana jest wartoœæ okreœlaj¹ca czy udekorowana metoda spe³nia na³o¿ony na ni¹ kontrakt w kontekœcie danego wywo³ania.
 
 
-Okazuje siê, ¿e w momencie wysy³ania powiadomienia o zajœciu zdarzenia wywo³ania metody, maszyna wirtualna .NET wype³nia strukturê \linebreak \emph{\_COR\_PRF\_FUNCTION\_ARGUMENT\_INFO}, która jest przekazywana do odbiorcy. 
-Jej definicja przedstawia siê w sposób nastêpuj¹cy:
-\begin{lstlisting}[label=CorPrfFunctionArgumentInfo]
-typedef struct _COR_PRF_FUNCTION_ARGUMENT_INFO {
-    ULONG numRanges;
-    ULONG totalArgumentSize;
-    COR_PRF_FUNCTION_ARGUMENT_RANGE ranges[1];
-} COR_PRF_FUNCTION_ARGUMENT_INFO;
-\end{lstlisting}
-Objaœnienia:
-\begin{itemize}
-\item \emph{numRanges} - Liczba bloków pamiêci, wewn¹trz których znajduj¹ siê wartoœci argumentów. Okreœla liczbê elementów tablicy typu \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}
-\item \emph{totalArgumentSize} - Ca³kowita d³ugoœæ wszystkich argumentów wyra¿ona w bajtach.
-\item \emph{ranges} Tablica obiektów typu \linebreak \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, z których ka¿da reprezentuje jeden blok pamiêci, gdzie zawarte s¹ wartoœci argumentów metody
-\end{itemize}
-Struktura ta reprezentuje wartoœci argumentów metody, zgodnie z porz¹dkiem od lewej do prawej.
-Typ \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE }u¿yty w ramach tej struktury okreœlony jest jak nastêpuje:
-\begin{lstlisting}[label=lst:CorPrfFunctionArgumentRange]
-typedef struct _COR_PRF_FUNCTION_ARGUMENT_RANGE {
-    UINT_PTR startAddress;
-    ULONG length;
-} COR_PRF_FUNCTION_ARGUMENT_RANGE;
-\end{lstlisting}
-,gdzie\\
-\begin{itemize}
-\item startAddress - Adres pocz¹tku bloku.
-\item length - Wielkoœæ bloku pamiêci.
-\end{itemize}
+\section{Funkcjonalnoœci biblioteki}
 
-Te dane w po³¹czeniu z informacj¹ o typie argumentu pozwalaj¹ na poprawny odczyt argumentów metody. 
+W dalszych rozwa¿aniach oparto siê na definicji klas \emph{Account} oraz \emph{AccountManager} z przyk³adu \ref{lst:AccountTest} rozszerzonej o nastêpuj¹ce metody:
 
-\section{Wartoœci zwracane}
-\label{sec:chapter4:section5}
-
-Kolejnym elementem jest mo¿liwoœæ weryfikacji kontraktów zawieraj¹cych w sobie odniesienia do wartoœci zwracanej przez metodê.\\
-
-W dalszych przyk³adach wykorzystano klasê \emph{Account} reprezentuj¹c¹ konto bankowe, której czêœciowa definicja zawarta jest poni¿ej.
-\begin{lstlisting}[label=AccountClass, caption=Klasa Account]
-class Account {
- // Identyfikator konta
- public long AccountId;
- // Stan œrodków na koncie
- public int Balance;
- // Nazwisko posiadacza
- public string OwnerName;
- 
- ...
-}
-\end{lstlisting}
-
-
-Dodatkowo, niech dana bêdzie klasa \emph{AccountManager} definiuj¹ca operacje na obiektach typu \emph{Account}.
-
-\begin{lstlisting}[label=AccountClass, caption=Klasa AccountManager]
+\begin{lstlisting}[label=lst:AccountManagerClass, caption=Klasa AccountManager]
 class AccountManager {
- public Account ChangeOwnerName(Account account, string newName) {
+
+ 
+ [AsContract(null, "@returnValue.OwnerName == newName")]
+ public Account ChangeOwnerName(Account account, string newName) 
+ {
   // Wywo³anie metody rejestruj¹cej bie¿¹c¹ operacjê w bazie danych
   // Zwraca zapisan¹ wartoœæ
   account.OwnerName = Database.SetAccountOwnerInternal(account.accountId, newName);
   return account; 
  }
-}
-\end{lstlisting}
 
-Metoda ta zwraca obiekt typu \emph{Account}, z uaktualnion¹ wartoœci¹ \emph{OwnerName} mówi¹c¹ o dostêpnych œrodkach. W celu sprawdzenia poprawnoœci dzia³ania tej funkcjonalnoœci mo¿liwe jest na³o¿enie odpowiedniego kontraktu  na metodê \emph{ChangeOwnerName}. Przy u¿yciu atrybutów z biblioteki \emph{AsProfiled} mo¿liwa jest inspekcja obiektu zwracanego z metody. Warto zaznaczyæ, ¿e takie odniesienia maj¹ tylko sens przy warunkach koñcowych, po odebraniu notyfikacji o zdarzeniu opuszczenia metody.
-W ramach atrybutów \emph{AsContract} odwo³anie do wartoœci zwracanej odbywa siê poprzez u¿ycie  identyfikatora \emph{@returnValue}. Maj¹c to na uwadze, warunek koñcowy, sprawdzaj¹cy czy nazwisko posiadacza rzeczywiœcie zosta³o uaktualnione, na³o¿ony na t¹ metodê, móg³by mieæ nastêpuj¹c¹ postaæ:
-
-\begin{lstlisting}[label=AccountClass, caption=Sprawdzenie poprawnoœci operacji uaktualnienia nazwiska posiadacza konta]
- [AsContract(null, "@returnValue.OwnerName == newName")]
- public Account ChangeOwnerName(Account account, string newName) {
-  account.OwnerName = Database.SetAccountOwnerInternal(account.accountId, newName);
-  return account; 
- }
-}
-\end{lstlisting}
-
-Sposób odczytu wartoœci zwracanej jest analogiczny do odczytywania wartoœci parametrów metody. W tym wypadku, odbiorca zdarzenia otrzymuje dostêp do pojedynczego obiektu typu \linebreak \emph{COR\_PRF\_FUNCTION\_ARGUMENT\_RANGE}, który zawiera w sobie informacje na temat po³o¿enia wartoœci zwracanej w pamiêci.
-
-\section{Wartoœci pocz¹tkowe}
-
-Termin wartoœci pocz¹tkowe odnosi siê do stanu argumentów w momencie wywo³ania metody. Zgodnie z za³o¿eniami z rozdzia³u pierwszego, biblioteka powinna udostêpniaæ funkcjonalnoœæ definiowania kontraktów z³o¿onych z odwo³añ do pocz¹tkowych wartoœci obiektów. Naturalnie, stan obiektów mo¿e ulec zmianie w czasie dzia³ania metody, nale¿a³o wiêc przedsiêwzi¹æ kroki umo¿liwiaj¹ce tego rodzaju odwo³ania do pocz¹tkowych wartoœci obiektów. 
-
-Jedyn¹ sytuacj¹ jak¹ nale¿y rozwa¿yæ jest przypadek, w którym odwo³ania do wartoœci pocz¹tkowych ma miejsce w warunku koñcowym w ramach danego kontraktu.
-Rzecz jasna, odwo³ania do tych wartoœci nie maj¹ sensu w przypadku warunków pocz¹tkowych, gdy¿ te ewaluowane s¹ zanim sterowanie dojdzie do momentu wykonywania instrukcji wewn¹trz metody, a które mog³yby zmodyfikowaæ stan obiektu. 
-Z drugiej strony, co wynika ze specyfiki otrzymywanych powiadomieñ, odczytywanie argumentów jest mo¿liwe tylko w momencie wywo³ywania metody.\\
-
-
-Niech dana bêdzie metoda zwiêkszaj¹ca bilans konta bankowego po wp³yniêciu na nie œrodków.
-
-\begin{lstlisting}[label=InitialValues, caption=Metoda zwiêkszaj¹ca bilans konta]
-
-class AccountManager {
- public Account Deposit(Account account, int sum) {
+ 
+ [AsContract(null, "account.Balance == ^account.Balance + sum")]
+ public Account Deposit(Account account, int sum) 
+{
   // Wywo³anie metody zapisuj¹cej do bazy danych nowy stan konta o danym
   // identyfikatorze
   // Zwraca uaktualniony obiekt typu Account
@@ -280,24 +167,40 @@ class AccountManager {
 }
 \end{lstlisting}
 
-W tej sytuacji ma sens weryfikacja stanu konta po zakoñczeniu metody \emph{Deposit}. W ramach biblioteki \emph{AsProfiled} mo¿liwe jest zdefiniowanie warunku koñcowego, który weryfikuje t¹ wartoœæ, przy uwzglêdnieniu wartoœci pocz¹tkowej elementu Balance.
-W tej konkretnej sytuacji bêdzie mia³ on nastêpuj¹c¹ postaæ:
-\begin{lstlisting}[label=InitialValuesConstrained, caption=Odwo³anie do wartoœci pocz¹tkowej]
-[AsContract(null, "account.Balance == ^account.Balance + sum")]
-public Account Deposit(Account account, int sum) {
- int newBalance = Database.DepositInternal(AccountId, sum);
- account.Balance = newBalance;
- return account; 
-}
-\end{lstlisting}
+Metoda \emph{ChangeOwnerName} dokonuje zamiany w³aœciciela konta, którego obiekt przekazywany jest jako parametr.
+Metoda \emph{Deposit} deponuje okreœlon¹ kwotê na danym koncie. 
+\subsection{Odczytywanie wartoœci argumentów metod}
 
-Kontrakt ten nak³ada warunek okreœlaj¹cy, i¿ po spe³niony po zakoñczeniu wykonywania metody nowa wartoœæ pola \emph{Balance} obiektu typu \emph{Account} musi byæ równa pocz¹tkowej wartoœci tego pola powiêkszonej o wartoœæ \emph{sum}
-Odwo³anie do wartoœci pocz¹tkowych danego argumentu odbywa siê poprzez poprzedzenie jego nazwy symbolem \^{}, tutaj \^{}account.Balance. \\
+Dziêki informacjom zawartym w metadanych, mo¿liwe jest okreœlenie liczby i typów parametrów przekazywanych do metod. S¹ to dane statyczne, w tym sensie, ¿e s¹ one sta³e w ramach raz zdefiniowanego programu. Z drugiej strony, wartoœci parametrów mog¹ byæ inne dla ka¿dego wywo³ania metody, tak wiêc nie mog¹ w ¿aden sposób stanowiæ czêœci metadanych. Musi wiêc istnieæ inny mechanizm pozwalaj¹cy na odczyt wartoœci argumentów. Okazuje siê, ze maszyna CLR wraz w powiadomieniem o rozpoczêciu wykonywania metody dostarcza strukturê wewn¹trz której znajduj¹ siê odniesienia do fragmentów pamiêci, gdzie zapisane s¹ aktualne wartoœci argumentów. S¹ to dane binarne, które nale¿y interpretowaæ zgodnie z typem argumentu, które reprezentuj¹. Biblioteka \emph{AsProfiled} umo¿liwia odczyt wartoœci pól znajduj¹cych siê w dowolnym miejscu w hierarchii w ramach przekazywanego parametru. Warunek koñcowy na³o¿ony na metodê \emph{Deposit} w ramach klasy z przyk³adu \ref{lst:AccountManagerClass} ilustruje odwo³anie siê do wewnêtrznych pól przekazywanego parametru.
 
 
-Zgodnie z tym co zosta³o powiedziane wczeœniej, niezbêdne jest zachowanie stanu obiektu w momencie otrzymania notyfikacji o rozpoczêciu wykonywania metody i odwo³ywanie siê do niego w czasie weryfikacji warunków koñcowych. Dodatkowo, nie wystarczy zachowanie referencji do obiektu. Wynika to z faktu, i¿ pomimo tego, ¿e przekazywanie argumentów do metody odbywa siê poprzez kopiowanie, to kopiowana jest tylko referencja do obiektu, a nie sam obiekt. Oczywiœcie, kopia referencji dalej wskazuje na ten sam obiekt, wiêc zmieniaj¹c stan obiektu przy jej u¿yciu, zmieniany jest oryginalny obiekt.
-Z tego powodu niezbêdne okazuje siê kopiowanie poszczególnych wartoœci do których wystêpuje odwo³anie w warunkach koñcowych.
-Konieczne jest wiêc przeprowadzanie przetwarzania wstêpnego, tzn. w chwili otrzymania powiadomienia o wywo³aniu metody przeprowadzona zostaje analiza zarówno warunków pocz¹tkowych i warunków koñcowych kontraktu. W czasie tej analizy warunek koñcowy sprawdzany jest pod k¹tem wystêpowania elementów odnosz¹cych siê do stanu pocz¹tkowego argumentów funkcji. Nastêpnie argumenty, do których takie odwo³ania wystêpuj¹ poddawane s¹ inspekcji i wy³uskiwana jest wartoœæ sk³adowej obiektu, do którego odniesienie znajduje siê w warunku koñcowym. Ta wartoœæ zapisywana jest w pamiêci podrêcznej aplikacji, do której dostêp jest mo¿liwy w momencie otrzymania powiadomienia o zakoñczeniu wykonywania weryfikowanej metody, kiedy to mo¿e zostaæ u¿yta do weryfikacji warunku koñcowego.\\
+\subsection{Wartoœci zwracane}
+\label{sec:chapter4:section5}
 
-%\section{Ograniczenia}
+Kolejnym elementem jest mo¿liwoœæ weryfikacji kontraktów zawieraj¹cych w sobie odniesienia do wartoœci zwracanej przez metodê.\\
+
+
+Metoda \emph{ChangeOwnerName} z przyk³adu \ref{lst:AccountManagerClass} zwraca obiekt typu \emph{Account}, z uaktualnion¹ wartoœci¹ \emph{OwnerName} mówi¹c¹ o dostêpnych œrodkach. W celu sprawdzenia poprawnoœci dzia³ania tej funkcjonalnoœci mo¿liwe jest na³o¿enie odpowiedniego kontraktu  na metodê \emph{ChangeOwnerName}. Przy u¿yciu atrybutów z biblioteki \emph{AsProfiled} mo¿liwa jest inspekcja wartoœci obiektu zwracanego z metody. Takie odniesienia maj¹ tylko sens przy warunkach koñcowych, po odebraniu notyfikacji o zdarzeniu opuszczenia metody.
+W ramach atrybutów \emph{AsContract} odwo³anie do wartoœci zwracanej odbywa siê poprzez u¿ycie  identyfikatora \emph{@returnValue}. \\
+Sposób odczytu wartoœci zwracanej jest analogiczny do odczytywania wartoœci parametrów metody. Szczegó³y techniczne opisuj¹ce ten proces zosta³y podane w nastêpnym rozdziale.
+
+\subsection{Wartoœci pocz¹tkowe}
+
+Termin wartoœci pocz¹tkowe odnosi siê do stanu argumentów w momencie wywo³ania metody. Zgodnie z za³o¿eniami z rozdzia³u pierwszego, biblioteka powinna udostêpniaæ funkcjonalnoœæ definiowania kontraktów z³o¿onych z odwo³añ do pocz¹tkowych wartoœci obiektów. Naturalnie, stan obiektów mo¿e ulec zmianie w czasie dzia³ania metody, nale¿a³o wiêc przedsiêwzi¹æ kroki umo¿liwiaj¹ce tego rodzaju odwo³ania do pocz¹tkowych wartoœci obiektów. 
+
+Jedyn¹ sytuacj¹ jak¹ nale¿y rozwa¿yæ jest przypadek, w którym odwo³ania do wartoœci pocz¹tkowych ma miejsce w warunku koñcowym w ramach danego kontraktu.
+Rzecz jasna, odwo³ania do tych wartoœci nie maj¹ sensu w przypadku warunków pocz¹tkowych, gdy¿ te ewaluowane s¹ zanim sterowanie dojdzie do momentu wykonywania instrukcji wewn¹trz metody, a które mog³yby zmodyfikowaæ stan obiektu. 
+Z drugiej strony, co wynika ze specyfiki otrzymywanych powiadomieñ, odczytywanie argumentów jest mo¿liwe tylko w momencie wywo³ywania metody.\\
+
+
+W kontekœcie sytuacji przedstawionej na listingu \ref{lst:AccountManagerClass} ma sens weryfikacja stanu konta po zakoñczeniu metody \emph{Deposit}. W ramach biblioteki \emph{AsProfiled} mo¿liwe jest zdefiniowanie warunku koñcowego, który weryfikuje t¹ wartoœæ, przy uwzglêdnieniu wartoœci pocz¹tkowej pola \emph{Balance} obiektu typu \emph{Account}.
+
+Kontrakt na³o¿ony na metodê \emph{Deposit} nak³ada warunek okreœlaj¹cy, i¿ po zakoñczeniu wykonywania metody nowa wartoœæ pola \emph{Balance} obiektu typu \emph{Account} musi byæ równa pocz¹tkowej wartoœci tego pola powiêkszonej o wartoœæ \emph{sum}
+Odwo³anie do wartoœci pocz¹tkowej danego argumentu odbywa siê poprzez poprzedzenie jego nazwy symbolem \^{}, tutaj \^{}account.Balance. \\
+
+
+%Zgodnie z tym co zosta³o powiedziane wczeœniej, niezbêdne jest zachowanie stanu obiektu w momencie otrzymania notyfikacji o rozpoczêciu wykonywania metody i odwo³ywanie siê do niego w czasie weryfikacji warunków koñcowych. Dodatkowo, nie wystarczy zachowanie referencji do obiektu. Wynika to z faktu, i¿ pomimo tego, ¿e przekazywanie argumentów do metody odbywa siê poprzez kopiowanie, to kopiowana jest tylko referencja do obiektu, a nie sam obiekt. Oczywiœcie, kopia referencji dalej wskazuje na ten sam obiekt, wiêc zmieniaj¹c stan obiektu przy jej u¿yciu, zmieniany jest oryginalny obiekt.
+%Z tego powodu niezbêdne jest kopiowanie poszczególnych wartoœci, do których wystêpuje odwo³anie w warunkach koñcowych.
+%Konieczne jest wiêc przeprowadzanie przetwarzania wstêpnego, tzn. w chwili otrzymania powiadomienia o wywo³aniu metody przeprowadzona zostaje analiza zarówno warunków pocz¹tkowych i warunków koñcowych kontraktu. W czasie tej analizy warunek koñcowy sprawdzany jest pod k¹tem wystêpowania elementów odnosz¹cych siê do stanu pocz¹tkowego argumentów funkcji. Nastêpnie argumenty, do których takie odwo³ania wystêpuj¹ poddawane s¹ inspekcji i wy³uskiwana jest wartoœæ sk³adowej obiektu, do którego odniesienie znajduje siê w warunku koñcowym. Ta wartoœæ zapisywana jest w pamiêci podrêcznej aplikacji, do której dostêp jest mo¿liwy w momencie otrzymania powiadomienia o zakoñczeniu wykonywania weryfikowanej metody, kiedy to mo¿e zostaæ u¿yta do weryfikacji warunku koñcowego.\\
+
 

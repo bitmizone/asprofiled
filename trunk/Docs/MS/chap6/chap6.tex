@@ -1,11 +1,11 @@
 \chapter{Porównanie z innymi bibliotekami}
-W tej czêœci opisano dwa rozwi¹zania realizuj¹ce podejœcie programowania kontraktowego. Podobnie jak biblioteka AsProfiled s¹ one przeznaczone dla programów pracuj¹cych w ramach platformy .NET.
+W tej czêœci opisano dwa rozwi¹zania realizuj¹ce podejœcie programowania kontraktowego. Podobnie jak biblioteka \emph{AsProfiled} s¹ one przeznaczone dla programów pracuj¹cych w ramach platformy .NET.
 
 \section{Code Contracts}
-Code Contracts to kompleksowe rozwi¹zanie firmy Microsoft, pocz¹tkowe tworzone w ramach komórki badawczej Mirosoft Research. Obecnie jest ju¿ dostêpna na rynku w pe³ni funkcjonalna wersja tego zestawu narzêdzi i wchodz¹ one w sk³ad œrodowiska programistycznego Visual Studio 2010. \\
+Code Contracts \cite{website:codecontracts} to kompleksowe rozwi¹zanie firmy Microsoft, pocz¹tkowe tworzone w ramach komórki badawczej Mirosoft Research. Obecnie jest ju¿ dostêpna na rynku w pe³ni funkcjonalna wersja tego zestawu narzêdzi i wchodz¹ one w sk³ad œrodowiska programistycznego Visual Studio 2010. \\
 
-Z perspektywy implementacyjnej w ramach \emph{Code Contracts} zastosowano inne podejœcie, od tego, które reprezentowane jest przez AsProfiled.
-Dla przypomnienia, AsProfiled stanowi zewnêtrzn¹ bibliotekê, do której odwo³ania wystêpuj¹ na poziomie maszyny wirtualnej .NET. Sprawdzany program nie ma œwiadomoœci istnienia tej biblioteki, a jedynym elementem zewnêtrznym jest klasa definiuj¹ca atrybuty, poprzez który reprezentowany jest kontrakt.
+Z perspektywy implementacyjnej w ramach \emph{Code Contracts} zastosowano inne podejœcie, od tego, które reprezentowane jest przez \emph{AsProfiled}.
+Dla przypomnienia,\emph{AsProfiled} stanowi zewnêtrzn¹ bibliotekê, do której odwo³ania wystêpuj¹ na poziomie maszyny wirtualnej .NET. Sprawdzany program nie ma œwiadomoœci istnienia tej biblioteki, a jedynym elementem zewnêtrznym jest klasa definiuj¹ca atrybuty, poprzez który reprezentowany jest kontrakt.
 W przypadku u¿ycia \emph{Code Contracts}, kontrolowany program (biblioteka) odwo³uje siê bezpoœrednio do metod zdefiniowanych w ramach przestrzeni nazw \emph{System.Diagnostics.Contracts}. 
 
 Razem z bibliotek¹ dostarczane jest narzêdzie \emph{ccrewrite.exe}, które jest kluczowym elementem w zadaniu sprawdzania poprawnoœci kontraktów w czasie dzia³ania aplikacji. Narzêdzie to, dostaj¹c na wejœciu skompilowan¹ bibliotekê,
@@ -19,7 +19,7 @@ Przepisywanie kodu skompilowanej biblioteki przy u¿yciu powy¿szego narzêdzia to 
 Narzêdzie \emph{Ccrewrite.exe} poprzez przepisywanie kodu umo¿liwia umieszczenie wszystkich deklaracji kontraktów na pocz¹tku metody.
 Zmodyfikowany kod bêdzie zawiera³ sprawdzenie kontraktu koñcowego we wszystkich miejscach, w których mo¿liwe jest opuszczenie metody.  \\
 
-Z punktu widzenia u¿ytkownika, zasadnicza ró¿nic¹, w stosunku do biblioteki AsProfiled jest sposób okreœlania kontraktów.
+Z punktu widzenia u¿ytkownika, zasadnicza ró¿nic¹, w stosunku do biblioteki \emph{AsProfiled} jest sposób okreœlania kontraktów.
 W tym wypadku s¹ one definiowane jako wywo³ania statycznych metod klasy \emph{Contract}, przy czym kontrakt podawany jako ich argument, w postaci wyra¿enia logicznego. Poprawnym wyra¿eniem jest dowolne wyra¿enie zgodne z regu³ami ich budowania w ramach ustalonego jêzyka programowania.
 Podejœcie to ma zasadnicz¹ zaletê, mianowicie kontrakty s¹ silnie typowane.
 Poni¿szy wycinek kodu ilustruje dotychczasowy opis:
@@ -63,7 +63,7 @@ Jest to odpowiednik elementu \emph{@returnValue} w obrêbie kontraktów AsContract
 
 Wspóln¹ cech¹ bibliotek \emph{Code Contracts} oraz \emph{AsProfiled} jest mo¿liwoœæ odwo³ywania siê do wartoœci pocz¹tkowych argumentów metody.
 W ramach kontraktów \emph{AsContracts} odwo³anie do wartoœci pocz¹tkowych oznaczane s¹ przez \emph{\^{}nazwaArgumentu}, z kolei tutaj t¹ rolê pe³ni metoda \linebreak 
-\emph{Contracts.OldValue\textless T \textgreater(T value)}.
+\emph{Contracts.OldValue\textless T\textgreater(T value)}.
 Za zachowywanie tych wartoœci odpowiedzialny jest kod wygenerowany przez \emph{ccrewrite.exe}. 
 Poni¿szy kod ilustruje wykorzystanie tej funkcjonalnoœci.
 
@@ -106,7 +106,7 @@ Podsumowuj¹c, \emph{Code Contracts} w obecnej postaci jest dopracowanym rozwi¹za
 Du¿¹ zalet¹ w stosunku do biblioteki AsProfiled, poza bogatsz¹ funkcjonalnoœci¹, jest silne typowanie wyra¿eñ okreœlaj¹cych warunki. U³atwia to ich pisanie oraz uniemo¿liwia tworzenie niepoprawnych w sensie sk³adniowym warunków. 
 
 \section{LinFu.Contracts}
-LinFu.Contracts wchodzi w sk³ad bibliotek zgrupowanych w ramach projektu LinFu, stworzonego przez Philipa Laureano a udostêpnianego na zasadach wolnego oprogramowania. U podstaw tej biblioteki le¿y mechanizm generowania dynamicznych obiektów poœrednicz¹cych (ang. \emph{dynamic proxy}), które pozwalaj¹ na przechwytywanie wywo³añ metod na docelowym obiekcie. 
+LinFu.Contracts wchodzi w sk³ad bibliotek zgrupowanych w ramach projektu LinFu \cite{website:linfu}, stworzonego przez Philipa Laureano a udostêpnianego na zasadach wolnego oprogramowania. U podstaw tej biblioteki le¿y mechanizm generowania dynamicznych obiektów poœrednicz¹cych (ang. dynamic proxy), które pozwalaj¹ na przechwytywanie wywo³añ metod na docelowym obiekcie. 
 Ten w³aœnie mechanizm wykorzystywany jest przy realizacji podejœcia programowania kontraktowego. \\
 Proces tworzenia obiektu poœrednicz¹cego odbywa siê poprzez metodê \emph{CreateProxy\textless T\textgreater(IInvokeWrapper wrapper)} nale¿¹cej do klasy \emph{ProxyFactory}. W rezultacie zwracany jest uchwyt to obiektu typu \emph{T}, przy czym ka¿de odwo³anie do jego metod bêdzie przechwytywane przez obiekt implementuj¹cy interfejs \emph{IInvokeWrapper}.
 Interfejs ten okreœlony jest w sposób nastêpuj¹cy:
@@ -119,7 +119,7 @@ public interface IInvokeWrapper
  void AfterInvoke(InvocationInfo info, object returnValue);
 }
 \end{lstlisting}
-Powy¿sze metody wywo³ywane s¹ przez obiekt poœrednicz¹cy w momentach zgodnych z ich nazewnictwem, tzn. \emph{BeforeInvoke}, \emph{AfterInvoke} oznaczaj¹ moment przed i po wywo³aniu, natomiast \emph{DoInvoke} to w³aœciwe wywo³anie. Nale¿y zaznaczyæ i¿ metoda na obiekcie docelowym mo¿e, ale nie musi byæ wykonana, decyduje o tym implementacja metody \emph{DoInvoke}. 
+Powy¿sze metody wywo³ywane s¹ przez obiekt poœrednicz¹cy w momentach zgodnych z ich nazewnictwem, tzn. \emph{BeforeInvoke}, \emph{AfterInvoke} oznaczaj¹ moment przed i po wywo³aniu, natomiast \emph{DoInvoke} to w³aœciwe wywo³anie. Metoda na obiekcie docelowym mo¿e, ale nie musi byæ wykonana, decyduje o tym implementacja metody \emph{DoInvoke}. 
 Dla jasnoœci prezentowany jest poni¿szy przyk³ad:
 \begin{lstlisting}[label=DynamicProxy, caption=Tworzenie obiektu poœredniego]
 // Klasa pocz¹tkowa 

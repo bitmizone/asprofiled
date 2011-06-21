@@ -1,8 +1,12 @@
 % ********** Rozdzia³ 1 **********
 \chapter{Wstêp}
 \label{sec:chapter1:section1}
-W niniejszej pracy opisano budowê oraz zasadê dzia³ania biblioteki AsProfiled umo¿liwiaj¹cej kontrolê poprawnoœci dzia³ania dowolnego programu dzia³aj¹cego w obrêbie platformy .NET. \\
-Poprawnoœæ ta badana jest poprzez weryfikacjê kontraktów na³o¿onych na poszczególne czêœci programów, w tym wypadku, funkcji (metod).
+W niniejszej pracy opisano budowê oraz zasadê dzia³ania biblioteki \emph{AsProfiled} umo¿liwiaj¹cej kontrolê poprawnoœci dzia³ania dowolnego programu dzia³aj¹cego w obrêbie platformy .NET. \\
+
+G³ówn¹ motywacj¹ dla podjêcia tego tematu by³a chêæ poznania niskopoziomowych mechanizmów dzia³ania maszyny wirtualnej .NET wraz z reprezentacj¹ programów w pamiêci operacyjnej. Wydaje siê, ¿e w³aœciwym sposobem do osi¹gniêcia tego celu jest utworzenie aplikacji/biblioteki, która bêdzie operowa³a na tym samym poziomie abstrakcji co maszyna wirtualna. Realizacj¹ tych za³o¿eñ jest implementacja biblioteki pozwalaj¹cej na badanie poprawnoœci dzia³ania innych programów.
+Dodatkowym wyzwaniem by³o zmierzenie siê z bogatymi w funkcjonalnoœci, ale s³abo udokumentowanymi interfejsami programowania aplikacji (API) pozwalaj¹cymi na komunikacjê ze œrodowiskiem uruchomieniowym. \\
+
+Poprawnoœæ programów badana jest poprzez weryfikacjê kontraktów na³o¿onych na poszczególne czêœci programów, w tym wypadku, funkcji (metod).
 Ten rodzaj weryfikacji nazywany jest programowaniem kontraktowym.  \\
 
 Pomimo tego, ¿e pocz¹tki tego paradygmatu siêgaj¹ roku 1986, to na obecn¹ chwilê nie mo¿na powiedzieæ, i¿ takie podejœcie do programowania jest powszechnie stosowane. Z drugiej strony, dla ka¿dego ze stosowanych dzisiaj jêzyków programowania powsta³y odpowiednie rozwi¹zania realizuj¹ce t¹ koncepcjê. Istnieje kilka ró¿nych podejœæ przy jej implementacji, s¹ to m.in.:
@@ -18,7 +22,7 @@ Nale¿y tu wyró¿niæ zestaw narzêdzi \emph{Code.Contracts}, które sta³y siê czêœci
 Pomimo szerokiego wachlarza dostêpnych rozwi¹zañ, okazuje siê, ¿e jest mo¿liwe utworzenie rozwi¹zania nie bazuj¹cego na ¿adnym z wy¿ej wymienionych podejœæ.
 Polega ono na wykorzystaniu specyficznych dla technologii .NET w³asnoœci, które pozwalaj¹ na komunikacjê maszyny wirtualnej z zewnêtrzn¹ bibliotek¹ w celu przekazywania informacji na temat zdarzeñ zachodz¹cych w programie.
 Ta cecha zosta³a wykorzystana przy budowie biblioteki \emph{AsProfiled}, której proces tworzenia zosta³ przedstawiony w tej pracy.
-Nale¿y wspomnieæ, i¿ w kontekœcie programowania kontraktowego jest to 
+W kontekœcie programowania kontraktowego jest to 
 rozwi¹zanie, jak do tej pory, unikalne.
 Aplikacja zosta³a napisana w jêzyku C++ przy wykorzystaniu mechanizmów zwi¹zanych z technologi¹ COM.
 Kod Ÿród³owy biblioteki wraz z dokumentacj¹ znajduje siê pod adresem https://code.google.com/p/asprofiled/.
@@ -32,7 +36,7 @@ zwi¹zana z oficjaln¹ wersj¹ œrodowiska .NET, a konkretnie
 Microsoft .NET Framework. Rozszerzenia mechanizmów profilowania dla
 innych dystrybucji .NET, takich jak \emph{Mono} czy te¿ \emph{DotGNU Portable.NET}, nie by³y przedmiotem tej pracy.\\
 
-Technologia ta nie jest zwi¹zana z ¿adnym konkretnym jêzykiem programowania, aczkolwiek jêzyk C\# jest uwa¿any za flagowe rozwi¹zanie s³u¿¹ce do tworzenia aplikacji pod t¹ platformê. Z drugiej strony, do tej pory powsta³o wiele innych jêzyków, czêœæ z nich zosta³a zbudowana bezpoœrednio przez firmê Microsoft, inne powsta³y jako niezale¿ne projekty. Do tej pierwszej grupy, poza wspomnianym C\#, zaliczaj¹ siê takie jêzyki jak C++/CLI, J\#, F\#, Delphi 8 dla .NET, Visual Basic .NET. W drugiej grupie znajduj¹ siê m.in. Scala, IronPython, IronRuby, Nemerle.
+Technologia .NET nie jest zwi¹zana z ¿adnym konkretnym jêzykiem programowania, aczkolwiek jêzyk C\# jest uwa¿any za flagowe rozwi¹zanie s³u¿¹ce do tworzenia aplikacji pod t¹ platformê. Z drugiej strony, do tej pory powsta³o wiele innych jêzyków, czêœæ z nich zosta³a zbudowana bezpoœrednio przez firmê Microsoft, inne powsta³y jako niezale¿ne projekty. Do tej pierwszej grupy, poza wspomnianym C\#, zaliczaj¹ siê takie jêzyki jak C++/CLI, J\#, F\#, Delphi 8 dla .NET, Visual Basic .NET. W drugiej grupie znajduj¹ siê m.in. Scala, IronPython, IronRuby, Nemerle.
 Z ka¿dym z nich zwi¹zany jest odpowiedni kompilator, którego zadaniem jest translacja programów na jêzyk poœredni CIL (wczeœniej MSIL). Dopiero tak przygotowane programy mog¹ byæ wykonane na maszynie wirtualnej CLR, która to jest œrodowiskiem uruchomieniowym platformy .NET. \\
 
 Taka konstrukcja pozwoli³a rozszerzyæ zakres dzia³ania zaimplementowanego rozwi¹zania na wszystkie jêzyki programowania w obrêbie tej platformy, pod warunkiem, ¿e dany jêzyk wspiera konstrukcje programowe zwane atrybutami. W niniejszej pracy wszystkie przyk³ady opieraj¹ siê na programach napisanych w jêzyku C\#.
@@ -52,5 +56,15 @@ Wszystkie z nich zosta³y szczegó³owo opisane w rozdziale czwartym, jednak wprowa
 \item aplikacja musi byæ w stanie odczytaæ wartoœci zwracane z badanych metod
 \end{packed_item}
 W kolejnych rozdzia³ach opisane w jaki sposób ka¿de z powy¿szych za³o¿eñ zosta³o spe³nione.
-Nie przewidziano ¿adnych za³o¿eñ co do wymagañ poza funkcjonalnych, co oznacza, i¿ takie parametry jak szybkoœæ dzia³ania aplikacji czy bezpieczeñstwo rozwi¹zania, nie by³y przedmiotem zainteresowania.
+Nie przewidziano ¿adnych za³o¿eñ co do wymagañ niefunkcjonalnych, co oznacza, i¿ takie parametry jak szybkoœæ dzia³ania aplikacji czy bezpieczeñstwo rozwi¹zania, nie by³y przedmiotem zainteresowania.
+
+\section{Plan pracy}
+Poni¿ej zawarto opis tego o czym traktuj¹ kolejne rozdzia³y niniejszej pracy.
+\begin{enumerate}
+\item Rozdzia³ drugi opisuje zagadnienie programowania kontraktowego. W szczególnoœci, przytoczona jest jego geneza, podstawowe za³o¿enia oraz dotychczasowe implementacje tej koncepcji. 
+\item W rozdziale trzecim przedstawione s¹ funkcjonalnoœci zaimplementowane w ramach biblioteki \emph{AsProfiled} poparte odpowiednimi przyk³adami.
+\item Rozdzia³ czwarty poœwiêcony jest szczegó³om implementacyjnym biblioteki \emph{AsProfiled}. Opisywane s¹ tam równie¿ cechy charakterystyczne platformy .NET, które zosta³y wykorzystane do realizacji zagadnienia programowania kontraktowego.
+\item W rozdziale pi¹tym biblioteka \emph{AsProfiled} zestawiona zosta³a z konkurencyjnymi rozwi¹zaniami, umo¿liwiaj¹cymi programowanie kontraktowe w ramach platformy .NET. Opisywane s¹ zasady dzia³ania bibliotek \emph{Code Contracts} oraz \emph{LinFu.Contacts} wraz z przyk³adami ich wykorzystania.
+
+\end{enumerate}
 % ********** Koniec rozdzia³u **********

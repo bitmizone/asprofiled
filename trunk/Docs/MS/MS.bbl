@@ -1,0 +1,43 @@
+\begin{thebibliography}{1}
+
+\bibitem{website:astudillo}
+Manuel Astudillo.
+\newblock C++ gold parser engine.
+\newblock \\\url{https://github.com/manast/cpp-gpengine}.
+
+\bibitem{website:gold-parser}
+DevinCook.com.
+\newblock Gold parsing system. a free, multi-programming language, parser.
+\newblock \\\url{http://www.devincook.com/goldparser/}.
+
+\bibitem{book:ECMA-335}
+ECMA International.
+\newblock {\em Common Language Infrastructure (CLI) Partitions I to VI}.
+\newblock ECMA International, 5th edition, 2010.
+
+\bibitem{website:linfu}
+Philip Laureano.
+\newblock Linfu.
+\newblock \\\url{https://www.ohloh.net/p/linfu}.
+
+\bibitem{website:com}
+Microsoft.
+\newblock Component object model.
+\newblock \\\url{http://msdn.microsoft.com/en-us/library/aa286559.aspx}.
+
+\bibitem{website:codecontracts}
+Microsoft.
+\newblock Devlabs: Code contracts.
+\newblock \\\url{http://msdn.microsoft.com/en-us/devlabs/dd491992}.
+
+\bibitem{website:metadataapi}
+Microsoft.
+\newblock Metadata (unmanaged api reference).
+\newblock \\\url{http://msdn.microsoft.com/en-us/library/ms404384.aspx}.
+
+\bibitem{website:profilingapi}
+Microsoft.
+\newblock Profiling (unmanaged api reference).
+\newblock \\\url{http://msdn.microsoft.com/en-us/library/ms404386.aspx}.
+
+\end{thebibliography}

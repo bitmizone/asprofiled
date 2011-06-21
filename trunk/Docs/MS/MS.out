@@ -2,34 +2,36 @@
 \BOOKMARK [0][-]{chapter.1}{Wstep}{}% 2
 \BOOKMARK [1][-]{section.1.1}{Platforma .NET i CLR}{chapter.1}% 3
 \BOOKMARK [1][-]{section.1.2}{Za\233ozenia}{chapter.1}% 4
-\BOOKMARK [0][-]{chapter.2}{Wprowadzenie do programowania kontraktowego}{}% 5
-\BOOKMARK [0][-]{chapter.3}{Om\363wienie funkcjonalnosci biblioteki}{}% 6
-\BOOKMARK [1][-]{section.3.1}{Og\363lny schemat architektury biblioteki AsProfiled}{chapter.3}% 7
-\BOOKMARK [1][-]{section.3.2}{Przyk\233ad wykorzystania biblioteki AsProfiled}{chapter.3}% 8
-\BOOKMARK [1][-]{section.3.3}{Inspekcja nadzorowanego programu}{chapter.3}% 9
-\BOOKMARK [1][-]{section.3.4}{Kontrakty}{chapter.3}% 10
-\BOOKMARK [1][-]{section.3.5}{Metadane}{chapter.3}% 11
-\BOOKMARK [1][-]{section.3.6}{Odczytywanie wartosci argument\363w metod}{chapter.3}% 12
-\BOOKMARK [1][-]{section.3.7}{Wartosci zwracane}{chapter.3}% 13
-\BOOKMARK [1][-]{section.3.8}{Wartosci poczatkowe}{chapter.3}% 14
-\BOOKMARK [0][-]{chapter.4}{Szczeg\363\233y implementacji}{}% 15
-\BOOKMARK [1][-]{section.4.1}{Atrybuty jako kontrakty}{chapter.4}% 16
-\BOOKMARK [1][-]{section.4.2}{Gramatyka kontrakt\363w}{chapter.4}% 17
-\BOOKMARK [1][-]{section.4.3}{Om\363wienie i implementacja interfejs\363w}{chapter.4}% 18
-\BOOKMARK [1][-]{section.4.4}{Odbieranie notyfikacji o zdarzeniach zachodzacych w programie}{chapter.4}% 19
-\BOOKMARK [1][-]{section.4.5}{Odczyt metadanych}{chapter.4}% 20
-\BOOKMARK [2][-]{subsection.4.5.1}{Reprezentacja metadanych}{section.4.5}% 21
-\BOOKMARK [2][-]{subsection.4.5.2}{Interpretacja metadanych}{section.4.5}% 22
-\BOOKMARK [2][-]{subsection.4.5.3}{Odczyt metadanych w bibliotece AsProfiled}{section.4.5}% 23
-\BOOKMARK [1][-]{section.4.6}{Parsowanie wyrazen zawartych w kontraktach}{chapter.4}% 24
-\BOOKMARK [1][-]{section.4.7}{Inspekcja wartosci zmiennych}{chapter.4}% 25
-\BOOKMARK [2][-]{subsection.4.7.1}{Typy wbudowane}{section.4.7}% 26
-\BOOKMARK [2][-]{subsection.4.7.2}{Odwo\233ania do wartosci sk\233adowych obiekt\363w z\233ozonych}{section.4.7}% 27
-\BOOKMARK [1][-]{section.4.8}{Ewaluacja kontrakt\363w}{chapter.4}% 28
-\BOOKMARK [2][-]{subsection.4.8.1}{Zachowywanie wartosci poczatkowych}{section.4.8}% 29
-\BOOKMARK [2][-]{subsection.4.8.2}{Wartosci zwracane}{section.4.8}% 30
-\BOOKMARK [0][-]{chapter.5}{Por\363wnanie z innymi bibliotekami}{}% 31
-\BOOKMARK [1][-]{section.5.1}{Code Contracts}{chapter.5}% 32
-\BOOKMARK [1][-]{section.5.2}{LinFu.Contracts}{chapter.5}% 33
-\BOOKMARK [1][-]{section.5.3}{Por\363wnanie funkcjonalnosci opisywanych bibliotek}{chapter.5}% 34
-\BOOKMARK [0][-]{chapter.6}{Podsumowanie}{}% 35
+\BOOKMARK [1][-]{section.1.3}{Plan pracy}{chapter.1}% 5
+\BOOKMARK [0][-]{chapter.2}{Wprowadzenie do programowania kontraktowego}{}% 6
+\BOOKMARK [0][-]{chapter.3}{Om\363wienie funkcjonalnosci biblioteki}{}% 7
+\BOOKMARK [1][-]{section.3.1}{Og\363lny schemat architektury biblioteki AsProfiled}{chapter.3}% 8
+\BOOKMARK [1][-]{section.3.2}{Przyk\233ad wykorzystania biblioteki AsProfiled}{chapter.3}% 9
+\BOOKMARK [1][-]{section.3.3}{Inspekcja nadzorowanego programu}{chapter.3}% 10
+\BOOKMARK [1][-]{section.3.4}{Kontrakty}{chapter.3}% 11
+\BOOKMARK [1][-]{section.3.5}{Funkcjonalnosci biblioteki}{chapter.3}% 12
+\BOOKMARK [2][-]{subsection.3.5.1}{Odczytywanie wartosci argument\363w metod}{section.3.5}% 13
+\BOOKMARK [2][-]{subsection.3.5.2}{Wartosci zwracane}{section.3.5}% 14
+\BOOKMARK [2][-]{subsection.3.5.3}{Wartosci poczatkowe}{section.3.5}% 15
+\BOOKMARK [0][-]{chapter.4}{Szczeg\363\233y implementacji}{}% 16
+\BOOKMARK [1][-]{section.4.1}{Atrybuty jako kontrakty}{chapter.4}% 17
+\BOOKMARK [1][-]{section.4.2}{Gramatyka kontrakt\363w}{chapter.4}% 18
+\BOOKMARK [1][-]{section.4.3}{Om\363wienie i implementacja interfejs\363w}{chapter.4}% 19
+\BOOKMARK [1][-]{section.4.4}{Odbieranie notyfikacji o zdarzeniach zachodzacych w programie}{chapter.4}% 20
+\BOOKMARK [1][-]{section.4.5}{Odczyt metadanych}{chapter.4}% 21
+\BOOKMARK [2][-]{subsection.4.5.1}{Reprezentacja metadanych}{section.4.5}% 22
+\BOOKMARK [2][-]{subsection.4.5.2}{Interpretacja metadanych}{section.4.5}% 23
+\BOOKMARK [2][-]{subsection.4.5.3}{Odczyt metadanych w bibliotece AsProfiled}{section.4.5}% 24
+\BOOKMARK [1][-]{section.4.6}{Parsowanie wyrazen zawartych w kontraktach}{chapter.4}% 25
+\BOOKMARK [1][-]{section.4.7}{Inspekcja wartosci zmiennych}{chapter.4}% 26
+\BOOKMARK [2][-]{subsection.4.7.1}{Typy wbudowane}{section.4.7}% 27
+\BOOKMARK [2][-]{subsection.4.7.2}{Odwo\233ania do wartosci sk\233adowych obiekt\363w z\233ozonych}{section.4.7}% 28
+\BOOKMARK [1][-]{section.4.8}{Ewaluacja kontrakt\363w}{chapter.4}% 29
+\BOOKMARK [2][-]{subsection.4.8.1}{Zachowywanie wartosci poczatkowych}{section.4.8}% 30
+\BOOKMARK [2][-]{subsection.4.8.2}{Wartosci zwracane}{section.4.8}% 31
+\BOOKMARK [0][-]{chapter.5}{Por\363wnanie z innymi bibliotekami}{}% 32
+\BOOKMARK [1][-]{section.5.1}{Code Contracts}{chapter.5}% 33
+\BOOKMARK [1][-]{section.5.2}{LinFu.Contracts}{chapter.5}% 34
+\BOOKMARK [1][-]{section.5.3}{Por\363wnanie funkcjonalnosci opisywanych bibliotek}{chapter.5}% 35
+\BOOKMARK [0][-]{chapter.6}{Podsumowanie}{}% 36
+\BOOKMARK [0][-]{section*.3}{Bibliografia}{}% 37
